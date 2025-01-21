@@ -1,0 +1,25 @@
+=========== BACKEND ===========================
+go to backend, run
+mvn clean package
+
+copy target/resto-console-0.0.1-SNAPSHOT.jar to production/smart-console/backend
+copy application.properties to this prod folder and rename as application-prod.properties
+
+to run, type run.bat or ./run.bat  //runs backend in localhost:8080
+
+============ FRONT END ========================
+go to frontend, run 
+npm run build
+copy the dist content to production/smart-console/frontend/dist
+
+npm install -g http-server
+cd C:\SMARTDATA2\resto-pos\smart-console\frontend\dist
+
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+
+http-server -p 3000   // runs frontend in localhost:3000
+
+
+============ NGINX ========================
+nginx  // to run on localhost:8081.. configuration in nginx.conf
+
