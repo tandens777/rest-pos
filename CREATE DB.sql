@@ -1064,7 +1064,6 @@ ALTER TABLE public.downpayment ADD CONSTRAINT fk_downpayment_customer FOREIGN KE
 
 ALTER TABLE public.downpayment_dtl ADD CONSTRAINT fk_downpayment_dtl_downpayment FOREIGN KEY (cust_id, dp_id) REFERENCES public.downpayment (cust_id, dp_id);
 
-ALTER TABLE public.employee ADD CONSTRAINT fk_employee_role FOREIGN KEY (role_id) REFERENCES public.role_tbl (role_id);
 
 ALTER TABLE public.food_delivery_app_item_price ADD CONSTRAINT fk_food_dlvry_app_item_price_app FOREIGN KEY (app_id) REFERENCES public.food_delivery_app (app_id);
 

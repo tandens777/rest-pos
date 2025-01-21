@@ -1,0 +1,29 @@
+open POSTGRESQL using PGAdmin
+
+create a database called resto_pos
+
+run the createdb.sql inside that database.
+
+go to resto-pos/smartconsole/frontend
+run npm install
+
+to run front end, run this cmd
+npm run dev
+
+to run backend
+go to resto-pos/smartconsole/backend
+run this cmd
+mvn spring-boot:run
+
+goto web browser
+localhost:3000
+
+login pincode
+080888  for admin
+345678  for manager
+or 222222 for cashier
+111111 for waiter.
+
+to check/test all RESTAPIs for RESTOPOS
+localhost:8080/apidoc or
+localhost:8080/swagger-ui.html

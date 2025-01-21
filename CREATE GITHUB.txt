@@ -1,0 +1,10 @@
+1. login to GitHub and create a new repository resto-pos
+2. open terminal/command prompt
+3. cd resto-pos
+4. git init
+5. git remote add origin https://github.com/tandens777/rest-pos.git
+6. git pull origin main --allow-unrelated-histories
+7. git add .
+8. git commit -m "Initial commit"
+9. git branch -M main
+git push -u origin main
