@@ -1,0 +1,37 @@
+package com.smartdata.resto_console.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "users")  // Renamed table to avoid conflict with PostgreSQL 'user' table
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)  // Ensure username is unique and not null
+    private String username;
+
+    @Column(nullable = false)  // Ensure password is not null
+    private String password;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "role_id", nullable = false)  // Foreign key to Role table
+    private Role role;
+
+    // Getter and Setter for Role
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+}
