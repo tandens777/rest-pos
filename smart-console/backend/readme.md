@@ -15,7 +15,9 @@ mvn clean spring-boot:run
 logging.level.org.springframework.security=DEBUG
 logging.level.org.springframework.web=DEBUG
 logging.level.org.springdoc=DEBUG
-- to test http://localhost:8080/swagger-ui/index.html
+- to test http://localhost:8080/swagger-ui/index.html or http://localhost:8080/apidoc
+
+
 - use postman to login
 http://localhost:8080/auth/login
 put Header Content-Type: application/json
