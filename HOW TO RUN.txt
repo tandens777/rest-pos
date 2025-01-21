@@ -27,3 +27,16 @@ or 222222 for cashier
 to check/test all RESTAPIs for RESTOPOS
 localhost:8080/apidoc or
 localhost:8080/swagger-ui.html
+
+
+*** using nginx, goto folder and run cmd ***
+cd nginx*
+nginx
+
+*** now port 8081 will be used instead ***
+run frontend
+localhost:8081
+
+*** to open to outside world **
+ngrok http 8081
+and use the url created.

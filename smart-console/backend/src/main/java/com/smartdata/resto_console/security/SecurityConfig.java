@@ -51,10 +51,12 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Allow all endpoints
-                        .allowedOrigins("http://localhost:3000") // Allow requests from your React app
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow specific HTTP methods
-                        .allowedHeaders("*") // Allow all headers
-                        .allowCredentials(true); // Allow credentials (e.g., cookies, authorization headers)
+                .allowedOriginPatterns("*") // Allow *
+                //.allowedOriginPatterns("https://*.ngrok-free.app", "http://localhost:3000") // Allow *.ngrok-free.app and localhost:3000
+                //.allowedOrigins("http://localhost:3000") // Allow requests from your React app
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow specific HTTP methods
+                .allowedHeaders("*") // Allow all headers
+                .allowCredentials(true); // Allow credentials (e.g., cookies, authorization headers)
             }
         };
     }    

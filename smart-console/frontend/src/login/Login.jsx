@@ -35,7 +35,8 @@ function Login() {
   const handleLogin = async () => {
     try {
       console.log('Sending login request...');
-      const response = await axios.post('http://localhost:8080/api/auth/login', { pinCode });
+      const response = await axios.post('/api/auth/login', { pinCode });
+      //const response = await axios.post('http://localhost:8080/api/auth/login', { pinCode });
       console.log('Login response:', response.data);
 
       const { username, token, role } = response.data;
