@@ -1,0 +1,16 @@
+git clone .... .git
+
+git branch dennis
+git checkout dennis
+git branch -a (show all current branches)
+
+
+git add .
+git commit -m "TEST"
+git push origin dennis or main
+the branch will pull request in the repository, have to review then merge to main
+
+git pull origin main - to get latest
+git status    - show files that are not added... statuws
+
+
