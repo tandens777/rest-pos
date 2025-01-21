@@ -24,7 +24,7 @@ login pincode
 or 222222 for cashier
 111111 for waiter.
 
-to check/test all RESTAPIs for RESTOPOS
+to see/check/test all RESTAPIs for RESTOPOS
 localhost:8080/apidoc or
 localhost:8080/swagger-ui.html
 
@@ -37,6 +37,27 @@ nginx
 run frontend
 localhost:8081
 
+
+
+
 *** to open to outside world **
 ngrok http 8081
 and use the url created.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
