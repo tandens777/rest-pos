@@ -8,3 +8,11 @@
 8. git commit -m "Initial commit"
 9. git branch -M main
 git push -u origin main
+
+** to create tag
+git tag -a v1.0 -m "Version 1.0: Login, swagger, JWT authentication frontend backend working"
+git push --tags or
+git push origin v1.0
+
+** to remove tag
+git tag -d v1.0
