@@ -6,6 +6,9 @@ import jakarta.persistence.StoredProcedureQuery;
 import jakarta.persistence.ParameterMode;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.jpa.repository.Query;
+import java.util.List;
+
 import com.smartdata.resto_console.exception.EmployeeNotFoundException;
 
 @Repository
@@ -58,5 +61,7 @@ public class EmployeeRepository {
         }
         return name;
     }
-    
+ 
+    //@Query("SELECT DISTINCT r.roomType FROM Room r")
+    //List<String> findDistinctRoomTypes();    
 }
