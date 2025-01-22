@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 @Configuration
-@EnableMethodSecurity(prePostEnabled = true) // Enable method-level security annotations
+@EnableMethodSecurity(prePostEnabled = true) // Enable method-level security annotations PreAuthorize in Controller
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
