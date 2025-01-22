@@ -25,7 +25,8 @@ public class EmployeeController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public void createEmployee(@RequestParam String name) {
-        employeeService.createEmployee(name);
+        //System.out.println("Controller Creating employee with name: " + name);
+        employeeService.insertEmployee(name);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -40,8 +41,7 @@ public class EmployeeController {
         employeeService.deleteEmployee(id);
     }
 
-    //@PreAuthorize("hasAnyRole('CASHIER','ADMIN')")
-    @PreAuthorize("hasRole('CASHIER')")
+    @PreAuthorize("hasAnyRole('CASHIER','ADMIN')")
     @GetMapping("/name/{id}")
     public ResponseEntity<String> getEmployeeName(@PathVariable Long id) {
         return ResponseEntity.ok(employeeService.getEmployeeName(id));
