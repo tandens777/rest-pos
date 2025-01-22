@@ -7,8 +7,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true) // Enable method-level security annotations
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -35,8 +37,8 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(WHITE_LIST_URL).permitAll() // Permit whitelisted URLs
-                .requestMatchers("/api/employees/name/**").hasAnyRole("CASHIER", "ADMIN") // Role-specific endpoints
-                .requestMatchers("/api/employees/**").hasRole("ADMIN") // Restricted to ADMIN
+//                .requestMatchers("/api/employees/name/**").hasAnyRole("CASHIER", "ADMIN") // Role-specific endpoints
+//                .requestMatchers("/api/employees/**").hasRole("ADMIN") // Restricted to ADMIN
                 .anyRequest().authenticated() // All other endpoints require authentication
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter

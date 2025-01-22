@@ -40,7 +40,8 @@ public class EmployeeController {
         employeeService.deleteEmployee(id);
     }
 
-    @PreAuthorize("hasRole('MANAGER')")
+    //@PreAuthorize("hasAnyRole('CASHIER','ADMIN')")
+    @PreAuthorize("hasRole('CASHIER')")
     @GetMapping("/name/{id}")
     public ResponseEntity<String> getEmployeeName(@PathVariable Long id) {
         return ResponseEntity.ok(employeeService.getEmployeeName(id));
