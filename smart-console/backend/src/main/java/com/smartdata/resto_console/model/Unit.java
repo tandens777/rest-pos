@@ -44,9 +44,11 @@ public class Unit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String unit_code;
+    @Column(name = "unit_code") // Map the snake_case column name
+    private String unitCode;
 
-    private String unit_desc;
+    @Column(name = "unit_desc") // Map the snake_case column name
+    private String unitDesc;    
 
     // Getters and setters
 }

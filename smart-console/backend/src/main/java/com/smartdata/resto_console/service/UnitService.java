@@ -41,8 +41,13 @@ public class UnitService {
         }
     }
 
-    public List<Unit> getUnits() throws GenericNotFoundException {
-        List<Unit> units = unitRepository.findAll();
+    public List<Unit> getUnits(String searchTerm) throws GenericNotFoundException {
+        List<Unit> units;
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            units = unitRepository.findByUnitDescContainingIgnoreCaseOrderByUnitCode(searchTerm);
+        } else {
+            units = unitRepository.findAllByOrderByUnitCode();
+        }
 
         if (!units.isEmpty()) {
             return units;
