@@ -52,8 +52,7 @@ public class UnitController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<List<Unit>> getUnits() throws GenericNotFoundException {
-        return ResponseEntity.ok(unitService.getUnits());
-    }
-
+    public ResponseEntity<List<Unit>> getUnits(@RequestParam(required = false) String search) throws GenericNotFoundException {
+        return ResponseEntity.ok(unitService.getUnits(search));
+    }    
 }
