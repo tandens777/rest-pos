@@ -40,7 +40,7 @@ const Unit = () => {
             const response = await axiosInstance.get("/units/all");
             setUnits(response.data);
         } catch (error) {
-            message.error("Failed to fetch units.");
+            //message.error("Failed to fetch units.");
         }
     };
 
@@ -80,9 +80,18 @@ const Unit = () => {
     // Delete a Unit
     const handleDelete = async (id) => {
         try {
+            // Delete the unit
             await axiosInstance.delete(`/units/delete/${id}`);
             message.success("Unit deleted successfully.");
-            fetchUnits();
+
+            // Update the units state without fetching from the server
+            const updatedUnits = units.filter((unit) => unit.id !== id);
+            setUnits(updatedUnits);
+
+            // Check if the updated units list is empty
+            if (updatedUnits.length === 0) {
+                setCurrentPage(1); // Reset to the first page
+            }
         } catch (error) {
             message.error("Failed to delete unit.");
         }
@@ -269,9 +278,17 @@ const Unit = () => {
                 title={editingUnit ? "Edit Unit" : "Add New Unit"}
                 visible={isModalVisible}
                 onCancel={() => setIsModalVisible(false)}
-                onOk={() => form.submit()}
+                footer={null}
                 centered
-                width="90%"
+                width="400px"
+                maskStyle={{
+                    backgroundColor: "rgba(0, 0, 0, 0.6)",
+                }}
+                bodyStyle={{
+                    padding: "20px",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                }}
             >
                 <Form
                     form={form}
@@ -292,18 +309,22 @@ const Unit = () => {
                     >
                         <Input placeholder="Enter unit description" />
                     </Form.Item>
+                    <div style={{ textAlign: "right", marginTop: "20px" }}>
+                        <Button
+                            onClick={() => setIsModalVisible(false)}
+                            style={{ marginRight: "10px" }}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                        >
+                            Save
+                        </Button>
+                    </div>
                 </Form>
             </Modal>
-            <style jsx>{`
-                .custom-row td {
-                    padding: 8px 12px !important;
-                }
-                @media (max-width: 768px) {
-                    .custom-row td {
-                        font-size: 12px;
-                    }
-                }
-            `}</style>
         </div>
     );
 };

@@ -966,7 +966,7 @@ CREATE INDEX idx_reservation ON reservation(section_no, table_no, reserve_dt, cu
 CREATE UNIQUE INDEX idx_sia_pos_txn ON sia_pos_txn(order_num);
 CREATE UNIQUE INDEX idx_sia_pos_txn_dtl ON sia_pos_txn_dtl(order_num, dtl_id);
 CREATE INDEX idx_surcharge_disc2 ON surcharge_discount(disc_id, disc_desc, disc_type, auto_flag);
-
+CREATE UNIQUE INDEX idx_unit_unit_desc ON unit(unit_desc);
 
 -- GRANT permissions
 GRANT SELECT, UPDATE, INSERT, DELETE ON active_orders TO public;
