@@ -15,6 +15,27 @@ import { FiLogOut } from "react-icons/fi"; // Logout icon
 import { useMediaQuery } from "react-responsive";
 import { MdMenu } from "react-icons/md";
 import { NavLink, useLocation } from "react-router-dom"; // Remove useNavigate
+//------Sidebar icons --------
+import { BiHandicap } from "react-icons/bi";//surcharge discounts logo
+import { BiDonateHeart } from "react-icons/bi";
+import { BiSolidDiscount } from "react-icons/bi";
+import { TbDiscount } from "react-icons/tb";
+
+import { BiCreditCard } from "react-icons/bi";//payment logo
+import { BiDollarCircle } from "react-icons/bi";
+
+import { BiGroup } from "react-icons/bi";//employee logo
+import { BiGridAlt } from "react-icons/bi";//apps logo
+import { BiCog } from "react-icons/bi"; //settings logo
+import { BiBuildings } from "react-icons/bi";//company
+import { BiRestaurant } from "react-icons/bi"; //food menu
+import { BiPackage } from "react-icons/bi";//ingredients
+import { BiColorFill } from "react-icons/bi";
+import { BiFridge } from "react-icons/bi";
+import { MdOutlineScale } from "react-icons/md";//foodscale
+
+import { LiaPeopleCarrySolid } from "react-icons/lia";//food department
+
 
 import companyLogo from "../../assets/images/smartPOS.png";
 
@@ -73,54 +94,53 @@ const Sidebar = () => {
         },
       };
 
-  const adminMenus = [
-    {
-      name: "Company",
-      icon: RiBuilding3Line,
-      link: "/company",
-    },
-    {
-      name: "Employees",
-      icon: BsPerson,
-      link: "/employees",
-    },
-    {
-      name: "Food Department",
-      icon: HiOutlineDatabase,
-      link: "/food-department",
-    },
-    {
-      name: "Food Menu",
-      icon: AiOutlineAppstore,
-      link: "/food-menu",
-    },
-    {
-      name: "Ingredients",
-      icon: HiOutlineDatabase,
-      link: "/ingredients",
-    },
-    {
-      name: "Unit of Measure",
-      icon: TbReportAnalytics,
-      link: "/unit-of-measure",
-    },
-    {
-      name: "Payment Method",
-      icon: RiBuilding3Line,
-      link: "/payment-method",
-    },
-    {
-      name: "Surcharge/Discounts",
-      icon: TbReportAnalytics,
-      link: "/surcharge-discounts",
-    },
-    {
-      name: "Food Delivery Apps",
-      icon: AiOutlineAppstore,
-      link: "/food-delivery-apps",
-    },
-  ];
-
+    const adminMenus = [
+      {
+        name: "Company",
+        icon: BiBuildings,
+        link: "/company",
+      },
+      {
+        name: "Employees",
+        icon: BiGroup,
+        link: "/employees",
+      },
+      {
+        name: "Food Station",
+        icon: LiaPeopleCarrySolid,
+        link: "/food-station",
+      },
+      {
+        name: "Food Menu",
+        icon: BiRestaurant,
+        link: "/food-menu",
+      },
+      {
+        name: "Ingredients",
+        icon: BiFridge,
+        link: "/ingredients",
+      },
+      {
+        name: "Unit of Measure",
+        icon: MdOutlineScale,
+        link: "/unit-of-measure",
+      },
+      {
+        name: "Payment Method",
+        icon: BiCreditCard,
+        link: "/payment-method",
+      },
+      {
+        name: "Surcharge/Discounts",
+        icon: BiHandicap,
+        link: "/surcharge-discounts",
+      },
+      {
+        name: "Food Delivery Apps",
+        icon: BiGridAlt,
+        link: "/food-delivery-apps",
+      },
+    ];
   const managerMenus = [
     {
       name: "Change PIN",
