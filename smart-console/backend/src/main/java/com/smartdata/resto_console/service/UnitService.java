@@ -41,6 +41,7 @@ public class UnitService {
         }
     }
 
+    // copy sample for retrieving all records or by search word and sorted
     public List<Unit> getUnits(String searchTerm) throws GenericNotFoundException {
         List<Unit> units;
         if (searchTerm != null && !searchTerm.isEmpty()) {

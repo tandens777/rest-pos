@@ -1,0 +1,29 @@
+
+STEP 1 *** START WITH BACKEND ***
+============= For Backend ==========================
+1. Follow the Unit sample
+2. Add a Unit.java under model
+3. Add a UnitController.java under controller
+4. Add a UnitRepository.java under repository
+5. Add a UnitService.java under UnitService
+
+==== CODE THE STORED PROCEDURES AND RUN ON DATABASE =====
+1. under sql, write the insert, delete, update sql ,  follow the unit sample,  create a new folder for this new module
+2. run these sqls on PGAdmin, Query, make sure no errors, check under procedures if they are present after creation
+
+==== TEST YOUR RESTAPI UNDER SWAGGER ==============  mvn spring-boot:run =============
+1. goto localhost:8080/apidoc  or swagger-ui.html
+2. login first /api/auth/login and copy the token and paste in Authorize button on top of Swagger.
+3. test all your APIs.  Make sure they all work first before going to Frontend
+
+STEP2 *** CODE YOUR FRONTEND *********
+1. Under App.jsx, add the following.... use Unit as example
+import Unit from './pages/Unit';
+...
+<Route path="/unit-of-measure" element={<Unit />} />
+
+2. Under pages, add Unit.jsx  use this as sample. change code accordingly.
+
+3. You can copy the Unit.jsx to CHAT and also show the columns of the table ur using or the UnitController.java to show all 
+the restapi for this module..  and change accordingly.
+Make sure look and feel is the same using Unit.jsx

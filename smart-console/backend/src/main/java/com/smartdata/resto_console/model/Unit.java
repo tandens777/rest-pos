@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name = "unit")
 
+// declare all your stored procs here, the parameters 
 @NamedStoredProcedureQueries({
     @NamedStoredProcedureQuery(
         name = "addUnit",

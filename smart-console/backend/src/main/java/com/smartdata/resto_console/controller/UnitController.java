@@ -26,7 +26,7 @@ public class UnitController {
     @Autowired
     private UnitService unitService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")  // allows only ADMIN role to access this api /add, if more than one role use hasAnyRole('','')
     @PostMapping("/add")
     public void addUnit(@RequestParam String unit_code, @RequestParam String unit_desc) {
         unitService.addUnit(unit_code, unit_desc);
