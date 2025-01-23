@@ -5,7 +5,7 @@ CREATE OR REPLACE PROCEDURE public.update_unit(
 LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
-  UPDATE units SET unit_code = p_unit_code, unit_desc = p_unit_desc WHERE id = p_id;
+  UPDATE unit SET unit_code = p_unit_code, unit_desc = p_unit_desc WHERE id = p_id;
 END;
 $BODY$;
 ALTER PROCEDURE public.update_unit(bigint, character varying, character varying)
