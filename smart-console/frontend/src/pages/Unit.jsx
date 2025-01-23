@@ -38,13 +38,7 @@ const Unit = () => {
     const fetchUnits = async () => {
         try {
             const response = await axiosInstance.get("/units/all");
-            // Map backend fields to camelCase
-            const mappedUnits = response.data.map((unit) => ({
-                ...unit,
-                unitCode: unit.unitCode,
-                unitDesc: unit.unitDesc,
-            }));
-            setUnits(mappedUnits);
+            setUnits(response.data);
         } catch (error) {
             message.error("Failed to fetch units.");
         }
@@ -54,12 +48,7 @@ const Unit = () => {
     const handleSearch = async () => {
         try {
             const response = await axiosInstance.get(`/units/all?search=${searchTerm}`);
-            const mappedUnits = response.data.map((unit) => ({
-                ...unit,
-                unitCode: unit.unitCode,
-                unitDesc: unit.unitDesc,
-            }));
-            setUnits(mappedUnits);
+            setUnits(response.data);
         } catch (error) {
             message.error("Failed to search units.");
         }
@@ -186,10 +175,27 @@ const Unit = () => {
     );
 
     return (
-        <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-            <h1 style={{ fontSize: "24px", fontWeight: "bold", textAlign: "center", marginBottom: "20px" }}>Unit of Measure Setup</h1>
-            <Space style={{ marginBottom: "20px", width: "100%", justifyContent: "space-between" }}>
-                <Space>
+        <div style={{ padding: "20px", fontFamily: "'Roboto', sans-serif" }}>
+            <h1
+                style={{
+                    fontSize: "28px",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    marginBottom: "20px",
+                    color: "#333",
+                }}
+            >
+                Unit of Measure
+            </h1>
+            <Space
+                style={{
+                    marginBottom: "10px",
+                    width: "100%",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                }}
+            >
+                <Space style={{ marginBottom: "10px" }}>
                     <Input
                         placeholder="Search units..."
                         value={searchTerm}
@@ -204,8 +210,9 @@ const Unit = () => {
                         Search
                     </Button>
                     <Button
-                        type="primary"
+                        type="default"
                         onClick={handleReset}
+                        style={{ backgroundColor: "#1890ff", color: "#fff" }}
                     >
                         Reset
                     </Button>
@@ -229,8 +236,9 @@ const Unit = () => {
                 }}
                 style={{
                     border: "1px solid #f0f0f0",
+                    fontSize: "14px",
                 }}
-                scroll={{ x: true }}
+                scroll={{ x: "max-content" }}
                 bordered
                 components={{
                     header: {
@@ -248,14 +256,14 @@ const Unit = () => {
                         ),
                     },
                 }}
-                rowClassName={() => "custom-row"}
+                rowClassName="custom-row"
             />
             <Pagination
                 current={currentPage}
                 pageSize={pageSize}
                 total={units.length}
                 onChange={handlePageChange}
-                style={{ marginTop: "20px", textAlign: "right" }}
+                style={{ marginTop: "10px", textAlign: "right" }}
             />
             <Modal
                 title={editingUnit ? "Edit Unit" : "Add New Unit"}
@@ -263,6 +271,7 @@ const Unit = () => {
                 onCancel={() => setIsModalVisible(false)}
                 onOk={() => form.submit()}
                 centered
+                width="90%"
             >
                 <Form
                     form={form}
@@ -285,6 +294,16 @@ const Unit = () => {
                     </Form.Item>
                 </Form>
             </Modal>
+            <style jsx>{`
+                .custom-row td {
+                    padding: 8px 12px !important;
+                }
+                @media (max-width: 768px) {
+                    .custom-row td {
+                        font-size: 12px;
+                    }
+                }
+            `}</style>
         </div>
     );
 };
