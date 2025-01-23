@@ -1,4 +1,4 @@
-package com.smartdata.resto_console.controller;
+package com.smartdata.resto_console.swagger;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

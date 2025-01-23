@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
         name = "updateCompany",
         procedureName = "update_company",
         parameters = {
-            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id", type = Long.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id", type = Integer.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_cmpy_nm", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_operated_by", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_tin_no", type = String.class),
@@ -32,6 +32,7 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_pickup_count", type = Integer.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_dlvry_count", type = Integer.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_send_to_kitchen", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_track_invty_flag", type = String.class),
         }
     )
 })
@@ -40,7 +41,7 @@ public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "cmpy_nm") 
     private String cmpyName;
@@ -89,6 +90,9 @@ public class Company {
 
     @Column(name = "send_to_kitchen") 
     private String sendToKitchen;    
+
+    @Column(name = "track_invty_flag") 
+    private String trackInvtyFlag;    
 
     // Getters and setters
 }

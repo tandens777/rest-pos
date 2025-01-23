@@ -3,7 +3,7 @@ CREATE OR REPLACE PROCEDURE public.delete_unit(
 LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
-  DELETE FROM units WHERE id = p_id;
+  DELETE FROM unit WHERE id = p_id;
 END;
 $BODY$;
 ALTER PROCEDURE public.delete_unit(bigint)

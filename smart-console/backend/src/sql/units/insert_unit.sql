@@ -4,7 +4,7 @@ CREATE OR REPLACE PROCEDURE public.insert_unit(
 LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
-  INSERT INTO units (unit_code, unit_desc) VALUES (p_unit_code, p_unit_desc);
+  INSERT INTO unit (unit_code, unit_desc) VALUES (p_unit_code, p_unit_desc);
 END;
 $BODY$;
 ALTER PROCEDURE public.insert_unit(character varying, character varying)

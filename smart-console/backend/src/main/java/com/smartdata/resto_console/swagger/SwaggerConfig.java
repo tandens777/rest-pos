@@ -1,4 +1,4 @@
-package com.smartdata.resto_console.config;
+package com.smartdata.resto_console.swagger;
  
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
