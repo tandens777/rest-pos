@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.smartdata.resto_console.model.*;
-import com.smartdata.resto_console.service.UnitService;
+import com.smartdata.resto_console.service.CompanyService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/company")
 public class CompanyController {
-/* 
+ 
     @Autowired
     private CompanyService cmpyService;
 
@@ -43,5 +43,5 @@ public class CompanyController {
     public ResponseEntity<Optional<Company>> getCompany(@PathVariable Integer id) throws GenericNotFoundException {
         return ResponseEntity.ok(cmpyService.getCompany(id));
     }
-*/ 
+ 
 }
