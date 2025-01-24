@@ -25,7 +25,8 @@ public class SecurityConfig {
         "/swagger-ui.html", // Allow Swagger UI HTML page
         "/webjars/**", 
         "/api/test/**",
-        "/apidoc"
+        "/apidoc",
+        "/uploads/**"
     };
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {

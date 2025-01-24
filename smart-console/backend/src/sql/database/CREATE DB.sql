@@ -331,21 +331,24 @@ CREATE TABLE COMPANY_BRANCH (
     tin_no VARCHAR(255) NULL,
     address1 VARCHAR(255) NULL,
     address2 VARCHAR(255) NULL,
-    track_invty_flag CHAR(1) NULL,
-    reset_key VARCHAR(10) NULL,
-    reset_counter VARCHAR(10) NULL,
-    reset_date VARCHAR(20) NULL,
-    last_print_date TIMESTAMP NULL,
-    last_slip_no INTEGER NULL,
     roller_txt VARCHAR(255) NULL,
     delivery_charge_flag CHAR(1) NULL,
     branch_manager VARCHAR(255) NULL,
     branch_tel_no VARCHAR(100) NULL,
     email VARCHAR(255) NULL,
-    table_count INTEGER NULL,
+    logo_filename VARCHAR(255) NULL,
+    dinein_count INTEGER NULL,
+    pickup_count INTEGER NULL,
+    dlvry_count INTEGER NULL,
     send_to_kitchen CHAR(1) NULL,
-    min_delivery_time INTEGER NULL
+    track_invty_flag CHAR(1) NULL,
+    reset_key VARCHAR(10) NULL,
+    reset_counter VARCHAR(10) NULL,
+    reset_date VARCHAR(20) NULL,
+    last_print_date TIMESTAMP NULL,
+    last_slip_no INTEGER NULL
 );
+
 CREATE TABLE TERMINAL (
     terminal_num VARCHAR(50) NOT NULL,
     serial_num VARCHAR(50) NOT NULL,

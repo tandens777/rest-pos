@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
 import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 const Unit = () => {
     const [units, setUnits] = useState([]);
@@ -72,8 +72,8 @@ const Unit = () => {
         setEditingUnit(unit);
         setIsModalVisible(true);
         form.setFieldsValue({
-            unitCode: unit.unitCode,
-            unitDesc: unit.unitDesc,
+            unit_code: unit.unit_code,
+            unit_desc: unit.unit_desc,
         });
     };
 
@@ -107,8 +107,8 @@ const Unit = () => {
                     null,
                     {
                         params: {
-                            unit_code: values.unitCode,
-                            unit_desc: values.unitDesc,
+                            unit_code: values.unit_code,
+                            unit_desc: values.unit_desc,
                         },
                     }
                 );
@@ -120,8 +120,8 @@ const Unit = () => {
                     null,
                     {
                         params: {
-                            unit_code: values.unitCode,
-                            unit_desc: values.unitDesc,
+                            unit_code: values.unit_code,
+                            unit_desc: values.unit_desc,
                         },
                     }
                 );
@@ -187,7 +187,7 @@ const Unit = () => {
         <div style={{ padding: "20px", fontFamily: "'Roboto', sans-serif" }}>
             <h1
                 style={{
-                    fontSize: "28px",
+                    fontSize: "24px",
                     fontWeight: "bold",
                     textAlign: "center",
                     marginBottom: "20px",
@@ -230,7 +230,7 @@ const Unit = () => {
                     type="primary"
                     icon={<PlusOutlined />}
                     onClick={handleAdd}
-                    style={{ backgroundColor: "#1890ff", borderColor: "#1890ff" }}
+                    style={{ backgroundColor: "#28a745", borderColor: "#28a745", color: "#fff" }}
                 >
                     Add New
                 </Button>
@@ -296,31 +296,47 @@ const Unit = () => {
                     onFinish={handleModalSubmit}
                 >
                     <Form.Item
-                        name="unitCode"
+                        name="unit_code"
                         label="Unit Code"
                         rules={[{ required: true, message: "Unit code is required." }]}
                     >
                         <Input placeholder="Enter unit code" />
                     </Form.Item>
                     <Form.Item
-                        name="unitDesc"
+                        name="unit_desc"
                         label="Unit Description"
                         rules={[{ required: true, message: "Unit description is required." }]}
                     >
                         <Input placeholder="Enter unit description" />
                     </Form.Item>
                     <div style={{ textAlign: "right", marginTop: "20px" }}>
-                        <Button
-                            onClick={() => setIsModalVisible(false)}
-                            style={{ marginRight: "10px" }}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
+                    <Button
                             type="primary"
                             htmlType="submit"
+                            icon={<CheckOutlined />}
+                            style={{
+                                backgroundColor: "#007bff",
+                                color: "white",
+                                borderRadius: "4px",
+                                height: "40px",
+                                padding: "0 20px",
+                                marginRight: "10px",
+                            }}
                         >
                             Save
+                        </Button>
+                        <Button
+                            onClick={() => setIsModalVisible(false)}
+                            icon={<ArrowLeftOutlined />}
+                            style={{
+                                backgroundColor: "#dc3545",
+                                color: "white",
+                                borderRadius: "4px",
+                                height: "40px",
+                                padding: "0 20px",
+                            }}
+                        >
+                            Cancel
                         </Button>
                     </div>
                 </Form>
