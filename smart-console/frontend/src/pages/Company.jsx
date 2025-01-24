@@ -369,7 +369,7 @@ const Company = () => {
                             Save
                         </Button>
                         <Button
-                            onClick={() => setIsModalVisible(false)}
+                            onClick={() => navigate("/")}
                             icon={<ArrowLeftOutlined />}
                             style={{
                                 backgroundColor: "#dc3545",
