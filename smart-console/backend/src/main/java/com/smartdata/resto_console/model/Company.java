@@ -28,7 +28,8 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_branch_manager", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_branch_tel_no", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_email", type = String.class),
-            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_table_count", type = Integer.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_logo_filename", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_dinein_count", type = Integer.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_pickup_count", type = Integer.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_dlvry_count", type = Integer.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_send_to_kitchen", type = String.class),
@@ -79,8 +80,11 @@ public class Company {
     @Column(name = "email") 
     private String email;    
 
-    @Column(name = "table_count") 
-    private Integer tableCount;    
+    @Column(name = "logo_filename") 
+    private String logoFilename;    
+
+    @Column(name = "dinein_count") 
+    private Integer dineinCount;    
 
     @Column(name = "pickup_count") 
     private Integer pickupCount;    

@@ -28,13 +28,20 @@ public class CompanyController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{id}")
-    public void updateCompany(@PathVariable Integer id, @RequestParam String cmpy_nm, @RequestParam String operated_by, @RequestParam String tin_no, 
-                            @RequestParam String address1, @RequestParam String address2, @RequestParam String roller_txt, @RequestParam String branch_manager, 
-                            @RequestParam String branch_tel_no, @RequestParam String email, 
-                            @RequestParam Integer table_count, @RequestParam Integer pickup_count, @RequestParam Integer dlvry_count, 
-                            @RequestParam String send_to_kitchen, 
-                            @RequestParam String track_invty_flag) {
-        cmpyService.updateCompany(id, cmpy_nm, operated_by, tin_no, address1, address2, roller_txt, branch_manager, branch_tel_no, email, table_count, pickup_count, dlvry_count, send_to_kitchen, track_invty_flag);
+    public void updateCompany(@PathVariable Integer id, @RequestParam String cmpy_nm, 
+        @RequestParam(required = false) String operated_by, 
+        @RequestParam(required = false) String tin_no, 
+        @RequestParam(required = false) String address1, 
+        @RequestParam(required = false) String address2, 
+        @RequestParam(required = false) String roller_txt, 
+        @RequestParam(required = false) String branch_manager, 
+        @RequestParam(required = false) String branch_tel_no, 
+        @RequestParam(required = false) String email, 
+        @RequestParam(required = false) String logo_filename,
+        @RequestParam Integer dinein_count, @RequestParam Integer pickup_count, @RequestParam Integer dlvry_count, 
+        @RequestParam String send_to_kitchen, 
+        @RequestParam String track_invty_flag) {
+        cmpyService.updateCompany(id, cmpy_nm, operated_by, tin_no, address1, address2, roller_txt, branch_manager, branch_tel_no, email, logo_filename, dinein_count, pickup_count, dlvry_count, send_to_kitchen, track_invty_flag);
     }
 
 

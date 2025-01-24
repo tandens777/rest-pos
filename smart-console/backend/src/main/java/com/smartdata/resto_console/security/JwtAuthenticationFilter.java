@@ -34,7 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         "/swagger-ui.html", // Allow Swagger UI HTML page
         "/webjars/**", 
         "/api/test/**",
-        "/apidoc"
+        "/apidoc",
+        "/uploads/**"
     };
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil, UserService userService) {
