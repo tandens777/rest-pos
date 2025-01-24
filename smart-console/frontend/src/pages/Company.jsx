@@ -316,8 +316,21 @@ const Company = () => {
                             }
                             onRemove={handleRemove}
                         >
+
                             {!logoPreview && (
-                                <Button icon={<UploadOutlined />}>Upload Photo</Button>
+                                <Button
+                                    icon={<UploadOutlined />}
+                                    style={{
+                                        backgroundColor: "black",
+                                        color: "white",
+                                        borderRadius: "4px",
+                                        height: "40px",
+                                        padding: "0 20px",
+                                        border: "none",
+                                    }}
+                                >
+                                    Upload Photo
+                                </Button>
                             )}
                         </Upload>
                     </Form.Item>
