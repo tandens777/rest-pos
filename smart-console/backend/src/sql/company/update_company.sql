@@ -1,15 +1,17 @@
+DROP PROCEDURE IF EXISTS public.update_company;
+
 CREATE OR REPLACE PROCEDURE public.update_company(
 	IN p_id int,
   IN p_cmpy_nm character varying, 
-  IN p_operated_by character varying default NULL, 
-  IN p_tin_no character varying default NULL, 
-  IN p_address1 character varying default NULL,  
-  IN p_address2 character varying default NULL,  
-  IN p_roller_txt character varying default NULL, 
-  IN p_branch_manager character varying default NULL, 
-  IN p_branch_tel_no character varying default NULL, 
-  IN p_email character varying default NULL, 
-  IN p_logo_filename character varying default NULL, 
+  IN p_operated_by character varying, 
+  IN p_tin_no character varying, 
+  IN p_address1 character varying,  
+  IN p_address2 character varying,  
+  IN p_roller_txt character varying, 
+  IN p_branch_manager character varying, 
+  IN p_branch_tel_no character varying, 
+  IN p_email character varying, 
+  IN p_logo_filename character varying, 
   IN p_dinein_count int default 0,
   IN p_pickup_count int default 0,
   IN p_dlvry_count int default 0,
@@ -41,4 +43,3 @@ ALTER PROCEDURE public.update_company(int,
 character varying, character varying, character varying, character varying, character varying, character varying, character varying, character varying, character varying, character varying, 
 int, int, int, character varying, character varying)
     OWNER TO postgres;
-
