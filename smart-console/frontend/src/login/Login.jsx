@@ -36,7 +36,6 @@ function Login() {
     try {
       console.log('Sending login request...');
       const response = await axios.post('/api/auth/login', { pinCode });
-      //const response = await axios.post('http://localhost:8080/api/auth/login', { pinCode });
       console.log('Login response:', response.data);
 
       const { username, token, role } = response.data;
@@ -125,7 +124,8 @@ function Login() {
               Login
             </h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', margin: '15px 0' }}>
-              {[...Array(10).keys()].map((num) => (
+              {/* Numeric Keypad Layout */}
+              {[7, 8, 9, 4, 5, 6, 1, 2, 3].map((num) => (
                 <button
                   key={num}
                   onClick={() => handleButtonClick(num.toString())}
@@ -137,7 +137,15 @@ function Login() {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    backgroundColor: '#fff',
+                    border: '1px solid #ccc',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.3s, box-shadow 0.3s',
                   }}
+                  onMouseOver={(e) => (e.target.style.backgroundColor = '#f0f0f0')}
+                  onMouseOut={(e) => (e.target.style.backgroundColor = '#fff')}
                 >
                   {num}
                 </button>
@@ -152,9 +160,39 @@ function Login() {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
+                  backgroundColor: '#fff',
+                  border: '1px solid #ccc',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s, box-shadow 0.3s',
                 }}
+                onMouseOver={(e) => (e.target.style.backgroundColor = '#f0f0f0')}
+                onMouseOut={(e) => (e.target.style.backgroundColor = '#fff')}
               >
                 Clear
+              </button>
+              <button
+                onClick={() => handleButtonClick('0')}
+                style={{
+                  padding: '10px',
+                  fontSize: '14px',
+                  width: '100%',
+                  height: '40px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: '#fff',
+                  border: '1px solid #ccc',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s, box-shadow 0.3s',
+                }}
+                onMouseOver={(e) => (e.target.style.backgroundColor = '#f0f0f0')}
+                onMouseOut={(e) => (e.target.style.backgroundColor = '#fff')}
+              >
+                0
               </button>
               <button
                 onClick={() => handleButtonClick('backspace')}
@@ -166,7 +204,15 @@ function Login() {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
+                  backgroundColor: '#fff',
+                  border: '1px solid #ccc',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s, box-shadow 0.3s',
                 }}
+                onMouseOver={(e) => (e.target.style.backgroundColor = '#f0f0f0')}
+                onMouseOut={(e) => (e.target.style.backgroundColor = '#fff')}
               >
                 ←
               </button>
@@ -181,7 +227,16 @@ function Login() {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
+                  backgroundColor: '#007bff',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s, box-shadow 0.3s',
                 }}
+                onMouseOver={(e) => (e.target.style.backgroundColor = '#005bb5')}
+                onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}
               >
                 Enter
               </button>
@@ -192,7 +247,18 @@ function Login() {
                 placeholder="PIN"
                 value={pinCode}
                 readOnly
-                style={{ width: '150px', padding: '5px', marginBottom: '10px', fontSize: '14px', textAlign: 'center', margin: '0 auto', display: 'block' }}
+                style={{
+                  width: '150px',
+                  padding: '5px',
+                  marginBottom: '10px',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                  margin: '0 auto',
+                  display: 'block',
+                  border: '1px solid #ccc', // Ensure the border is visible
+                  borderRadius: '4px', // Optional: Add rounded corners
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Optional: Add a subtle shadow
+                }}
               />
             </div>
             <p style={{ color: message === 'Invalid credentials' ? 'red' : 'black' }}>{message}</p>
