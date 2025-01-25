@@ -16,26 +16,25 @@ import { useMediaQuery } from "react-responsive";
 import { MdMenu } from "react-icons/md";
 import { NavLink, useLocation } from "react-router-dom"; // Remove useNavigate
 //------Sidebar icons --------
-import { BiHandicap } from "react-icons/bi";//surcharge discounts logo
+import { BiHandicap } from "react-icons/bi"; //surcharge discounts logo
 import { BiDonateHeart } from "react-icons/bi";
 import { BiSolidDiscount } from "react-icons/bi";
 import { TbDiscount } from "react-icons/tb";
 
-import { BiCreditCard } from "react-icons/bi";//payment logo
+import { BiCreditCard } from "react-icons/bi"; //payment logo
 import { BiDollarCircle } from "react-icons/bi";
 
-import { BiGroup } from "react-icons/bi";//employee logo
-import { BiGridAlt } from "react-icons/bi";//apps logo
+import { BiGroup } from "react-icons/bi"; //employee logo
+import { BiGridAlt } from "react-icons/bi"; //apps logo
 import { BiCog } from "react-icons/bi"; //settings logo
-import { BiBuildings } from "react-icons/bi";//company
+import { BiBuildings } from "react-icons/bi"; //company
 import { BiRestaurant } from "react-icons/bi"; //food menu
-import { BiPackage } from "react-icons/bi";//ingredients
+import { BiPackage } from "react-icons/bi"; //ingredients
 import { BiColorFill } from "react-icons/bi";
 import { BiFridge } from "react-icons/bi";
-import { MdOutlineScale } from "react-icons/md";//foodscale
+import { MdOutlineScale } from "react-icons/md"; //foodscale
 
-import { LiaPeopleCarrySolid } from "react-icons/lia";//food department
-
+import { LiaPeopleCarrySolid } from "react-icons/lia"; //food department
 
 import companyLogo from "../../assets/images/smartPOS.png";
 
@@ -94,53 +93,54 @@ const Sidebar = () => {
         },
       };
 
-    const adminMenus = [
-      {
-        name: "Company",
-        icon: BiBuildings,
-        link: "/company",
-      },
-      {
-        name: "Employees",
-        icon: BiGroup,
-        link: "/employees",
-      },
-      {
-        name: "Food Station",
-        icon: LiaPeopleCarrySolid,
-        link: "/food-station",
-      },
-      {
-        name: "Food Menu",
-        icon: BiRestaurant,
-        link: "/food-menu",
-      },
-      {
-        name: "Ingredients",
-        icon: BiFridge,
-        link: "/ingredients",
-      },
-      {
-        name: "Unit of Measure",
-        icon: MdOutlineScale,
-        link: "/unit-of-measure",
-      },
-      {
-        name: "Payment Method",
-        icon: BiCreditCard,
-        link: "/payment-method",
-      },
-      {
-        name: "Surcharge/Discounts",
-        icon: BiHandicap,
-        link: "/surcharge-discounts",
-      },
-      {
-        name: "Food Delivery Apps",
-        icon: BiGridAlt,
-        link: "/food-delivery-apps",
-      },
-    ];
+  const adminMenus = [
+    {
+      name: "Company",
+      icon: BiBuildings,
+      link: "/company",
+    },
+    {
+      name: "Employees",
+      icon: BiGroup,
+      link: "/employees",
+    },
+    {
+      name: "Food Station",
+      icon: LiaPeopleCarrySolid,
+      link: "/food-station",
+    },
+    {
+      name: "Food Menu",
+      icon: BiRestaurant,
+      link: "/food-menu",
+    },
+    {
+      name: "Ingredients",
+      icon: BiFridge,
+      link: "/ingredients",
+    },
+    {
+      name: "Unit of Measure",
+      icon: MdOutlineScale,
+      link: "/unit-of-measure",
+    },
+    {
+      name: "Payment Method",
+      icon: BiCreditCard,
+      link: "/payment-method",
+    },
+    {
+      name: "Surcharge/Discounts",
+      icon: BiHandicap,
+      link: "/surcharge-discounts",
+    },
+    {
+      name: "Food Delivery Apps",
+      icon: BiGridAlt,
+      link: "/food-delivery-apps",
+    },
+  ];
+
   const managerMenus = [
     {
       name: "Change PIN",
@@ -197,12 +197,15 @@ const Sidebar = () => {
 
   return (
     <div>
+      {/* Overlay for mobile */}
       <div
         onClick={() => setOpen(false)}
         className={`md:hidden fixed inset-0 max-h-screen z-[998] bg-black/50 ${
           open ? "block" : "hidden"
-        } `}
+        }`}
       ></div>
+
+      {/* Sidebar */}
       <motion.div
         ref={sidebarRef}
         variants={Nav_animation}
@@ -210,18 +213,25 @@ const Sidebar = () => {
         animate={open ? "open" : "closed"}
         className="bg-white text-gray shadow-xl z-[999] max-w-[16rem] w-[16rem] overflow-hidden md:relative fixed h-screen"
       >
+        {/* Sidebar content */}
         <div className="flex items-center gap-2.5 font-medium border-b py-3 border-slate-300 mx-3">
-          <img
-            src={companyLogo}
-            width={45}
-            alt=""
-          />
+          <img src={companyLogo} width={45} alt="" />
           <div className="flex flex-col">
-            <span className="text-xl whitespace-pre">SMARTConsole</span>
-            <span className="text-xs text-gray-500">Ver 1.0.0</span> {/* Version number */}
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-xl whitespace-pre no-underline text-black"
+                  : "text-xl whitespace-pre no-underline text-black"
+              }
+            >
+              SMARTConsole
+            </NavLink>
+            <span className="text-xs text-gray-500">Ver 1.0.0</span>
           </div>
         </div>
 
+        {/* Menu items */}
         <div className="flex flex-col h-full">
           <ul className="whitespace-pre px-2.5 text-[0.9rem] py-5 flex flex-col gap-1 font-medium overflow-x-hidden scrollbar-thin scrollbar-track-white scrollbar-thumb-slate-100 md:h-[68%] h-[70%]">
             {/* Render menus based on role */}
@@ -282,7 +292,7 @@ const Sidebar = () => {
             <div className="flex-1 text-sm z-50 max-h-48 my-auto whitespace-pre w-full font-medium">
               <div className="flex border-y border-slate-300 p-4 items-center justify-between">
                 <div>
-                  <p>Welcome, {username}</p> {/* Display the username */}
+                  <p>Welcome, {username}</p>
                   <small>You are logged in</small>
                 </div>
                 <button
@@ -319,8 +329,19 @@ const Sidebar = () => {
           <IoIosArrowBack size={25} />
         </motion.div>
       </motion.div>
-      <div className="m-3 md:hidden" onClick={() => setOpen(true)}>
-        <MdMenu size={25} />
+
+      {/* 3-bar menu icon for mobile */}
+      <div className="fixed top-3 left-3 z-[1000] md:hidden">
+        <MdMenu size={25} onClick={() => setOpen(true)} />
+      </div>
+
+      {/* Main content */}
+      <div
+        className={`pt-16 md:pt-0 ${
+          open ? "md:ml-[16rem]" : "md:ml-[4rem]"
+        } transition-all duration-300`}
+      >
+        {/* Your main content goes here */}
       </div>
     </div>
   );
