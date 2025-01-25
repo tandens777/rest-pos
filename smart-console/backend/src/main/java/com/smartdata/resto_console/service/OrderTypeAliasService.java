@@ -14,8 +14,8 @@ public class OrderTypeAliasService {
     @Autowired
     private OrderTypeAliasRepository aliasRepository;
 
-    public void generateOrderTypeAlias(String orderType, String skipNums) {
-        aliasRepository.generateOrderTypeAlias(orderType, skipNums);
+    public void generateOrderTypeAlias(String orderType, String skipNums, int startNum) {
+        aliasRepository.generateOrderTypeAlias(orderType, skipNums, startNum);
     }
 
     public void updateOrderTypeAliases(String orderType, List<OrderTypeAlias> aliases) {

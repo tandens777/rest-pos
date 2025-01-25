@@ -18,7 +18,8 @@ import lombok.NoArgsConstructor;
         procedureName = "gen_order_type_aliases",
         parameters = {
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_order_type", type = String.class),
-            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_skip_nums", type = String.class)
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_skip_nums", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_start_num", type = Integer.class)
         }
     ),
     @NamedStoredProcedureQuery(
