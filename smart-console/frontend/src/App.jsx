@@ -9,6 +9,7 @@ import Build from './pages/Build';
 import Settings from './pages/Settings';
 import Unit from './pages/Unit';
 import Company from './pages/Company';
+import QRCodeConnect from './pages/QRCodeConnect';
 
 const App = () => {
   // Use state to track authentication status
@@ -47,7 +48,8 @@ const App = () => {
           element={
             <RootLayout>
               <Routes>
-                <Route path="/" element={<AllApps />} />
+                {/*<Route path="/" element={<AllApps />} />*/}
+                <Route path="/" element={<QRCodeConnect />} />
                 <Route path="/company" element={<Company />} />
                 <Route path="/authentication" element={<Authentication />} />
                 <Route path="/unit-of-measure" element={<Unit />} />
