@@ -184,7 +184,17 @@ const Unit = () => {
     );
 
     return (
-        <div style={{ padding: "20px", fontFamily: "'Roboto', sans-serif" }}>
+        <div
+            style={{
+                padding: "20px",
+                fontFamily: "'Roboto', sans-serif",
+                backgroundColor: "#f9f9f9",
+                borderRadius: "8px",
+                maxWidth: "800px",
+                margin: "40px auto",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+            }}
+        >
             <h1
                 style={{
                     fontSize: "24px",
@@ -310,7 +320,7 @@ const Unit = () => {
                         <Input placeholder="Enter unit description" />
                     </Form.Item>
                     <div style={{ textAlign: "right", marginTop: "20px" }}>
-                    <Button
+                        <Button
                             type="primary"
                             htmlType="submit"
                             icon={<CheckOutlined />}

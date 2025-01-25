@@ -24,9 +24,19 @@ const QRCodeGenerator = () => {
   }, []);
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Scan to Connect to Local Server</h1>
-      <canvas ref={canvasRef} style={styles.canvas} />
+    <div
+      style={{
+        padding: "20px",
+        fontFamily: "'Roboto', sans-serif",
+        borderRadius: "8px",
+        maxWidth: "800px",
+        margin: "40px auto",
+      }}
+    >
+      <div style={styles.container}>
+        <h1 style={styles.title}>Scan to Connect to Local Server</h1>
+        <canvas ref={canvasRef} style={styles.canvas} />
+      </div>
     </div>
   );
 };
@@ -42,7 +52,6 @@ const styles = {
     justifyContent: 'center',
     height: '100vh', // Full viewport height
     textAlign: 'center',
-    backgroundColor: '#f0f0f0', // Optional: Add a background color
   },
   title: {
     marginBottom: '20px',
