@@ -2,14 +2,15 @@ DROP PROCEDURE IF EXISTS public.gen_order_type_aliases;
 
 CREATE OR REPLACE PROCEDURE public.gen_order_type_aliases(
     IN p_order_type CHAR(1),
-    IN p_skip_nums VARCHAR
+    IN p_skip_nums VARCHAR,
+    IN p_start_num INT
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
 DECLARE
     max_cnt INT;
     curr_id INT := 0;
-    tbl_name_counter INT := 0;
+    tbl_name_counter INT;
     skip_nums INT[]; -- Array to store numbers to skip
     num_to_skip INT;
 BEGIN
@@ -34,6 +35,9 @@ BEGIN
         skip_nums := ARRAY[]::INT[]; -- Empty array if no numbers to skip
     END IF;
 
+    -- Initialize tbl_name_counter with p_start_num
+    tbl_name_counter := p_start_num - 1; -- Subtract 1 to account for the first increment in the loop
+
     -- Loop to insert records into order_type_aliases
     WHILE curr_id < max_cnt LOOP
         curr_id := curr_id + 1;
@@ -53,5 +57,5 @@ BEGIN
 END;
 $BODY$;
 
-ALTER PROCEDURE public.gen_order_type_aliases(CHAR(1), VARCHAR)
+ALTER PROCEDURE public.gen_order_type_aliases(CHAR(1), VARCHAR, INT)
     OWNER TO postgres;

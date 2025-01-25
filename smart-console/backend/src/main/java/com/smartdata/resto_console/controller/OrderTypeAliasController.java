@@ -21,8 +21,8 @@ public class OrderTypeAliasController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/generate")
-    public void generateOrderTypeAlias(@RequestParam String order_type, @RequestParam String skip_nums) {
-        aliasService.generateOrderTypeAlias(order_type, skip_nums);
+    public void generateOrderTypeAlias(@RequestParam String order_type, @RequestParam String skip_nums, @RequestParam int start_num ) {
+        aliasService.generateOrderTypeAlias(order_type, skip_nums, start_num);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

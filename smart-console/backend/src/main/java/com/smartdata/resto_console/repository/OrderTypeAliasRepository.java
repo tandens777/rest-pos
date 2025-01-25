@@ -14,7 +14,7 @@ public interface OrderTypeAliasRepository extends JpaRepository<OrderTypeAlias, 
 
     // declare stored procedure mapping here for use in service
     @Procedure(name = "generateOrderTypeAlias")
-    void generateOrderTypeAlias(@Param("p_order_type") String order_type, @Param("p_skip_nums") String skip_nums);
+    void generateOrderTypeAlias(@Param("p_order_type") String order_type, @Param("p_skip_nums") String skip_nums, @Param("p_start_num") int start_num);
 
     @Procedure(name = "updateOrderTypeAlias")
     void updateOrderTypeAlias(@Param("p_order_type") String order_type, @Param("p_tbl_num") int tbl_num, @Param("p_tbl_name") String tbl_name);
