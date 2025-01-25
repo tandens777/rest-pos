@@ -2,13 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
 import { Button, Form, Input, Row, Col, message, Upload } from "antd";
-import { UploadOutlined, CheckOutlined, ArrowLeftOutlined  } from "@ant-design/icons";
+import { UploadOutlined, CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 const Company = () => {
     const [company, setCompany] = useState(null);
     const [logoPreview, setLogoPreview] = useState(""); // State for logo preview
     const [form] = Form.useForm();
     const navigate = useNavigate();
+
+    // Environment variables for API and file server URLs
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL; // e.g., http://192.168.68.118:8081
+    const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL; // e.g., http://192.168.68.118:8080
+    
+    console.log("API Base URL:", apiBaseUrl); // Debugging
+    console.log("File Base URL:", fileBaseUrl); // Debugging
 
     // Fetch Company details on component mount
     useEffect(() => {
@@ -21,8 +28,7 @@ const Company = () => {
             const response = await axiosInstance.get(`/company/get/1`); // Assuming the company ID is 1
             setCompany(response.data);
 
-            // working format  
-            // cmpy_nm: response.data.cmpyName
+            // Set form fields with the fetched data
             form.setFieldsValue({
                 cmpy_nm: response.data.cmpyName,
                 operated_by: response.data.operatedBy,
@@ -41,13 +47,14 @@ const Company = () => {
                 track_invty_flag: response.data.trackInvtyFlag,
             });
 
+            // Set logo preview URL using the file server base URL
             if (response.data.logoFilename) {
-                setLogoPreview(`http://localhost:8080${response.data.logoFilename}`); // Generate the full URL for preview
+                setLogoPreview(`${fileBaseUrl}${response.data.logoFilename}`);
             } else {
                 setLogoPreview("");
             }
-
         } catch (error) {
+            console.error("Failed to fetch company details:", error); // Debugging
             message.error("Failed to fetch company details.");
         }
     };
@@ -57,16 +64,9 @@ const Company = () => {
         // Check if logo_filename is [object Object] and set it to null
         if (values.logo_filename && values.logo_filename.toString() === "[object Object]") {
             values.logo_filename = null;
-        }        
+        }
 
         try {
-
-            /*message.success(
-                `Form Values:
-                Logo Filename: ${values.logo_filename || "No logo"}
-                `
-            );*/
-
             await axiosInstance.put(`/company/update/1`, null, {
                 params: {
                     cmpy_nm: values.cmpy_nm,
@@ -89,8 +89,8 @@ const Company = () => {
             message.success("Company details updated successfully.");
             fetchCompanyDetails(); // Refresh company details
         } catch (error) {
-            console.error("Update error:", error); // Log the error for debugging
-            message.error("Failed to update company details. Please try again.", error);
+            console.error("Update error:", error); // Debugging
+            message.error("Failed to update company details. Please try again.");
         }
     };
 
@@ -108,10 +108,12 @@ const Company = () => {
 
             const filePath = response.data.filePath; // The relative path returned by the backend
             form.setFieldsValue({ logo_filename: filePath });
-            setLogoPreview(`http://localhost:8080${filePath}`); // Generate the full URL for preview
+
+            // Set logo preview URL using the file server base URL
+            setLogoPreview(`${fileBaseUrl}${filePath}`);
             message.success("File uploaded successfully.");
         } catch (error) {
-            console.error("Upload error:", error);
+            console.error("Upload error:", error); // Debugging
             message.error("Failed to upload file.");
         }
     };
@@ -119,23 +121,12 @@ const Company = () => {
     // Handle File Removal
     const handleRemove = async () => {
         try {
-
             // Set logo_filename to an empty string and clear the preview
             form.setFieldsValue({ logo_filename: "" });
             setLogoPreview("");
-
-            // Get the current form values
-            const values = form.getFieldsValue();
-
-            // Display the form values in a single message
-            /*message.success(
-                `Form Values:
-                Logo Filename: ${values.logo_filename || "No logo"}`
-            );*/            
-
             message.success("Logo removed successfully.");
         } catch (error) {
-            console.error("Remove error:", error); // Log the error for debugging
+            console.error("Remove error:", error); // Debugging
             message.error("Failed to remove logo.");
         }
     };
@@ -316,7 +307,6 @@ const Company = () => {
                             }
                             onRemove={handleRemove}
                         >
-
                             {!logoPreview && (
                                 <Button
                                     icon={<UploadOutlined />}
@@ -381,7 +371,7 @@ const Company = () => {
                         >
                             Cancel
                         </Button>
-                </div>
+                    </div>
                 </Form>
             )}
         </div>

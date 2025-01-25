@@ -3,7 +3,7 @@ import { useRef } from "react";
 import SubMenu from "./SubMenu";
 import { motion } from "framer-motion";
 
-// * React icons
+// React icons
 import { IoIosArrowBack } from "react-icons/io";
 import { SlSettings } from "react-icons/sl";
 import { AiOutlineAppstore } from "react-icons/ai";
@@ -14,27 +14,25 @@ import { RiBuilding3Line } from "react-icons/ri";
 import { FiLogOut } from "react-icons/fi"; // Logout icon
 import { useMediaQuery } from "react-responsive";
 import { MdMenu } from "react-icons/md";
-import { NavLink, useLocation } from "react-router-dom"; // Remove useNavigate
-//------Sidebar icons --------
-import { BiHandicap } from "react-icons/bi"; //surcharge discounts logo
+import { NavLink, useLocation } from "react-router-dom";
+
+// Sidebar icons
+import { BiHandicap } from "react-icons/bi"; // Surcharge discounts logo
 import { BiDonateHeart } from "react-icons/bi";
 import { BiSolidDiscount } from "react-icons/bi";
 import { TbDiscount } from "react-icons/tb";
-
-import { BiCreditCard } from "react-icons/bi"; //payment logo
+import { BiCreditCard } from "react-icons/bi"; // Payment logo
 import { BiDollarCircle } from "react-icons/bi";
-
-import { BiGroup } from "react-icons/bi"; //employee logo
-import { BiGridAlt } from "react-icons/bi"; //apps logo
-import { BiCog } from "react-icons/bi"; //settings logo
-import { BiBuildings } from "react-icons/bi"; //company
-import { BiRestaurant } from "react-icons/bi"; //food menu
-import { BiPackage } from "react-icons/bi"; //ingredients
+import { BiGroup } from "react-icons/bi"; // Employee logo
+import { BiGridAlt } from "react-icons/bi"; // Apps logo
+import { BiCog } from "react-icons/bi"; // Settings logo
+import { BiBuildings } from "react-icons/bi"; // Company
+import { BiRestaurant } from "react-icons/bi"; // Food menu
+import { BiPackage } from "react-icons/bi"; // Ingredients
 import { BiColorFill } from "react-icons/bi";
 import { BiFridge } from "react-icons/bi";
-import { MdOutlineScale } from "react-icons/md"; //foodscale
-
-import { LiaPeopleCarrySolid } from "react-icons/lia"; //food department
+import { MdOutlineScale } from "react-icons/md"; // Food scale
+import { LiaPeopleCarrySolid } from "react-icons/lia"; // Food department
 
 import companyLogo from "../../assets/images/smartPOS.png";
 
@@ -50,14 +48,16 @@ const Sidebar = () => {
 
   useEffect(() => {
     if (isTabletMid) {
-      setOpen(false);
+      setOpen(false); // Collapse sidebar on small screens
     } else {
-      setOpen(true);
+      setOpen(true); // Expand sidebar on larger screens
     }
   }, [isTabletMid]);
 
   useEffect(() => {
-    isTabletMid && setOpen(false);
+    if (isTabletMid) {
+      setOpen(false); // Collapse sidebar when navigating on small screens
+    }
   }, [pathname]);
 
   const Nav_animation = isTabletMid
@@ -233,7 +233,7 @@ const Sidebar = () => {
 
         {/* Menu items */}
         <div className="flex flex-col h-full">
-          <ul className="whitespace-pre px-2.5 text-[0.9rem] py-5 flex flex-col gap-1 font-medium overflow-x-hidden scrollbar-thin scrollbar-track-white scrollbar-thumb-slate-100 md:h-[68%] h-[70%]">
+          <ul className="whitespace-nowrap px-2.5 text-sm py-5 flex flex-col gap-1 font-medium overflow-x-visible scrollbar-thin scrollbar-track-white scrollbar-thumb-slate-100 md:h-[68%] h-[70%]">
             {/* Render menus based on role */}
             {role === "ADMIN" ? (
               // ADMIN menu
@@ -242,7 +242,7 @@ const Sidebar = () => {
                   <li key={menu.name}>
                     <NavLink to={menu.link} className="link">
                       <menu.icon size={23} className="min-w-max" />
-                      {menu.name}
+                      <span className="flex-shrink-0">{menu.name}</span>
                     </NavLink>
                   </li>
                 ))}
@@ -250,7 +250,7 @@ const Sidebar = () => {
                 <li>
                   <NavLink to="/settings" className="link">
                     <SlSettings size={23} className="min-w-max" />
-                    Settings
+                    <span className="flex-shrink-0">Settings</span>
                   </NavLink>
                 </li>
               </>
@@ -261,7 +261,7 @@ const Sidebar = () => {
                   <li key={menu.name}>
                     <NavLink to={menu.link} className="link">
                       <menu.icon size={23} className="min-w-max" />
-                      {menu.name}
+                      <span className="flex-shrink-0">{menu.name}</span>
                     </NavLink>
                   </li>
                 ))}
@@ -283,7 +283,7 @@ const Sidebar = () => {
               <li>
                 <NavLink to="/change-pin" className="link">
                   <SlSettings size={23} className="min-w-max" />
-                  Change PIN
+                  <span className="flex-shrink-0">Change PIN</span>
                 </NavLink>
               </li>
             )}
