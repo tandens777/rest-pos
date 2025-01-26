@@ -203,21 +203,28 @@ const Settings = () => {
       <Form.Item name={skipNumsField} label="Skip Numbers" style={{ marginBottom: "15px" }}>
         <Input placeholder="e.g., 1,2,3" style={{ width: "100%" }} />
       </Form.Item>
-      <Button type="primary" icon={<PlusOutlined />} onClick={() => handleGenerateAliases(orderType, form.getFieldValue(startNumField), form.getFieldValue(skipNumsField))}>
-        Generate
-      </Button>
+    {/* Buttons Row */}
+    <Row justify="space-between" style={{ marginBottom: "16px" }}>
+      <Col>
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => handleGenerateAliases(orderType, form.getFieldValue(startNumField), form.getFieldValue(skipNumsField))}>
+          Generate
+        </Button>
+      </Col>
       {/* Add Edit Positions button only for Dine-in */}
       {orderType === "N" && (
-        <Button
-          type="primary"
-          icon={<EditOutlined />}
-          style={{ backgroundColor: "#52c41a", marginLeft: "8px" }}
-          onClick={() => setEditPositionsModalVisible(true)}
-        >
-          Edit Positions
-        </Button>
+        <Col>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            style={{ backgroundColor: "#52c41a" }}
+            onClick={() => setEditPositionsModalVisible(true)}
+          >
+            Edit Positions
+          </Button>
+        </Col>
       )}
-      <Table
+    </Row>
+    <Table
         dataSource={aliases}
         columns={[
           {
