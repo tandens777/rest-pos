@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../config/axiosConfig";
-import { Button, Form, Input, Row, Col, message, InputNumber, Checkbox, Table, Tabs } from "antd";
+import axiosInstance from "../config/axiosConfig"; // Keep using axiosInstance for localhost:8081
+import { Button, Form, Input, Row, Col, message, InputNumber, Checkbox, Table, Tabs, Select } from "antd";
 import { CheckOutlined, ArrowLeftOutlined, PlusOutlined } from "@ant-design/icons";
 import "./Settings.css"; // Import custom CSS for tab styling
 
 const { TabPane } = Tabs;
+const { Option } = Select;
 
 const Settings = () => {
     const [company, setCompany] = useState(null);
     const [dineInAliases, setDineInAliases] = useState([]);
     const [pickupAliases, setPickupAliases] = useState([]);
     const [deliveryAliases, setDeliveryAliases] = useState([]);
+    const [tablePictures, setTablePictures] = useState([
+        { filename: "round2.jpg", url: "http://localhost:8080/uploads/tables/round2.jpg" },
+        { filename: "round4.jpg", url: "http://localhost:8080/uploads/tables/round4.jpg" },
+        { filename: "round6.jpg", url: "http://localhost:8080/uploads/tables/round6.jpg" },
+    ]); // Hardcoded list with image URLs
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
@@ -23,10 +29,10 @@ const Settings = () => {
         fetchAliases('D', setDeliveryAliases);
     }, []);
 
-    // Fetch Company Details (unchanged)
+    // Fetch Company Details
     const fetchCompanyDetails = async () => {
         try {
-            const response = await axiosInstance.get(`/company/get/1`); // Assuming the company ID is 1
+            const response = await axiosInstance.get(`/company/get/1`); // Use axiosInstance for localhost:8081
             setCompany(response.data);
 
             // Set form fields with the fetched data, including hidden fields
@@ -60,6 +66,15 @@ const Settings = () => {
                 params: { order_type: orderType }
             });
             setAliases(response.data);
+
+            // Update the corresponding form field with the count of aliases
+            if (orderType === 'N') {
+                form.setFieldsValue({ dinein_count: response.data.length });
+            } else if (orderType === 'P') {
+                form.setFieldsValue({ pickup_count: response.data.length });
+            } else if (orderType === 'D') {
+                form.setFieldsValue({ dlvry_count: response.data.length });
+            }
         } catch (error) {
             console.error(`Failed to fetch ${orderType} aliases:`, error);
             message.error(`Failed to fetch ${orderType} aliases.`);
@@ -95,7 +110,8 @@ const Settings = () => {
                 id: alias.id, // Ensure each alias has an `id` field
                 orderType: orderType,
                 tblNum: alias.tblNum,
-                tblName: alias.tblName,
+                tblName: alias.tblName//,
+                //picture: alias.picture, // Include the picture filename (only for Dine-in)
             }));
     
             // Log the payload for debugging
@@ -134,9 +150,12 @@ const Settings = () => {
     // Handle Update Submission
     const handleUpdate = async (values) => {
         try {
-            // Convert boolean values back to 'Y' and 'N'
+            // Ensure form fields are updated with the latest values
             const updatedValues = {
                 ...values,
+                dinein_count: dineInAliases.length,
+                pickup_count: pickupAliases.length,
+                dlvry_count: deliveryAliases.length,
                 send_to_kitchen: values.send_to_kitchen ? 'Y' : 'N',
                 track_invty_flag: values.track_invty_flag ? 'Y' : 'N',
             };
@@ -174,6 +193,7 @@ const Settings = () => {
         }
     };
 
+    // Render Alias Section with Conditional Picture Dropdown
     const renderAliasSection = (orderType, aliases, setAliases, countField, startNumField, skipNumsField, numberLabel, nameLabel) => (
         <div style={{ border: "1px solid #d9d9d9", borderTop: "none", borderRadius: "0 0 4px 4px", padding: "16px", backgroundColor: "#fff" }}>
             <Row gutter={8}>
@@ -219,6 +239,56 @@ const Settings = () => {
                             />
                         ),
                     },
+                    // Conditionally render the "Picture" column only for Dine-in (orderType === 'N')
+                    ...(orderType === 'N' ? [
+                        {
+                            title: 'Picture',
+                            dataIndex: 'picture',
+                            key: 'picture',
+                            render: (text, record, index) => (
+                                <Select
+                                    value={{
+                                        value: text, // The value of the selected option (filename)
+                                        label: (
+                                            <div style={{ display: "flex", alignItems: "center" }}>
+                                                {text ? (
+                                                    <img
+                                                        src={tablePictures.find(pic => pic.filename === text)?.url || ''}
+                                                        alt={text}
+                                                        style={{ width: "24px", height: "24px", marginRight: "8px" }}
+                                                    />
+                                                ) : (
+                                                    <span></span>
+                                                )}
+                                                {text || "No Pic"}
+                                            </div>
+                                        ),
+                                    }}
+                                    onChange={(value) => {
+                                        const newAliases = [...aliases];
+                                        //newAliases[index].picture = value; // This line is intentionally commented
+                                        setAliases(newAliases);
+                                    }}
+                                    optionLabelProp="label"
+                                    style={{ width: "120px" }}
+                                    labelInValue
+                                >
+                                    {tablePictures.map((picture) => (
+                                        <Option key={picture.filename} value={picture.filename} label={picture.filename}>
+                                            <div style={{ display: "flex", alignItems: "center" }}>
+                                                <img
+                                                    src={picture.url}
+                                                    alt={picture.filename}
+                                                    style={{ width: "24px", height: "24px", marginRight: "8px" }}
+                                                />
+                                                {picture.filename}
+                                            </div>
+                                        </Option>
+                                    ))}
+                                </Select>
+                            ),
+                        },
+                    ] : []),
                 ]}
                 rowKey="tblNum"
                 pagination={false}
@@ -258,7 +328,7 @@ const Settings = () => {
                         </TabPane>
                     </Tabs>
 
-                    {/* Hidden Fields (unchanged) */}
+                    {/* Hidden Fields */}
                     <Form.Item name="cmpy_nm" style={{ display: "none" }}>
                         <Input type="hidden" />
                     </Form.Item>
@@ -287,7 +357,7 @@ const Settings = () => {
                         <Input type="hidden" />
                     </Form.Item>
 
-                    {/* Send to Kitchen and Track Inventory (unchanged) */}
+                    {/* Send to Kitchen and Track Inventory */}
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item name="send_to_kitchen" valuePropName="checked" style={{ marginBottom: "15px" }}>
