@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../config/axiosConfig"; // Keep using axiosInstance for localhost:8081
+import axiosInstance from "../config/axiosConfig";
 import { Button, Form, Input, Row, Col, message, InputNumber, Checkbox, Table, Tabs, Select } from "antd";
 import { CheckOutlined, ArrowLeftOutlined, PlusOutlined } from "@ant-design/icons";
-import "./Settings.css"; // Import custom CSS for tab styling
+import "./Settings.css";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -17,7 +17,11 @@ const Settings = () => {
         { filename: "round2.jpg", url: "http://localhost:8080/uploads/tables/round2.jpg" },
         { filename: "round4.jpg", url: "http://localhost:8080/uploads/tables/round4.jpg" },
         { filename: "round6.jpg", url: "http://localhost:8080/uploads/tables/round6.jpg" },
-    ]); // Hardcoded list with image URLs
+    ]);
+    const [floors] = useState([
+        { id: 1, name: 'Gnd Floor' },
+        { id: 2, name: '2nd Floor' },
+    ]); // Hardcoded floor data
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
@@ -32,10 +36,8 @@ const Settings = () => {
     // Fetch Company Details
     const fetchCompanyDetails = async () => {
         try {
-            const response = await axiosInstance.get(`/company/get/1`); // Use axiosInstance for localhost:8081
+            const response = await axiosInstance.get(`/company/get/1`);
             setCompany(response.data);
-
-            // Set form fields with the fetched data, including hidden fields
             form.setFieldsValue({
                 cmpy_nm: response.data.cmpyName,
                 operated_by: response.data.operatedBy,
@@ -49,12 +51,12 @@ const Settings = () => {
                 dinein_count: response.data.dineinCount,
                 pickup_count: response.data.pickupCount,
                 dlvry_count: response.data.dlvryCount,
-                send_to_kitchen: response.data.sendToKitchen === 'Y', // Convert 'Y' to true, 'N' to false
-                track_invty_flag: response.data.trackInvtyFlag === 'Y', // Convert 'Y' to true, 'N' to false
+                send_to_kitchen: response.data.sendToKitchen === 'Y',
+                track_invty_flag: response.data.trackInvtyFlag === 'Y',
                 roller_txt: response.data.rollerTxt,
             });
         } catch (error) {
-            console.error("Failed to fetch company details:", error); // Debugging
+            console.error("Failed to fetch company details:", error);
             message.error("Failed to fetch company details.");
         }
     };
@@ -67,7 +69,6 @@ const Settings = () => {
             });
             setAliases(response.data);
 
-            // Update the corresponding form field with the count of aliases
             if (orderType === 'N') {
                 form.setFieldsValue({ dinein_count: response.data.length });
             } else if (orderType === 'P') {
@@ -84,14 +85,12 @@ const Settings = () => {
     // Handle Generate Aliases
     const handleGenerateAliases = async (orderType, startNum, skipNums) => {
         try {
-            // If skipNums is null or undefined, set it to an empty string
             const skipNumsValue = skipNums || '';
-
             await axiosInstance.post(`/order_type/generate`, null, {
                 params: { 
                     order_type: orderType, 
                     start_num: startNum,
-                    skip_nums: skipNumsValue, // Use skipNumsValue instead of skipNums
+                    skip_nums: skipNumsValue,
                 }
             });
             message.success(`${orderType} aliases generated successfully.`);
@@ -105,48 +104,35 @@ const Settings = () => {
     // Update Order Aliases
     const updateOrderAliases = async (orderType, aliases) => {
         try {
-            // Prepare the payload
             const payload = aliases.map(alias => ({
-                id: alias.id, // Ensure each alias has an `id` field
+                id: alias.id,
                 orderType: orderType,
                 tblNum: alias.tblNum,
                 tblName: alias.tblName//,
-                //picture: alias.picture, // Include the picture filename (only for Dine-in)
+                //floor: alias.floor,
+                //positionX: alias.positionX,
+                //positionY: alias.positionY,
+                //picture: alias.picture,
             }));
     
-            // Log the payload for debugging
-            console.log("Payload:", payload);
-    
-            // Make the API request
-            const response = await axiosInstance.put(
-                `/order_type/update/${orderType}`, // Use PUT instead of POST
+            await axiosInstance.put(
+                `/order_type/update/${orderType}`,
                 payload,
                 {
                     headers: {
-                        'Content-Type': 'application/json', // Ensure the correct content type
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add Authorization header
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     },
                 }
             );
     
-            // Log the response for debugging
-            console.log("Response:", response.data);
-    
             message.success(`${orderType} aliases updated successfully.`);
         } catch (error) {
             console.error(`Failed to update ${orderType} aliases:`, error);
-    
-            // Log the error response for debugging
-            if (error.response) {
-                console.error("Error Response Data:", error.response.data);
-                console.error("Error Response Status:", error.response.status);
-                console.error("Error Response Headers:", error.response.headers);
-            }
-    
             message.error(`Failed to update ${orderType} aliases.`);
         }
     };
-        
+
     // Handle Update Submission
     const handleUpdate = async (values) => {
         try {
@@ -234,12 +220,37 @@ const Settings = () => {
                                     newAliases[index].tblName = e.target.value;
                                     setAliases(newAliases);
                                 }}
-                                maxLength={10} // Limit input to 10 characters
-                                style={{ width: "120px" }} // Set a fixed width for the input field
+                                maxLength={10}
+                                style={{ width: "120px" }}
                             />
                         ),
                     },
-                    // Conditionally render the "Picture" column only for Dine-in (orderType === 'N')
+                    // Add Floor Dropdown (only for Dine-in)
+                    ...(orderType === 'N' ? [
+                        {
+                            title: 'Floor',
+                            dataIndex: 'floor',
+                            key: 'floor',
+                            render: (text, record, index) => (
+                                <Select
+                                    value={text}
+                                    onChange={(value) => {
+                                        const newAliases = [...aliases];
+                                        newAliases[index].floor = value;
+                                        setAliases(newAliases);
+                                    }}
+                                    style={{ width: "120px" }}
+                                >
+                                    {floors.map(floor => (
+                                        <Option key={floor.id} value={floor.id}>
+                                            {floor.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            ),
+                        },
+                    ] : []),
+                    // Add Picture Dropdown (only for Dine-in)
                     ...(orderType === 'N' ? [
                         {
                             title: 'Picture',
@@ -247,45 +258,62 @@ const Settings = () => {
                             key: 'picture',
                             render: (text, record, index) => (
                                 <Select
-                                    value={{
-                                        value: text, // The value of the selected option (filename)
-                                        label: (
-                                            <div style={{ display: "flex", alignItems: "center" }}>
-                                                {text ? (
-                                                    <img
-                                                        src={tablePictures.find(pic => pic.filename === text)?.url || ''}
-                                                        alt={text}
-                                                        style={{ width: "24px", height: "24px", marginRight: "8px" }}
-                                                    />
-                                                ) : (
-                                                    <span></span>
-                                                )}
-                                                {text || "No Pic"}
-                                            </div>
-                                        ),
-                                    }}
+                                    value={text}
                                     onChange={(value) => {
                                         const newAliases = [...aliases];
-                                        //newAliases[index].picture = value; // This line is intentionally commented
+                                        newAliases[index].picture = value;
                                         setAliases(newAliases);
                                     }}
-                                    optionLabelProp="label"
-                                    style={{ width: "120px" }}
-                                    labelInValue
+                                    style={{ width: "180px" }}
                                 >
                                     {tablePictures.map((picture) => (
-                                        <Option key={picture.filename} value={picture.filename} label={picture.filename}>
+                                        <Option key={picture.filename} value={picture.filename}>
                                             <div style={{ display: "flex", alignItems: "center" }}>
                                                 <img
                                                     src={picture.url}
                                                     alt={picture.filename}
-                                                    style={{ width: "24px", height: "24px", marginRight: "8px" }}
+                                                    style={{ width: "24px", height: "24px", marginRight: "8px" }} // Smaller image size
                                                 />
                                                 {picture.filename}
                                             </div>
                                         </Option>
                                     ))}
                                 </Select>
+                            ),
+                        },
+                    ] : []),
+                    // Add Position X and Position Y (only for Dine-in)
+                    ...(orderType === 'N' ? [
+                        {
+                            title: 'Position X',
+                            dataIndex: 'positionX',
+                            key: 'positionX',
+                            render: (text, record, index) => (
+                                <InputNumber
+                                    value={text}
+                                    onChange={(value) => {
+                                        const newAliases = [...aliases];
+                                        newAliases[index].positionX = value;
+                                        setAliases(newAliases);
+                                    }}
+                                    style={{ width: "100px" }}
+                                />
+                            ),
+                        },
+                        {
+                            title: 'Position Y',
+                            dataIndex: 'positionY',
+                            key: 'positionY',
+                            render: (text, record, index) => (
+                                <InputNumber
+                                    value={text}
+                                    onChange={(value) => {
+                                        const newAliases = [...aliases];
+                                        newAliases[index].positionY = value;
+                                        setAliases(newAliases);
+                                    }}
+                                    style={{ width: "100px" }}
+                                />
                             ),
                         },
                     ] : []),
@@ -298,7 +326,7 @@ const Settings = () => {
     );
 
     return (
-        <div style={{ padding: "20px", fontFamily: "'Roboto', sans-serif", backgroundColor: "#f9f9f9", borderRadius: "8px", maxWidth: "800px", margin: "40px auto", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
+        <div style={{ padding: "20px", fontFamily: "'Roboto', sans-serif", backgroundColor: "#f9f9f9", borderRadius: "8px", maxWidth: "1000px", margin: "40px auto", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
             <h1 style={{ fontSize: "24px", fontWeight: "bold", textAlign: "center", marginBottom: "20px", color: "#333" }}>Settings</h1>
 
             {company && (
@@ -313,9 +341,9 @@ const Settings = () => {
                             backgroundColor: "#fff",
                             borderBottom: "1px solid #d9d9d9",
                             padding: "0 16px",
-                            marginBottom: 0, // Remove margin at the bottom of the tabs
+                            marginBottom: 0,
                         }}
-                        tabBarGutter={0} // Remove gutter between tabs
+                        tabBarGutter={0}
                     >
                         <TabPane tab="Dine-in" key="1">
                             {renderAliasSection('N', dineInAliases, setDineInAliases, 'dinein_count', 'dinein_start_num', 'dinein_skip_nums', 'Table Number', 'Table Name')}
