@@ -1,0 +1,55 @@
+/* Customize the background color of unselected tabs */
+.ant-tabs-tab:not(.ant-tabs-tab-active) {
+    background-color: #f0f0f0; /* Grey background for unselected tabs */
+    border-radius: 4px 4px 0 0; /* Rounded corners for the tab */
+    margin-right: 0; /* Remove margin between tabs */
+    border: 1px solid #d9d9d9; /* Light grey border for unselected tabs */
+    border-bottom: none; /* Remove bottom border to align with the active tab */
+    padding: 8px 16px; /* Add padding to the tab labels */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+/* Hover effect for unselected tabs */
+.ant-tabs-tab:not(.ant-tabs-tab-active):hover {
+    background-color: #e0e0e0; /* Slightly darker background on hover */
+}
+
+/* Customize the selected tab */
+.ant-tabs-tab-active {
+    background-color: #fafafa; /* Light background for the selected tab */
+    border-radius: 4px 4px 0 0; /* Rounded corners for the tab */
+    margin-right: 0; /* Remove margin between tabs */
+    border: 1px solid #d9d9d9 !important; /* Match the border color of unselected tabs */
+    border-bottom: 1px solid transparent !important; /* Ensure bottom border is transparent */
+    padding: 8px 16px !important; /* Ensure consistent padding inside the selected tab */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+/* Customize the blue underline for the selected tab */
+.ant-tabs-ink-bar {
+    background-color: #1890ff; /* Blue underline for the selected tab */
+    height: 3px; /* Increase the height of the underline */
+}
+
+/* Remove the default margin and padding from the tab bar */
+.ant-tabs-nav {
+    margin: 0; /* Remove margin */
+    padding: 0; /* Remove padding */
+    display: flex; /* Use flexbox to align tabs */
+}
+
+/* Ensure tabs are tightly packed */
+.ant-tabs-tab {
+    margin-right: 0 !important; /* Remove margin between tabs */
+    border-right: 1px solid #d9d9d9; /* Add a border between tabs */
+}
+
+/* Remove the right border from the last tab */
+.ant-tabs-tab:last-child {
+    border-right: none;
+}
+
+/* Add some spacing around the tabs container */
+.ant-tabs {
+    margin-bottom: 20px; /* Add some space below the tabs */
+}
