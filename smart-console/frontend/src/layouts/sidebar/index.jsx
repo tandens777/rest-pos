@@ -9,7 +9,7 @@ import { SlSettings } from "react-icons/sl";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { BsPerson } from "react-icons/bs";
 import { HiOutlineDatabase } from "react-icons/hi";
-import { TbReportAnalytics } from "react-icons/tb";
+import { TbReportAnalytics, TbStairs } from "react-icons/tb";
 import { RiBuilding3Line } from "react-icons/ri";
 import { FiLogOut } from "react-icons/fi"; // Logout icon
 import { useMediaQuery } from "react-responsive";
@@ -105,9 +105,14 @@ const Sidebar = () => {
       link: "/employees",
     },
     {
-      name: "Food Station",
+      name: "Food Stations", // Updated from "Food Station" to "Food Stations"
       icon: LiaPeopleCarrySolid,
-      link: "/food-station",
+      link: "/food-stations", // Updated link to match the new name
+    },
+    {
+      name: "Dine-in Floors", // New menu item
+      icon: TbStairs, // You can choose an appropriate icon, e.g., BiBuildings or another relevant icon
+      link: "/floors", // Link for Dine-in Floors
     },
     {
       name: "Food Menu",
@@ -140,7 +145,7 @@ const Sidebar = () => {
       link: "/food-delivery-apps",
     },
   ];
-
+  
   const managerMenus = [
     {
       name: "Change PIN",
