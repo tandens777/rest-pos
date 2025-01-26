@@ -3,4 +3,13 @@
     height: 500px;
     border: 1px solid #d9d9d9;
     overflow: hidden; /* Prevent images from overflowing */
+    width: 100vw;
+  }
+
+  img {
+    user-select: none; /* Prevent image from being selected */
+  }
+
+  img {
+    z-index: 1000; /* Ensure images are on top */
   }

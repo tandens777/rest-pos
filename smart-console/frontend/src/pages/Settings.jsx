@@ -358,7 +358,16 @@ const Settings = () => {
             <Input placeholder="Enter roller text" style={{ height: "40px", borderRadius: "4px", border: "1px solid #ccc", padding: "8px" }} />
           </Form.Item>
 
-          <Tabs defaultActiveKey="1">
+          <Tabs
+                defaultActiveKey="1"
+                tabBarStyle={{
+                    backgroundColor: "#fff",
+                    borderBottom: "1px solid #d9d9d9",
+                    padding: "0 16px",
+                    marginBottom: 0,
+                }}
+                tabBarGutter={0}
+            >
             <TabPane tab="Dine-in" key="1">
               {renderAliasSection("N", dineInAliases, setDineInAliases, "dinein_count", "dinein_start_num", "dinein_skip_nums", "Table Number", "Table Name")}
             </TabPane>

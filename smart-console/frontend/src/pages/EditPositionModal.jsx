@@ -9,24 +9,22 @@ const EditPositionModal = ({ visible, onCancel, tables, setTables, tablePictures
 
   const handleMouseDown = (id) => {
     setDraggedTableId(id);
+
+    // Add global mouse event listeners
+    //window.addEventListener("mousemove", handleMouseMove);
+    //window.addEventListener("mouseup", handleMouseUp);
   };
 
   const handleMouseMove = (e) => {
     if (draggedTableId !== null) {
-      const draggableArea = e.currentTarget.getBoundingClientRect();
-      const offsetX = e.clientX - draggableArea.left - 50; // Adjust for the center of the image
-      const offsetY = e.clientY - draggableArea.top - 50; // Adjust for the center of the image
-
-      console.log(`Dragging table ${draggedTableId} to (${offsetX}, ${offsetY})`);
-
       setTables((prevTables) =>
         prevTables.map((table) =>
           table.id === draggedTableId
             ? {
                 ...table,
                 position: {
-                  x: offsetX,
-                  y: offsetY,
+                  x: e.clientX - 50, // Adjust for the center of the image
+                  y: e.clientY - 50, // Adjust for the center of the image
                 },
               }
             : table
@@ -34,9 +32,35 @@ const EditPositionModal = ({ visible, onCancel, tables, setTables, tablePictures
       );
     }
   };
+  /*  
+  const handleMouseMove = (e) => {
+    if (draggedTableId !== null) {
+      const draggableArea = document.querySelector(".draggable-area").getBoundingClientRect();
+      const offsetX = e.clientX - draggableArea.left - 50; // Adjust for center of image
+      const offsetY = e.clientY - draggableArea.top - 50;
 
+      setTables((prevTables) =>
+        prevTables.map((table) =>
+          table.id === draggedTableId
+            ? {
+                ...table,
+                position: {
+                  x: Math.max(0, Math.min(draggableArea.width - 100, offsetX)),
+                  y: Math.max(0, Math.min(draggableArea.height - 100, offsetY)),
+                },
+              }
+            : table
+        )
+      );
+    }
+  };
+*/
   const handleMouseUp = () => {
     setDraggedTableId(null);
+
+    // Remove global mouse event listeners
+    //window.removeEventListener("mousemove", handleMouseMove);
+    //window.removeEventListener("mouseup", handleMouseUp);
   };
 
   const handlePictureChange = (index, value) => {
@@ -53,10 +77,9 @@ const EditPositionModal = ({ visible, onCancel, tables, setTables, tablePictures
       footer={null}
       width={800}
     >
-      <div
-        className="draggable-area"
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
+      <div className="draggable-area" 
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
       >
         {tables.map((table) => {
           const picture = tablePictures.find((pic) => pic.filename === table.picture);
