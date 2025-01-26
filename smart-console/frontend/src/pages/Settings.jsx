@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../config/axiosConfig";
-import { Button, Form, Input, Row, Col, message, InputNumber, Checkbox, Table } from "antd";
+import { Button, Form, Input, Row, Col, message, InputNumber, Checkbox, Table, Tabs } from "antd";
 import { CheckOutlined, ArrowLeftOutlined, PlusOutlined } from "@ant-design/icons";
+import "./Settings.css"; // Import custom CSS for tab styling
+
+const { TabPane } = Tabs;
 
 const Settings = () => {
     const [company, setCompany] = useState(null);
@@ -171,6 +174,59 @@ const Settings = () => {
         }
     };
 
+    const renderAliasSection = (orderType, aliases, setAliases, countField, startNumField, skipNumsField, numberLabel, nameLabel) => (
+        <div style={{ border: "1px solid #d9d9d9", borderTop: "none", borderRadius: "0 0 4px 4px", padding: "16px", backgroundColor: "#fff" }}>
+            <Row gutter={8}>
+                <Col span={12}>
+                    <Form.Item name={countField} label={`${numberLabel} Count`} style={{ marginBottom: "15px" }}>
+                        <InputNumber min={0} style={{ width: "100%" }} placeholder="Count" />
+                    </Form.Item>
+                </Col>
+                <Col span={12}>
+                    <Form.Item name={startNumField} label="Start No." style={{ marginBottom: "15px" }}>
+                        <InputNumber min={0} style={{ width: "100%" }} placeholder="Start No." />
+                    </Form.Item>
+                </Col>
+            </Row>
+            <Form.Item name={skipNumsField} label="Skip Numbers" style={{ marginBottom: "15px" }}>
+                <Input placeholder="e.g., 1,2,3" style={{ width: "100%" }} />
+            </Form.Item>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => handleGenerateAliases(orderType, form.getFieldValue(startNumField), form.getFieldValue(skipNumsField))}>
+                Generate
+            </Button>
+            <Table
+                dataSource={aliases}
+                columns={[
+                    {
+                        title: numberLabel,
+                        dataIndex: 'tblNum',
+                        key: 'tblNum',
+                    },
+                    {
+                        title: nameLabel,
+                        dataIndex: 'tblName',
+                        key: 'tblName',
+                        render: (text, record, index) => (
+                            <Input
+                                value={text}
+                                onChange={(e) => {
+                                    const newAliases = [...aliases];
+                                    newAliases[index].tblName = e.target.value;
+                                    setAliases(newAliases);
+                                }}
+                                maxLength={10} // Limit input to 10 characters
+                                style={{ width: "120px" }} // Set a fixed width for the input field
+                            />
+                        ),
+                    },
+                ]}
+                rowKey="tblNum"
+                pagination={false}
+                style={{ marginTop: "16px" }}
+            />
+        </div>
+    );
+
     return (
         <div style={{ padding: "20px", fontFamily: "'Roboto', sans-serif", backgroundColor: "#f9f9f9", borderRadius: "8px", maxWidth: "800px", margin: "40px auto", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
             <h1 style={{ fontSize: "24px", fontWeight: "bold", textAlign: "center", marginBottom: "20px", color: "#333" }}>Settings</h1>
@@ -181,149 +237,26 @@ const Settings = () => {
                         <Input placeholder="Enter roller text" style={{ height: "40px", borderRadius: "4px", border: "1px solid #ccc", padding: "8px" }} />
                     </Form.Item>
 
-                    <Row gutter={16}>
-                        <Col span={8}>
-                            <Row gutter={8}>
-                                <Col span={12}>
-                                    <Form.Item name="dinein_count" label="Dine-in Count" style={{ marginBottom: "15px" }}>
-                                        <InputNumber min={0} style={{ width: "100%" }} placeholder="Count" />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item name="dinein_start_num" label="Start No." style={{ marginBottom: "15px" }}>
-                                        <InputNumber min={0} style={{ width: "100%" }} placeholder="Start No." />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Form.Item name="dinein_skip_nums" label="Skip Numbers" style={{ marginBottom: "15px" }}>
-                                <Input placeholder="e.g., 1,2,3" style={{ width: "100%" }} />
-                            </Form.Item>
-                            <Button type="primary" icon={<PlusOutlined />} onClick={() => handleGenerateAliases('N', form.getFieldValue('dinein_start_num'), form.getFieldValue('dinein_skip_nums'))}>
-                                Generate
-                            </Button>
-                            <Table
-                                dataSource={dineInAliases}
-                                columns={[
-                                    {
-                                        title: 'Table Number',
-                                        dataIndex: 'tblNum',
-                                        key: 'tblNum',
-                                    },
-                                    {
-                                        title: 'Table Name',
-                                        dataIndex: 'tblName',
-                                        key: 'tblName',
-                                        render: (text, record, index) => (
-                                            <Input
-                                                value={text}
-                                                onChange={(e) => {
-                                                    const newAliases = [...dineInAliases];
-                                                    newAliases[index].tblName = e.target.value;
-                                                    setDineInAliases(newAliases);
-                                                }}
-                                            />
-                                        ),
-                                    },
-                                ]}
-                                rowKey="tblNum"
-                                pagination={false}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <Row gutter={8}>
-                                <Col span={12}>
-                                    <Form.Item name="pickup_count" label="Take-out Count" style={{ marginBottom: "15px" }}>
-                                        <InputNumber min={0} style={{ width: "100%" }} placeholder="Count" />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item name="pickup_start_num" label="Start No." style={{ marginBottom: "15px" }}>
-                                        <InputNumber min={0} style={{ width: "100%" }} placeholder="Start No." />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Form.Item name="pickup_skip_nums" label="Skip Numbers" style={{ marginBottom: "15px" }}>
-                                <Input placeholder="e.g., 1,2,3" style={{ width: "100%" }} />
-                            </Form.Item>
-                            <Button type="primary" icon={<PlusOutlined />} onClick={() => handleGenerateAliases('P', form.getFieldValue('pickup_start_num'), form.getFieldValue('pickup_skip_nums'))}>
-                                Generate
-                            </Button>
-                            <Table
-                                dataSource={pickupAliases}
-                                columns={[
-                                    {
-                                        title: 'Table Number',
-                                        dataIndex: 'tblNum',
-                                        key: 'tblNum',
-                                    },
-                                    {
-                                        title: 'Table Name',
-                                        dataIndex: 'tblName',
-                                        key: 'tblName',
-                                        render: (text, record, index) => (
-                                            <Input
-                                                value={text}
-                                                onChange={(e) => {
-                                                    const newAliases = [...pickupAliases];
-                                                    newAliases[index].tblName = e.target.value;
-                                                    setPickupAliases(newAliases);
-                                                }}
-                                            />
-                                        ),
-                                    },
-                                ]}
-                                rowKey="tblNum"
-                                pagination={false}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <Row gutter={8}>
-                                <Col span={12}>
-                                    <Form.Item name="dlvry_count" label="Delivery Count" style={{ marginBottom: "15px" }}>
-                                        <InputNumber min={0} style={{ width: "100%" }} placeholder="Count" />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item name="dlvry_start_num" label="Start No." style={{ marginBottom: "15px" }}>
-                                        <InputNumber min={0} style={{ width: "100%" }} placeholder="Start No." />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Form.Item name="dlvry_skip_nums" label="Skip Numbers" style={{ marginBottom: "15px" }}>
-                                <Input placeholder="e.g., 1,2,3" style={{ width: "100%" }} />
-                            </Form.Item>
-                            <Button type="primary" icon={<PlusOutlined />} onClick={() => handleGenerateAliases('D', form.getFieldValue('dlvry_start_num'), form.getFieldValue('dlvry_skip_nums'))}>
-                                Generate
-                            </Button>
-                            <Table
-                                dataSource={deliveryAliases}
-                                columns={[
-                                    {
-                                        title: 'Table Number',
-                                        dataIndex: 'tblNum',
-                                        key: 'tblNum',
-                                    },
-                                    {
-                                        title: 'Table Name',
-                                        dataIndex: 'tblName',
-                                        key: 'tblName',
-                                        render: (text, record, index) => (
-                                            <Input
-                                                value={text}
-                                                onChange={(e) => {
-                                                    const newAliases = [...deliveryAliases];
-                                                    newAliases[index].tblName = e.target.value;
-                                                    setDeliveryAliases(newAliases);
-                                                }}
-                                            />
-                                        ),
-                                    },
-                                ]}
-                                rowKey="tblNum"
-                                pagination={false}
-                            />
-                        </Col>
-                    </Row>
+                    <Tabs
+                        defaultActiveKey="1"
+                        tabBarStyle={{
+                            backgroundColor: "#fff",
+                            borderBottom: "1px solid #d9d9d9",
+                            padding: "0 16px",
+                            marginBottom: 0, // Remove margin at the bottom of the tabs
+                        }}
+                        tabBarGutter={0} // Remove gutter between tabs
+                    >
+                        <TabPane tab="Dine-in" key="1">
+                            {renderAliasSection('N', dineInAliases, setDineInAliases, 'dinein_count', 'dinein_start_num', 'dinein_skip_nums', 'Table Number', 'Table Name')}
+                        </TabPane>
+                        <TabPane tab="Take-out" key="2">
+                            {renderAliasSection('P', pickupAliases, setPickupAliases, 'pickup_count', 'pickup_start_num', 'pickup_skip_nums', 'Take-out Number', 'Take-out Name')}
+                        </TabPane>
+                        <TabPane tab="Delivery" key="3">
+                            {renderAliasSection('D', deliveryAliases, setDeliveryAliases, 'dlvry_count', 'dlvry_start_num', 'dlvry_skip_nums', 'Delivery Number', 'Delivery Name')}
+                        </TabPane>
+                    </Tabs>
 
                     {/* Hidden Fields (unchanged) */}
                     <Form.Item name="cmpy_nm" style={{ display: "none" }}>
