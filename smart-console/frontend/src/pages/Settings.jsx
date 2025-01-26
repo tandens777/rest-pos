@@ -179,12 +179,12 @@ const Settings = () => {
             <Row gutter={8}>
                 <Col span={12}>
                     <Form.Item name={countField} label={`${numberLabel} Count`} style={{ marginBottom: "15px" }}>
-                        <InputNumber min={0} style={{ width: "100%" }} placeholder="Count" />
+                        <InputNumber min={0} style={{ width: "120px" }} placeholder="Count" />
                     </Form.Item>
                 </Col>
                 <Col span={12}>
                     <Form.Item name={startNumField} label="Start No." style={{ marginBottom: "15px" }}>
-                        <InputNumber min={0} style={{ width: "100%" }} placeholder="Start No." />
+                        <InputNumber min={0} style={{ width: "120px" }} placeholder="Start No." />
                     </Form.Item>
                 </Col>
             </Row>
