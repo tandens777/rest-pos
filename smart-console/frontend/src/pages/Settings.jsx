@@ -18,15 +18,38 @@ const Settings = () => {
   const [dineInAliases, setDineInAliases] = useState([]);
   const [pickupAliases, setPickupAliases] = useState([]);
   const [deliveryAliases, setDeliveryAliases] = useState([]);
-  const [tablePictures] = useState([
-    { id: 1, filename: "round2.jpg" },
-    { id: 2, filename: "round4.jpg" },
-    { id: 3, filename: "round6.jpg" },
+  /*const [tablePictures] = useState([
+    { id: 1, filename: "round2.png" },
+    { id: 2, filename: "round4.png" },
+    { id: 3, filename: "round6.png" },
   ]);
   const [floors] = useState([
     { id: 1, name: "Gnd Floor" },
     { id: 2, name: "2nd Floor" },
-  ]);
+  ]);*/
+  const [tablePictures, setTablePictures] = useState([]); // State for table pictures
+  const [floors, setFloors] = useState([]); // State for floors
+
+  // Fetch table pictures from the API
+  const fetchTablePictures = async () => {
+    try {
+      const response = await axiosInstance.get("/table_pictures/all");
+      setTablePictures(response.data); // Update state with fetched data
+    } catch (error) {
+      console.error("Failed to fetch table pictures:", error);
+    }
+  };
+
+  // Fetch floors from the API
+  const fetchFloors = async () => {
+    try {
+      const response = await axiosInstance.get("/floors/all");
+      setFloors(response.data); // Update state with fetched data
+    } catch (error) {
+      console.error("Failed to fetch floors:", error);
+    }
+  };
+
   const [editPositionsModalVisible, setEditPositionsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true); // Add loading state
   const [form] = Form.useForm();
@@ -34,6 +57,8 @@ const Settings = () => {
 
   // Fetch company details and aliases on component mount
   useEffect(() => {
+    fetchTablePictures();
+    fetchFloors();
     fetchCompanyDetails();
     fetchAliases("N", setDineInAliases);
     fetchAliases("P", setPickupAliases);
@@ -117,6 +142,10 @@ const Settings = () => {
         orderType: orderType,
         tblNum: alias.tblNum,
         tblName: alias.tblName,
+        floorId: alias.floorId,
+        picture: alias.picture,
+        positionX: alias.positionX,
+        positionY: alias.positionY
       }));
 
       await axiosInstance.put(
