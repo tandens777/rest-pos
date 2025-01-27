@@ -28,7 +28,11 @@ import lombok.NoArgsConstructor;
         parameters = {
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_order_type", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_tbl_num", type = Integer.class),
-            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_tbl_name", type = String.class)
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_tbl_name", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_floor_id", type = Integer.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_picture", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_position_x", type = Integer.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_position_y", type = Integer.class)
         }
     )
 })
@@ -47,6 +51,18 @@ public class OrderTypeAlias {
 
     @Column(name = "tbl_name", nullable = false)
     private String tblName;
+
+    @Column(name = "floor_id", nullable = false)
+    private Integer floorId;
+
+    @Column(name = "picture", nullable = false)
+    private String picture;
+
+    @Column(name = "position_x", nullable = false)
+    private Integer positionX;
+
+    @Column(name = "position_y", nullable = false)
+    private Integer positionY;
 
     // Getters and setters
 }

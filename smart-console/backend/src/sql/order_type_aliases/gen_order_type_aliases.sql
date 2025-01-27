@@ -50,9 +50,9 @@ BEGIN
 
         -- Insert the record
         INSERT INTO order_type_aliases
-        (order_type, tbl_num, tbl_name)
+        (order_type, tbl_num, tbl_name, floor_id, picture, position_x, position_y)
         VALUES
-        (p_order_type, curr_id, tbl_name_counter::VARCHAR);
+        (p_order_type, curr_id, tbl_name_counter::VARCHAR, 1, 'square4.png', 1, 1);
     END LOOP;
 END;
 $BODY$;

@@ -20,7 +20,8 @@ public class OrderTypeAliasService {
 
     public void updateOrderTypeAliases(String orderType, List<OrderTypeAlias> aliases) {
         for (OrderTypeAlias alias : aliases) {
-            aliasRepository.updateOrderTypeAlias(orderType, alias.getTblNum(), alias.getTblName());
+            aliasRepository.updateOrderTypeAlias(orderType, alias.getTblNum(), alias.getTblName(), 
+                alias.getFloorId(), alias.getPicture(), alias.getPositionX(), alias.getPositionY());
         }
     }
 

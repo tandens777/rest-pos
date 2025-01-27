@@ -17,7 +17,14 @@ public interface OrderTypeAliasRepository extends JpaRepository<OrderTypeAlias, 
     void generateOrderTypeAlias(@Param("p_order_type") String order_type, @Param("p_skip_nums") String skip_nums, @Param("p_start_num") int start_num);
 
     @Procedure(name = "updateOrderTypeAlias")
-    void updateOrderTypeAlias(@Param("p_order_type") String order_type, @Param("p_tbl_num") int tbl_num, @Param("p_tbl_name") String tbl_name);
+    void updateOrderTypeAlias(@Param("p_order_type") String order_type, 
+        @Param("p_tbl_num") int tbl_num, 
+        @Param("p_tbl_name") String tbl_name,
+        @Param("p_floor_id") int floor_id,
+        @Param("p_picture") String picture,
+        @Param("p_position_x") int position_x,
+        @Param("p_position_y") int position_y
+    );
 
     // Add sorting by tbl_num
     //List<OrderTypeAlias> findByOrderType(String orderType, Sort sort);
