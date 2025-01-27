@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../config/axiosConfig";
-import { Button, Form, Input, Row, Col, message, InputNumber, Checkbox, Table, Tabs, Select } from "antd";
+import { Button, Form, Input, Row, Col, message, InputNumber, Switch, Table, Tabs, Select } from "antd";
 import { CheckOutlined, ArrowLeftOutlined, PlusOutlined, EditOutlined } from "@ant-design/icons";
-import EditPositionModal from "./EditPositionModal"; // Import the modal component
+import EditPositionModal from "./EditPositionModal";
 import "./Settings.css";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
 
 // Environment variables for API and file server URLs
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL; // e.g., http://192.168.68.118:8081
-const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL + '/uploads/tables/'; // e.g., http://192.168.68.118:8080
-
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL + '/uploads/tables/';
 
 const Settings = () => {
   const [company, setCompany] = useState(null);
@@ -29,6 +28,7 @@ const Settings = () => {
     { id: 2, name: "2nd Floor" },
   ]);
   const [editPositionsModalVisible, setEditPositionsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true); // Add loading state
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
@@ -45,6 +45,11 @@ const Settings = () => {
     try {
       const response = await axiosInstance.get(`/company/get/1`);
       setCompany(response.data);
+
+      // Transform "Y" to true and "N" to false for the Switch components
+      const sendToKitchenBoolean = response.data.sendToKitchen === "Y";
+      const trackInvtyFlagBoolean = response.data.trackInvtyFlag === "Y";
+
       form.setFieldsValue({
         cmpy_nm: response.data.cmpyName,
         operated_by: response.data.operatedBy,
@@ -58,13 +63,17 @@ const Settings = () => {
         dinein_count: response.data.dineinCount,
         pickup_count: response.data.pickupCount,
         dlvry_count: response.data.dlvryCount,
-        send_to_kitchen: response.data.sendToKitchen === "Y",
-        track_invty_flag: response.data.trackInvtyFlag === "Y",
+        send_to_kitchen: sendToKitchenBoolean, // Set as boolean
+        track_invty_flag: trackInvtyFlagBoolean, // Set as boolean
         roller_txt: response.data.rollerTxt,
       });
+
+      console.log("Fetched company details:", response.data);
     } catch (error) {
       console.error("Failed to fetch company details:", error);
       message.error("Failed to fetch company details.");
+    } finally {
+      setLoading(false); // Set loading to false after fetching
     }
   };
 
@@ -75,14 +84,6 @@ const Settings = () => {
         params: { order_type: orderType },
       });
       setAliases(response.data);
-
-      /*if (orderType === "N") {
-        form.setFieldsValue({ dinein_count: response.data.length });
-      } else if (orderType === "P") {
-        form.setFieldsValue({ pickup_count: response.data.length });
-      } else if (orderType === "D") {
-        form.setFieldsValue({ dlvry_count: response.data.length });
-      }*/
     } catch (error) {
       console.error(`Failed to fetch ${orderType} aliases:`, error);
       message.error(`Failed to fetch ${orderType} aliases.`);
@@ -108,87 +109,80 @@ const Settings = () => {
     }
   };
 
-    // Update Order Aliases
-    const updateOrderAliases = async (orderType, aliases) => {
-        try {
-            const payload = aliases.map(alias => ({
-                id: alias.id,
-                orderType: orderType,
-                tblNum: alias.tblNum,
-                tblName: alias.tblName//,
-                //floor: alias.floor,
-                //positionX: alias.positionX,
-                //positionY: alias.positionY,
-                //picture: alias.picture,
-            }));
-    
-            await axiosInstance.put(
-                `/order_type/update/${orderType}`,
-                payload,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    },
-                }
-            );
-    
-            message.success(`${orderType} aliases updated successfully.`);
-        } catch (error) {
-            console.error(`Failed to update ${orderType} aliases:`, error);
-            message.error(`Failed to update ${orderType} aliases.`);
+  // Update Order Aliases
+  const updateOrderAliases = async (orderType, aliases) => {
+    try {
+      const payload = aliases.map(alias => ({
+        id: alias.id,
+        orderType: orderType,
+        tblNum: alias.tblNum,
+        tblName: alias.tblName,
+      }));
+
+      await axiosInstance.put(
+        `/order_type/update/${orderType}`,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
         }
-    };
+      );
 
-    // Handle Update Submission
-    const handleUpdate = async (values) => {
-        try {
-            // Ensure form fields are updated with the latest values
-            console.log("error dinein " + values.dinein_count );
-            const updatedValues = {
-                ...values,
-                dinein_count: values.dinein_count ?? dineInAliases.length, // Fallback to aliases length if not provided
-                pickup_count: values.pickup_count ?? pickupAliases.length, // Fallback to aliases length if not provided
-                dlvry_count: values.dlvry_count ?? deliveryAliases.length, // Fallback to aliases length if not provided                
-//                dinein_count: dineInAliases.length,
-//                pickup_count: pickupAliases.length,
-//                dlvry_count: deliveryAliases.length,
-                send_to_kitchen: values.send_to_kitchen ? 'Y' : 'N',
-                track_invty_flag: values.track_invty_flag ? 'Y' : 'N',
-            };
+      message.success(`${orderType} aliases updated successfully.`);
+    } catch (error) {
+      console.error(`Failed to update ${orderType} aliases:`, error);
+      message.error(`Failed to update ${orderType} aliases.`);
+    }
+  };
 
-            await axiosInstance.put(`/company/update/1`, null, {
-                params: {
-                    cmpy_nm: updatedValues.cmpy_nm,
-                    operated_by: updatedValues.operated_by,
-                    tin_no: updatedValues.tin_no,
-                    address1: updatedValues.address1,
-                    address2: updatedValues.address2,
-                    branch_manager: updatedValues.branch_manager,
-                    branch_tel_no: updatedValues.branch_tel_no,
-                    email: updatedValues.email,
-                    logo_filename: updatedValues.logo_filename,
-                    dinein_count: updatedValues.dinein_count,
-                    pickup_count: updatedValues.pickup_count,
-                    dlvry_count: updatedValues.dlvry_count,
-                    send_to_kitchen: updatedValues.send_to_kitchen,
-                    track_invty_flag: updatedValues.track_invty_flag,
-                    roller_txt: updatedValues.roller_txt,
-                },
-            });
-            message.success("Settings updated successfully.");
+  // Handle Update Submission
+  const handleUpdate = async (values) => {
+    try {
+      console.log("Form values on submit:", values);
 
-            // Update order aliases after updating company details
-            await updateOrderAliases('N', dineInAliases); // Update Dine-in aliases
-            await updateOrderAliases('P', pickupAliases); // Update Take-out aliases
-            await updateOrderAliases('D', deliveryAliases); // Update Delivery aliases
+      const updatedValues = {
+        ...values,
+        dinein_count: values.dinein_count ?? dineInAliases.length,
+        pickup_count: values.pickup_count ?? pickupAliases.length,
+        dlvry_count: values.dlvry_count ?? deliveryAliases.length,
+        send_to_kitchen: values.send_to_kitchen ? 'Y' : 'N',
+        track_invty_flag: values.track_invty_flag ? 'Y' : 'N',
+      };
 
-            fetchCompanyDetails(); // Refresh company details
-        } catch (error) {
-            console.error("Update error:", error); // Debugging
-            message.error("Failed to update settings. Please try again.");
-        }
-    };
+      await axiosInstance.put(`/company/update/1`, null, {
+        params: {
+          cmpy_nm: updatedValues.cmpy_nm,
+          operated_by: updatedValues.operated_by,
+          tin_no: updatedValues.tin_no,
+          address1: updatedValues.address1,
+          address2: updatedValues.address2,
+          branch_manager: updatedValues.branch_manager,
+          branch_tel_no: updatedValues.branch_tel_no,
+          email: updatedValues.email,
+          logo_filename: updatedValues.logo_filename,
+          dinein_count: updatedValues.dinein_count,
+          pickup_count: updatedValues.pickup_count,
+          dlvry_count: updatedValues.dlvry_count,
+          send_to_kitchen: updatedValues.send_to_kitchen,
+          track_invty_flag: updatedValues.track_invty_flag,
+          roller_txt: updatedValues.roller_txt,
+        },
+      });
+
+      message.success("Settings updated successfully.");
+
+      await updateOrderAliases('N', dineInAliases);
+      await updateOrderAliases('P', pickupAliases);
+      await updateOrderAliases('D', deliveryAliases);
+
+      fetchCompanyDetails();
+    } catch (error) {
+      console.error("Update error:", error);
+      message.error("Failed to update settings. Please try again.");
+    }
+  };
 
   // Function to handle updated table positions
   const handleSavePositions = (updatedTables) => {
@@ -218,28 +212,26 @@ const Settings = () => {
       <Form.Item name={skipNumsField} label="Skip Numbers" style={{ marginBottom: "15px" }}>
         <Input placeholder="e.g., 1,2,3" style={{ width: "100%" }} />
       </Form.Item>
-    {/* Buttons Row */}
-    <Row justify="space-between" style={{ marginBottom: "16px" }}>
-      <Col>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => handleGenerateAliases(orderType, form.getFieldValue(startNumField), form.getFieldValue(skipNumsField))}>
-          Generate
-        </Button>
-      </Col>
-      {/* Add Edit Positions button only for Dine-in */}
-      {orderType === "N" && (
+      <Row justify="space-between" style={{ marginBottom: "16px" }}>
         <Col>
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            style={{ backgroundColor: "#52c41a" }}
-            onClick={() => setEditPositionsModalVisible(true)}
-          >
-            Edit Positions
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => handleGenerateAliases(orderType, form.getFieldValue(startNumField), form.getFieldValue(skipNumsField))}>
+            Generate
           </Button>
         </Col>
-      )}
-    </Row>
-    <Table
+        {orderType === "N" && (
+          <Col>
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              style={{ backgroundColor: "#52c41a" }}
+              onClick={() => setEditPositionsModalVisible(true)}
+            >
+              Edit Positions
+            </Button>
+          </Col>
+        )}
+      </Row>
+      <Table
         dataSource={aliases}
         columns={[
           {
@@ -261,10 +253,10 @@ const Settings = () => {
                 }}
                 maxLength={10}
                 style={{ width: "120px" }}
+                required={true}
               />
             ),
           },
-          // Add floor dropdown (only for Dine-in)
           ...(orderType === "N"
             ? [
                 {
@@ -277,7 +269,7 @@ const Settings = () => {
                       onChange={(value) => {
                         const newAliases = [...aliases];
                         newAliases[index].floor = value;
-                        setAliases(newAliases);
+                        setAliases(newAliases);                        
                       }}
                       style={{ width: "120px" }}
                     >
@@ -291,7 +283,6 @@ const Settings = () => {
                 },
               ]
             : []),
-          // Add picture dropdown (only for Dine-in)
           ...(orderType === "N"
             ? [
                 {
@@ -325,7 +316,6 @@ const Settings = () => {
                 },
               ]
             : []),
-          // Add position X and position Y (only for Dine-in)
           ...(orderType === "N"
             ? [
                 {
@@ -374,100 +364,125 @@ const Settings = () => {
     <div style={{ padding: "20px", fontFamily: "'Roboto', sans-serif", backgroundColor: "#f9f9f9", borderRadius: "8px", maxWidth: "1000px", margin: "40px auto", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
       <h1 style={{ fontSize: "24px", fontWeight: "bold", textAlign: "center", marginBottom: "20px", color: "#333" }}>Settings</h1>
 
-      {company && (
-        <Form form={form} layout="vertical" onFinish={handleUpdate} initialValues={company}>
-          <Form.Item name="roller_txt" label="Roller Text" style={{ marginBottom: "15px" }}>
-            <Input placeholder="Enter roller text" style={{ height: "40px", borderRadius: "4px", border: "1px solid #ccc", padding: "8px" }} />
-          </Form.Item>
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        company && (
+          <Form form={form} layout="vertical" key={company?.id || 'default'} onFinish={handleUpdate} 
+          initialValues={{
+            send_to_kitchen: true, // Default
+            track_invty_flag: false, // Default
+          }} >
+            <Form.Item name="roller_txt" label="Roller Text" style={{ marginBottom: "15px" }}>
+              <Input placeholder="Enter roller text" style={{ height: "40px", borderRadius: "4px", border: "1px solid #ccc", padding: "8px" }} />
+            </Form.Item>
 
-          <Tabs
-                defaultActiveKey="1"
-                tabBarStyle={{
-                    backgroundColor: "#fff",
-                    borderBottom: "1px solid #d9d9d9",
-                    padding: "0 16px",
-                    marginBottom: 0,
-                }}
-                tabBarGutter={0}
+            <Tabs
+              defaultActiveKey="1"
+              tabBarStyle={{
+                backgroundColor: "#fff",
+                borderBottom: "1px solid #d9d9d9",
+                padding: "0 16px",
+                marginBottom: 0,
+              }}
+              tabBarGutter={0}
             >
-            <TabPane tab="Dine-in" key="1">
-              {renderAliasSection("N", dineInAliases, setDineInAliases, "dinein_count", "dinein_start_num", "dinein_skip_nums", "Table Number", "Table Name")}
-            </TabPane>
-            <TabPane tab="Take-out" key="2">
-              {renderAliasSection("P", pickupAliases, setPickupAliases, "pickup_count", "pickup_start_num", "pickup_skip_nums", "Take-out Number", "Take-out Name")}
-            </TabPane>
-            <TabPane tab="Delivery" key="3">
-              {renderAliasSection("D", deliveryAliases, setDeliveryAliases, "dlvry_count", "dlvry_start_num", "dlvry_skip_nums", "Delivery Number", "Delivery Name")}
-            </TabPane>
-          </Tabs>
+              <TabPane tab="Dine-in" key="1">
+                {renderAliasSection("N", dineInAliases, setDineInAliases, "dinein_count", "dinein_start_num", "dinein_skip_nums", "Table Number", "Table Name")}
+              </TabPane>
+              <TabPane tab="Take-out" key="2">
+                {renderAliasSection("P", pickupAliases, setPickupAliases, "pickup_count", "pickup_start_num", "pickup_skip_nums", "Take-out Number", "Take-out Name")}
+              </TabPane>
+              <TabPane tab="Delivery" key="3">
+                {renderAliasSection("D", deliveryAliases, setDeliveryAliases, "dlvry_count", "dlvry_start_num", "dlvry_skip_nums", "Delivery Number", "Delivery Name")}
+              </TabPane>
+            </Tabs>
 
-          {/* Hidden Fields */}
-          <Form.Item name="cmpy_nm" style={{ display: "none" }}>
-            <Input type="hidden" />
-          </Form.Item>
-          <Form.Item name="operated_by" style={{ display: "none" }}>
-            <Input type="hidden" />
-          </Form.Item>
-          <Form.Item name="tin_no" style={{ display: "none" }}>
-            <Input type="hidden" />
-          </Form.Item>
-          <Form.Item name="address1" style={{ display: "none" }}>
-            <Input type="hidden" />
-          </Form.Item>
-          <Form.Item name="address2" style={{ display: "none" }}>
-            <Input type="hidden" />
-          </Form.Item>
-          <Form.Item name="branch_manager" style={{ display: "none" }}>
-            <Input type="hidden" />
-          </Form.Item>
-          <Form.Item name="branch_tel_no" style={{ display: "none" }}>
-            <Input type="hidden" />
-          </Form.Item>
-          <Form.Item name="email" style={{ display: "none" }}>
-            <Input type="hidden" />
-          </Form.Item>
-          <Form.Item name="logo_filename" style={{ display: "none" }}>
-            <Input type="hidden" />
-          </Form.Item>
+            {/* Hidden Fields */}
+            <Form.Item name="cmpy_nm" style={{ display: "none" }}>
+              <Input type="hidden" />
+            </Form.Item>
+            <Form.Item name="operated_by" style={{ display: "none" }}>
+              <Input type="hidden" />
+            </Form.Item>
+            <Form.Item name="tin_no" style={{ display: "none" }}>
+              <Input type="hidden" />
+            </Form.Item>
+            <Form.Item name="address1" style={{ display: "none" }}>
+              <Input type="hidden" />
+            </Form.Item>
+            <Form.Item name="address2" style={{ display: "none" }}>
+              <Input type="hidden" />
+            </Form.Item>
+            <Form.Item name="branch_manager" style={{ display: "none" }}>
+              <Input type="hidden" />
+            </Form.Item>
+            <Form.Item name="branch_tel_no" style={{ display: "none" }}>
+              <Input type="hidden" />
+            </Form.Item>
+            <Form.Item name="email" style={{ display: "none" }}>
+              <Input type="hidden" />
+            </Form.Item>
+            <Form.Item name="logo_filename" style={{ display: "none" }}>
+              <Input type="hidden" />
+            </Form.Item>
 
-          {/* Send to Kitchen and Track Inventory */}
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="send_to_kitchen" valuePropName="checked" style={{ marginBottom: "15px" }}>
-                <Checkbox>Send to Kitchen</Checkbox>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="track_invty_flag" valuePropName="checked" style={{ marginBottom: "15px" }}>
-                <Checkbox>Track Inventory</Checkbox>
-              </Form.Item>
-            </Col>
-          </Row>
+            {/* Send to Kitchen and Track Inventory */}
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="send_to_kitchen"
+                  valuePropName="checked"
+                  label="Send to Kitchen"
+                  style={{ marginBottom: "15px", display: "flex", alignItems: "center" }}
+                >
+                  <Switch
+                    onChange={(checked) => {
+                      form.setFieldsValue({ send_to_kitchen: checked });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="track_invty_flag"
+                  valuePropName="checked"
+                  label="Track Inventory"
+                  style={{ marginBottom: "15px", display: "flex", alignItems: "center" }}
+                >
+                  <Switch
+                    onChange={(checked) => {
+                      form.setFieldsValue({ track_invty_flag: checked });
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
-          <div style={{ textAlign: "right", marginTop: "20px" }}>
-            <Button type="primary" htmlType="submit" icon={<CheckOutlined />} style={{ backgroundColor: "#007bff", color: "white", borderRadius: "4px", height: "40px", padding: "0 20px", marginRight: "10px" }}>
-              Save
-            </Button>
-            <Button onClick={() => navigate("/")} icon={<ArrowLeftOutlined />} style={{ backgroundColor: "#dc3545", color: "white", borderRadius: "4px", height: "40px", padding: "0 20px" }}>
-              Cancel
-            </Button>
-          </div>
+            <div style={{ textAlign: "right", marginTop: "20px" }}>
+              <Button type="primary" htmlType="submit" icon={<CheckOutlined />} style={{ backgroundColor: "#007bff", color: "white", borderRadius: "4px", height: "40px", padding: "0 20px", marginRight: "10px" }}>
+                Save
+              </Button>
+              <Button onClick={() => navigate("/")} icon={<ArrowLeftOutlined />} style={{ backgroundColor: "#dc3545", color: "white", borderRadius: "4px", height: "40px", padding: "0 20px" }}>
+                Cancel
+              </Button>
+            </div>
 
-          {/* Edit Position Modal */}
-          <EditPositionModal
-            visible={editPositionsModalVisible}
-            onCancel={() => setEditPositionsModalVisible(false)}
-            ttables={dineInAliases.map((alias, index) => ({
+            {/* Edit Position Modal */}
+            <EditPositionModal
+              visible={editPositionsModalVisible}
+              onCancel={() => setEditPositionsModalVisible(false)}
+              ttables={dineInAliases.map((alias, index) => ({
                 id: index,
                 position: { x: alias.positionX || 0, y: alias.positionY || 0 },
                 picture: `${fileBaseUrl}${alias.picture}`,
                 tblName: alias.tblName,
-                "status": "available"
+                status: "available",
               }))}
-            onSave={handleSavePositions} // Pass the callback
+              onSave={handleSavePositions}
             />
-
-        </Form>
+          </Form>
+        )
       )}
     </div>
   );

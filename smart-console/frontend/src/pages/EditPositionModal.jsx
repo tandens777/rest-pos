@@ -8,20 +8,19 @@ const EditPositionModal = ({ visible, onCancel, ttables, onSave }) => {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL; // e.g., http://192.168.68.118:8081
   const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL + '/uploads/tables/'; // e.g., http://192.168.68.118:8080
 
- // const filePath = "round8.jpg"
-
   // State to store the positions of all tables
   const [tables, setTables] = useState(() => {
     // Create a deep copy of ttables
     return JSON.parse(JSON.stringify(ttables));
   });
 
-  useEffect(() => {
+  // use for debugging to see contents 
+/*  useEffect(() => {
     console.log("Current tables state:", JSON.stringify(tables, null, 2));
   }, [tables]);
-  
+*/  
  useEffect(() => {
-    console.log("Current ttables prop:", JSON.stringify(ttables, null, 2));
+    //console.log("Current ttables prop:", JSON.stringify(ttables, null, 2));
     setTables(() => {
       // Create a deep copy of ttables
       return JSON.parse(JSON.stringify(ttables));
