@@ -9,15 +9,20 @@ import "./Settings.css";
 const { TabPane } = Tabs;
 const { Option } = Select;
 
+// Environment variables for API and file server URLs
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL; // e.g., http://192.168.68.118:8081
+const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL + '/uploads/tables/'; // e.g., http://192.168.68.118:8080
+
+
 const Settings = () => {
   const [company, setCompany] = useState(null);
   const [dineInAliases, setDineInAliases] = useState([]);
   const [pickupAliases, setPickupAliases] = useState([]);
   const [deliveryAliases, setDeliveryAliases] = useState([]);
   const [tablePictures] = useState([
-    { filename: "round2.jpg", url: "http://localhost:8080/uploads/tables/round2.jpg" },
-    { filename: "round4.jpg", url: "http://localhost:8080/uploads/tables/round4.jpg" },
-    { filename: "round6.jpg", url: "http://localhost:8080/uploads/tables/round6.jpg" },
+    { id: 1, filename: "round2.jpg" },
+    { id: 2, filename: "round4.jpg" },
+    { id: 3, filename: "round6.jpg" },
   ]);
   const [floors] = useState([
     { id: 1, name: "Gnd Floor" },
@@ -185,6 +190,16 @@ const Settings = () => {
         }
     };
 
+  // Function to handle updated table positions
+  const handleSavePositions = (updatedTables) => {
+    const updatedAliases = dineInAliases.map((alias, index) => ({
+      ...alias,
+      positionX: updatedTables[index].position.x,
+      positionY: updatedTables[index].position.y,
+    }));
+    setDineInAliases(updatedAliases);
+  };
+
   // Render alias section
   const renderAliasSection = (orderType, aliases, setAliases, countField, startNumField, skipNumsField, numberLabel, nameLabel) => (
     <div style={{ border: "1px solid #d9d9d9", borderTop: "none", borderRadius: "0 0 4px 4px", padding: "16px", backgroundColor: "#fff" }}>
@@ -297,7 +312,7 @@ const Settings = () => {
                         <Option key={picture.filename} value={picture.filename}>
                           <div style={{ display: "flex", alignItems: "center" }}>
                             <img
-                              src={picture.url}
+                              src={`${fileBaseUrl}${picture.filename}`}
                               alt={picture.filename}
                               style={{ width: "24px", height: "24px", marginRight: "8px" }}
                             />
@@ -442,22 +457,16 @@ const Settings = () => {
           <EditPositionModal
             visible={editPositionsModalVisible}
             onCancel={() => setEditPositionsModalVisible(false)}
-            tables={dineInAliases.map((alias, index) => ({
-              id: index,
-              position: { x: alias.positionX || 0, y: alias.positionY || 0 },
-              picture: alias.picture,
-              tblName: alias.tblName,
-            }))}
-            setTables={(newTables) => {
-              const updatedAliases = dineInAliases.map((alias, index) => ({
-                ...alias,
-                positionX: newTables[index].position.x,
-                positionY: newTables[index].position.y,
-              }));
-              setDineInAliases(updatedAliases);
-            }}
-            tablePictures={tablePictures} // Pass the tablePictures array here
-          />
+            ttables={dineInAliases.map((alias, index) => ({
+                id: index,
+                position: { x: alias.positionX || 0, y: alias.positionY || 0 },
+                picture: `${fileBaseUrl}${alias.picture}`,
+                tblName: alias.tblName,
+                "status": "available"
+              }))}
+            onSave={handleSavePositions} // Pass the callback
+            />
+
         </Form>
       )}
     </div>
