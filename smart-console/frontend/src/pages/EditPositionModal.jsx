@@ -1,31 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Modal, Button } from "antd";
+import { CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons"; // Import icons
 import "./EditPositionModal.css";
 
 const EditPositionModal = ({ visible, onCancel, ttables, onSave }) => {
-
   // Environment variables for API and file server URLs
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL; // e.g., http://192.168.68.118:8081
-  const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL + '/uploads/tables/'; // e.g., http://192.168.68.118:8080
+  const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL + "/uploads/tables/"; // e.g., http://192.168.68.118:8080
 
   // State to store the positions of all tables
   const [tables, setTables] = useState(() => {
     // Create a deep copy of ttables
     return JSON.parse(JSON.stringify(ttables));
   });
-
-  // use for debugging to see contents 
-/*  useEffect(() => {
-    console.log("Current tables state:", JSON.stringify(tables, null, 2));
-  }, [tables]);
-*/  
- useEffect(() => {
-    //console.log("Current ttables prop:", JSON.stringify(ttables, null, 2));
-    setTables(() => {
-      // Create a deep copy of ttables
-      return JSON.parse(JSON.stringify(ttables));
-    });
-  }, [ttables]);  
 
   // State to store the original positions when the modal is opened
   const [originalTables, setOriginalTables] = useState([]);
@@ -51,6 +38,14 @@ const EditPositionModal = ({ visible, onCancel, ttables, onSave }) => {
   useEffect(() => {
     localStorage.setItem("tables", JSON.stringify(tables));
   }, [tables]);
+
+  // Update tables state when ttables prop changes
+  useEffect(() => {
+    setTables(() => {
+      // Create a deep copy of ttables
+      return JSON.parse(JSON.stringify(ttables));
+    });
+  }, [ttables]);
 
   // Handle mouse down event (start dragging)
   const handleMouseDown = (id) => {
@@ -97,7 +92,7 @@ const EditPositionModal = ({ visible, onCancel, ttables, onSave }) => {
     onSave(tables); // Pass the updated tables back to the parent
     onCancel(); // Close the modal
   };
-    
+
   // Handle cancel button click
   const handleCancel = () => {
     setTables(originalTables); // Revert to original positions
@@ -139,12 +134,36 @@ const EditPositionModal = ({ visible, onCancel, ttables, onSave }) => {
       visible={visible}
       onCancel={handleCancel}
       footer={[
-        <Button key="cancel" onClick={handleCancel}>
-          Cancel
-        </Button>,
-        <Button key="save" type="primary" onClick={handleSave}>
-          Save Positions
-        </Button>,
+        <div style={{ textAlign: "right", marginTop: "20px" }}>
+          <Button
+            type="primary"
+            onClick={handleSave}
+            icon={<CheckOutlined />} // Add icon
+            style={{
+              backgroundColor: "#007bff", // blue color for save button
+              color: "white",
+              borderRadius: "4px",
+              height: "40px",
+              padding: "0 20px",
+              marginRight: "10px",
+            }}
+          >
+            Save Positions
+          </Button>
+          <Button
+            onClick={handleCancel}
+            icon={<ArrowLeftOutlined />} // Add icon
+            style={{
+              backgroundColor: "#f5222d", // Red color for cancel button
+              color: "white",
+              borderRadius: "4px",
+              height: "40px",
+              padding: "0 20px",
+            }}
+          >
+            Cancel
+          </Button>
+        </div>,
       ]}
       width="100%"
       style={{
