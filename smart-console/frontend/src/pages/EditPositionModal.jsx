@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Modal, Button } from "antd";
 import { CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons"; // Import icons
-import "./EditPositionModal.css";
+import styles from "./EditPositionModal.module.css";
 
 const EditPositionModal = ({ visible, onCancel, ttables, onSave }) => {
   // Environment variables for API and file server URLs
@@ -133,6 +133,7 @@ const EditPositionModal = ({ visible, onCancel, ttables, onSave }) => {
       title="Edit Table Positions"
       visible={visible}
       onCancel={handleCancel}
+      className={styles.modalContent}
       footer={[
         <div style={{ textAlign: "right", marginTop: "20px" }}>
           <Button

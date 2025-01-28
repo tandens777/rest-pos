@@ -184,17 +184,18 @@ const Unit = () => {
     );
 
     return (
-        <div
-            style={{
-                padding: "20px",
-                fontFamily: "'Roboto', sans-serif",
-                backgroundColor: "#f9f9f9",
-                borderRadius: "8px",
-                maxWidth: "800px",
-                margin: "40px auto",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            }}
-        >
+            <div
+                style={{
+                    padding: "20px",
+                    fontFamily: "'Roboto', sans-serif",
+                    backgroundColor: "#f9f9f9",
+                    borderRadius: "8px",
+                    maxWidth: "800px",
+                    margin: "40px auto",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                }}
+            >
+
             <h1
                 style={{
                     fontSize: "24px",
@@ -293,6 +294,10 @@ const Unit = () => {
                 width="400px"
                 maskStyle={{
                     backgroundColor: "rgba(0, 0, 0, 0.6)",
+                }}
+                style={{
+                    top: "20px", // Adjust the top position
+                    maxWidth: "90%", // Ensure the modal doesn't exceed the screen width
                 }}
                 bodyStyle={{
                     padding: "20px",
