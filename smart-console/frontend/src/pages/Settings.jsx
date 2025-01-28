@@ -390,7 +390,7 @@ const Settings = () => {
   );
 
   return (
-    <div style={{ padding: "20px", fontFamily: "'Roboto', sans-serif", backgroundColor: "#f9f9f9", borderRadius: "8px", maxWidth: "1000px", margin: "40px auto", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
+    <div class="ant-modal-content2" style={{ padding: "20px", fontFamily: "'Roboto', sans-serif", backgroundColor: "#f9f9f9", borderRadius: "8px", maxWidth: "1000px", margin: "40px auto", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}>
       <h1 style={{ fontSize: "24px", fontWeight: "bold", textAlign: "center", marginBottom: "20px", color: "#333" }}>Settings</h1>
 
       {loading ? (
