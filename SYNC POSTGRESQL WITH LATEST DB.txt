@@ -1,0 +1,7 @@
+Go to PGADMIN
+
+Restore the database resto-pos_db
+
+it shd restore all latest tables, stored procs, etc.
+
+no need to run other stuff
