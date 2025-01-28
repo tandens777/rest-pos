@@ -33,6 +33,22 @@ import { BiColorFill } from "react-icons/bi";
 import { BiFridge } from "react-icons/bi";
 import { MdOutlineScale } from "react-icons/md"; // Food scale
 import { LiaPeopleCarrySolid } from "react-icons/lia"; // Food department
+import { MdOutlinePendingActions } from "react-icons/md"; //downpayment 
+import { LuPackageSearch } from "react-icons/lu";//stock inventory
+import { TbShoppingCartPlus } from "react-icons/tb";
+// ingredients intake
+
+
+import { TbSquareKey } from "react-icons/tb";//change pin 
+import { TbPasswordUser } from "react-icons/tb";
+import { PiKeyDuotone } from "react-icons/pi";
+import { FaUserLock } from "react-icons/fa";
+import { MdLockOutline } from "react-icons/md";
+import { MdOutlineLockPerson } from "react-icons/md";
+
+import { PiChartBarHorizontalDuotone } from "react-icons/pi";
+import { GoGraph } from "react-icons/go"; //sales
+import { TbFileDollar } from "react-icons/tb";// price list
 
 import companyLogo from "../../assets/images/smartPOS.png";
 
@@ -149,27 +165,27 @@ const Sidebar = () => {
   const managerMenus = [
     {
       name: "Change PIN",
-      icon: SlSettings,
+      icon: MdOutlineLockPerson,
       link: "/change-pin",
     },
     {
       name: "Branch Food Menu",
-      icon: AiOutlineAppstore,
+      icon: BiRestaurant,
       link: "/branch-food-menu",
     },
     {
       name: "Ingredients Intake",
-      icon: HiOutlineDatabase,
+      icon: TbShoppingCartPlus,
       link: "/ingredients-intake",
     },
     {
       name: "Stock Inventory",
-      icon: TbReportAnalytics,
+      icon: LuPackageSearch,
       link: "/stock-inventory",
     },
     {
       name: "Down Payment",
-      icon: RiBuilding3Line,
+      icon: MdOutlinePendingActions,
       link: "/down-payment",
     },
   ];
@@ -177,17 +193,17 @@ const Sidebar = () => {
   const reportingSubMenus = [
     {
       name: "Sales",
-      icon: TbReportAnalytics,
+      icon: GoGraph,
       menus: ["daily-sales", "monthly-sales", "yearly-sales"],
     },
     {
       name: "Stock Management",
-      icon: HiOutlineDatabase,
+      icon: PiChartBarHorizontalDuotone,
       menus: ["stock-in", "stock-out", "stock-adjustment"],
     },
     {
       name: "Price List",
-      icon: RiBuilding3Line,
+      icon: TbFileDollar ,
       menus: ["product-pricing", "discounts", "promotions"],
     },
   ];
