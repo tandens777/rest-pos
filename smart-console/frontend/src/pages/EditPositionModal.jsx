@@ -175,7 +175,7 @@ const EditPositionModal = ({ visible, onCancel, ttables, onSave }) => {
         padding: 0,
       }}
       bodyStyle={{
-        height: "calc(100vh - 55px)", // Subtract modal header height
+        height: "calc(100vh - 140px)", // Subtract modal header height
         overflow: "hidden",
         position: "relative",
       }}
