@@ -136,6 +136,7 @@ const Settings = () => {
 
   // Update Order Aliases
   const updateOrderAliases = async (orderType, aliases) => {
+    console.log("Fetched ordertypealiases details:", aliases);
     try {
       const payload = aliases.map(alias => ({
         id: alias.id,
@@ -290,14 +291,14 @@ const Settings = () => {
             ? [
                 {
                   title: "Floor",
-                  dataIndex: "floor",
-                  key: "floor",
+                  dataIndex: "floorId",
+                  key: "floorId",
                   render: (text, record, index) => (
                     <Select
                       value={text}
                       onChange={(value) => {
                         const newAliases = [...aliases];
-                        newAliases[index].floor = value;
+                        newAliases[index].floorId = value;
                         setAliases(newAliases);                        
                       }}
                       style={{ width: "120px" }}
