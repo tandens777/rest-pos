@@ -97,6 +97,7 @@ const Company = () => {
     // Handle File Upload
     const handleUpload = async (file) => {
         const formData = new FormData();
+        formData.append("folder", "company")
         formData.append("file", file);
 
         try {
