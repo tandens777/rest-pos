@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
-import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Switch, Upload } from "antd";
+import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined, CloseOutlined, UploadOutlined } from "@ant-design/icons";
 
 const DeliveryApp = () => {
     const [deliveryApps, setDeliveryApps] = useState([]);
@@ -11,6 +11,11 @@ const DeliveryApp = () => {
     const [form] = Form.useForm();
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+    const [logoPreview, setLogoPreview] = useState(""); // State for logo preview
+
+    // Environment variables for API and file server URLs
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL; // e.g., http://192.168.68.118:8081
+    const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL; // e.g., http://192.168.68.118:8080
 
     // Fetch all delivery apps on component mount
     useEffect(() => {
@@ -39,6 +44,7 @@ const DeliveryApp = () => {
         try {
             const response = await axiosInstance.get("/delivery_apps/all");
             setDeliveryApps(response.data);
+
         } catch (error) {
             message.error("Failed to fetch delivery apps.");
         }
@@ -65,19 +71,30 @@ const DeliveryApp = () => {
         setEditingDeliveryApp(null);
         setIsModalVisible(true);
         form.resetFields();
+        setLogoPreview("");
     };
 
     // Edit an Existing Delivery App
     const handleEdit = (deliveryApp) => {
+        const activeFlagBoolean = deliveryApp.activeFlag === "Y";
+     
         setEditingDeliveryApp(deliveryApp);
         setIsModalVisible(true);
         form.setFieldsValue({
             app_nm: deliveryApp.appNm,
             order_type: deliveryApp.orderType,
-            active_flag: deliveryApp.activeFlag,
+            active_flag: activeFlagBoolean,
             table_count: deliveryApp.tableCount,
             pic_filename: deliveryApp.picFilename,
         });
+
+        // Set logo preview URL using the file server base URL
+        if (deliveryApp.picFilename) {
+            setLogoPreview(`${fileBaseUrl}${deliveryApp.picFilename}`);
+        } else {
+            setLogoPreview("");
+        }
+
     };
 
     // Delete a Delivery App
@@ -100,6 +117,45 @@ const DeliveryApp = () => {
         }
     };
 
+
+    // Handle File Upload
+    const handleUpload = async (file) => {
+        const formData = new FormData();
+        formData.append("folder", "delivery-apps")
+        formData.append("file", file);
+
+        try {
+            const response = await axiosInstance.post("/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            const filePath = response.data.filePath; // The relative path returned by the backend
+            form.setFieldsValue({ pic_filename: filePath });
+
+            // Set logo preview URL using the file server base URL
+            setLogoPreview(`${fileBaseUrl}${filePath}`);
+            message.success("File uploaded successfully.");
+        } catch (error) {
+            console.error("Upload error:", error); // Debugging
+            message.error("Failed to upload file.");
+        }
+    };
+
+    // Handle File Removal
+    const handleRemove = async () => {
+        try {
+            // Set logo_filename to an empty string and clear the preview
+            form.setFieldsValue({ pic_filename: "" });
+            setLogoPreview("");
+            message.success("Logo removed successfully.");
+        } catch (error) {
+            console.error("Remove error:", error); // Debugging
+            message.error("Failed to remove logo.");
+        }
+    };
+
     // Handle Modal Submission (Add or Update Delivery App)
     const handleModalSubmit = async (values) => {
         try {
@@ -112,7 +168,7 @@ const DeliveryApp = () => {
                         params: {
                             app_nm: values.app_nm,
                             order_type: values.order_type,
-                            active_flag: values.active_flag,
+                            active_flag: values.active_flag ? 'Y' : 'N',
                             table_count: values.table_count,
                             pic_filename: values.pic_filename,
                         },
@@ -128,7 +184,7 @@ const DeliveryApp = () => {
                         params: {
                             app_nm: values.app_nm,
                             order_type: values.order_type,
-                            active_flag: values.active_flag,
+                            active_flag: values.active_flag ? 'Y' : 'N',
                             table_count: values.table_count,
                             pic_filename: values.pic_filename,
                         },
@@ -158,15 +214,31 @@ const DeliveryApp = () => {
             width: "20%",
         },
         {
+            title: "App Logo", // Updated column title
+            dataIndex: "picFilename",
+            key: "picFilename",
+            width: "20%",
+            render: (picFilename) => (
+                picFilename ? (
+                    <img
+                        src={`${fileBaseUrl}${picFilename}`} // Construct the full URL
+                        alt="App Logo"
+                        style={{
+                            width: "50px",
+                            height: "50px",
+                            objectFit: "cover",
+                            borderRadius: "4px",
+                        }}
+                    />
+                ) : (
+                    <span>No Logo</span> // Fallback if no logo is available
+                )
+            ),
+        },        
+        {
             title: "Order Type",
             dataIndex: "orderType",
             key: "orderType",
-            width: "15%",
-        },
-        {
-            title: "Active Flag",
-            dataIndex: "activeFlag",
-            key: "activeFlag",
             width: "15%",
         },
         {
@@ -176,10 +248,20 @@ const DeliveryApp = () => {
             width: "15%",
         },
         {
-            title: "Picture Filename",
-            dataIndex: "picFilename",
-            key: "picFilename",
-            width: "20%",
+            title: "Active",
+            dataIndex: "activeFlag",
+            key: "activeFlag",
+            width: "15%",
+            align: "center", // Center the content in the column
+            render: (activeFlag) => (
+                <span style={{ display: "flex", justifyContent: "center" }}> {/* Center the icon */}
+                    {activeFlag === 'Y' ? (
+                        <CheckOutlined style={{ color: "#389e0d", fontSize: "18px" }} /> 
+                    ) : (
+                        <CloseOutlined style={{ color: "#ff4d4f", fontSize: "18px" }} />
+                    )}
+                </span>
+            ),
         },
         {
             title: "Actions",
@@ -231,7 +313,7 @@ const DeliveryApp = () => {
                     color: "#333",
                 }}
             >
-                Food Delivery App Management
+                Food Delivery Apps
             </h1>
             <Space
                 style={{
@@ -348,11 +430,16 @@ const DeliveryApp = () => {
                     </Form.Item>
                     <Form.Item
                         name="active_flag"
-                        label="Active Flag"
-                        rules={[{ required: true, message: "Active flag is required." }]}
+                        label="Active"
+                        valuePropName="checked"
                     >
-                        <Input placeholder="Enter active flag" />
+                    <Switch
+                        onChange={(checked) => {
+                        form.setFieldsValue({ active_flag: checked });
+                        }}
+                    />                        
                     </Form.Item>
+
                     <Form.Item
                         name="table_count"
                         label="Table Count"
@@ -360,13 +447,49 @@ const DeliveryApp = () => {
                     >
                         <Input type="number" placeholder="Enter table count" />
                     </Form.Item>
-                    <Form.Item
-                        name="pic_filename"
-                        label="Picture Filename"
+                    <Form.Item name="pic_filename" label="App Logo"
                         rules={[{ required: true, message: "Picture filename is required." }]}
                     >
-                        <Input placeholder="Enter picture filename" />
+                        <Upload
+                            beforeUpload={(file) => {
+                                handleUpload(file);
+                                return false;
+                            }}
+                            maxCount={1}
+                            listType="picture"
+                            fileList={
+                                logoPreview
+                                    ? [
+                                          {
+                                              uid: "-1",
+                                              name: "App Logo",
+                                              status: "done",
+                                              url: logoPreview,
+                                          },
+                                      ]
+                                    : []
+                            }
+                            onRemove={handleRemove}
+                        >
+                            {!logoPreview && (
+                                <Button
+                                    icon={<UploadOutlined />}
+                                    style={{
+                                        backgroundColor: "black",
+                                        color: "white",
+                                        borderRadius: "4px",
+                                        height: "40px",
+                                        padding: "0 20px",
+                                        border: "none",
+                                    }}
+                                >
+                                    Upload Photo
+                                </Button>
+                            )}
+                        </Upload>
                     </Form.Item>
+
+
                     <div style={{ textAlign: "right", marginTop: "20px" }}>
                         <Button
                             type="primary"
