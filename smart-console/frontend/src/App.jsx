@@ -11,6 +11,7 @@ import Unit from './pages/Unit';
 import Company from './pages/Company';
 import QRCodeConnect from './pages/QRCodeConnect';
 import Floor from './pages/Floor';
+import DeliveryApp from './pages/DeliveryApp';
 
 const App = () => {
   // Use state to track authentication status
@@ -56,6 +57,7 @@ const App = () => {
                 <Route path="/unit-of-measure" element={<Unit />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/floors" element={<Floor />} />
+                <Route path="/food-delivery-apps" element={<DeliveryApp />} />
                 <Route path="/build/:bID" element={<Build />} />
                 <Route path="/analytics/:aID" element={<Analytics />} />
               </Routes>
