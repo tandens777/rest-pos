@@ -45,8 +45,7 @@ public class FoodStation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "station_id") // Map the station_id to id   
-    private Long id;   // correct 
-
+    private Integer id;   // correct 
 
 
     // ****** change ******
