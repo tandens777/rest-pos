@@ -1,14 +1,14 @@
 
 STEP 1 *** START WITH BACKEND ***
 ============= For Backend ==========================
-1. Follow the Unit sample
-2. Add a Unit.java under model
-3. Add a UnitController.java under controller
-4. Add a UnitRepository.java under repository
-5. Add a UnitService.java under UnitService
+1. Follow the Floor / DeliveryApp sample
+2. Add a Floor.java under model
+3. Add a FloorController.java under controller
+4. Add a FloorRepository.java under repository
+5. Add a FloorService.java under FloorService
 
 ==== CODE THE STORED PROCEDURES AND RUN ON DATABASE =====
-1. under sql, write the insert, delete, update sql ,  follow the unit sample,  create a new folder for this new module
+1. under sql, write the insert, delete, update sql ,  follow the floor sample,  create a new folder for this new module
 2. run these sqls on PGAdmin, Query, make sure no errors, check under procedures if they are present after creation
 
 ==== TEST YOUR RESTAPI UNDER SWAGGER ==============  mvn spring-boot:run =============
@@ -17,13 +17,15 @@ STEP 1 *** START WITH BACKEND ***
 3. test all your APIs.  Make sure they all work first before going to Frontend
 
 STEP2 *** CODE YOUR FRONTEND *********
-1. Under App.jsx, add the following.... use Unit as example
-import Unit from './pages/Unit';
+1. Under App.jsx, add the following.... use Floor as example
+import Floor from './pages/Floor';
 ...
-<Route path="/unit-of-measure" element={<Unit />} />
+<Route path="/floor" element={<Floor />} />
 
-2. Under pages, add Unit.jsx  use this as sample. change code accordingly.
+2. Under pages, add Floor.jsx  use this as sample. change code accordingly.
 
-3. You can copy the Unit.jsx to CHAT and also show the columns of the table ur using or the UnitController.java to show all 
+3. You can copy the Floor.jsx to CHAT and also show the columns of the table (Floor.java) ur using or the FloorController.java to show all 
 the restapi for this module..  and change accordingly.
-Make sure look and feel is the same using Unit.jsx
+Make sure look and feel is the same using Floor.jsx
+
+DEEPSEEK is very easy to use.   Paste your FoodStationController.java, FoodStation.java (model) and a sample Floor.jsx (frontend) and ask deepseek to pattern and convert floor to foodstation. then use that code for FoodStation.jsx
