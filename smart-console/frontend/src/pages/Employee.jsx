@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
-import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, DatePicker, TimePicker, Col, Row } from "antd";
+import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, DatePicker, TimePicker, Col, Row, Checkbox } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
@@ -10,6 +10,10 @@ const Employee = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingEmployee, setEditingEmployee] = useState(null);
+    const [employeeTypes, setEmployeeTypes] = useState([]);
+    const [employeeStatuses, setEmployeeStatuses] = useState([]);
+    const [roles, setRoles] = useState([]);
+
     const [form] = Form.useForm();
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
@@ -17,6 +21,8 @@ const Employee = () => {
     // Fetch all employees on component mount
     useEffect(() => {
         fetchEmployees();
+        fetchDropdownData();
+
         const handleResize = () => {
             const screenWidth = window.innerWidth;
             if (screenWidth < 768) {
@@ -39,17 +45,32 @@ const Employee = () => {
     // Fetch Employees from API
     const fetchEmployees = async () => {
         try {
-            const response = await axiosInstance.get("/api/employees/all");
+            const response = await axiosInstance.get("/employees/all");
             setEmployees(response.data);
         } catch (error) {
             message.error("Failed to fetch employees.");
         }
     };
 
+    const fetchDropdownData = async () => {
+        try {
+            const [typesResponse, statusesResponse, rolesResponse] = await Promise.all([
+                axiosInstance.get("/employee_types/all"),
+                axiosInstance.get("/employee_statuses/all"),
+                axiosInstance.get("/roles/all"),
+            ]);
+            setEmployeeTypes(typesResponse.data);
+            setEmployeeStatuses(statusesResponse.data);
+            setRoles(rolesResponse.data);
+        } catch (error) {
+            message.error("Failed to fetch dropdown data.");
+        }
+    };
+
     // Search for Employees
     const handleSearch = async () => {
         try {
-            const response = await axiosInstance.get(`/api/employees/all?search=${searchTerm}`);
+            const response = await axiosInstance.get(`/employees/all?search=${searchTerm}`);
             setEmployees(response.data);
         } catch (error) {
             message.error("Failed to search employees.");
@@ -74,27 +95,45 @@ const Employee = () => {
         setEditingEmployee(employee);
         setIsModalVisible(true);
         form.setFieldsValue({
-            emp_no: employee.emp_no,
-            station_id: employee.station_id,
-            first_nm: employee.first_nm,
-            last_nm: employee.last_nm,
+            first_nm: employee.firstNm,
+            last_nm: employee.lastNm,
             gender: employee.gender,
+            station_id: employee.stationId,
+            tin_no: employee.tinNo,
+            sss_no: employee.sssNo,
             bday: employee.bday,
-            tin_no: employee.tin_no,
-            phone_no: employee.phone_no,
-            sss_no: employee.sss_no,
-            employee_type: employee.employee_type,
-            date_hired: employee.date_hired,
-            employee_status: employee.employee_status,
-            date_end: employee.date_end,
-            // Add time fields here
+            phone_no: employee.phoneNo,
+            date_hired: employee.dateHired,
+            date_end: employee.dateEnd,
+            remarks: employee.remarks,
+            face_id: employee.faceId,
+            public_key: employee.publicKey,
+            console_flag: employee.consoleFlag,
+            drawer_flag: employee.drawerFlag,
+            active_flag: employee.activeFlag,
+            pic_filename: employee.picFilename,
+            address: employee.address,
+            email: employee.email,
+            emp_type_id: employee.empTypeId,
+            emp_status_id: employee.empStatusId,
+            password: employee.password,
+            username: employee.username,
+            role_id: employee.roleId,
+            
+            mon_restday: employee.monRestday, mon_start1: employee.monStart1, mon_end1: employee.monEnd1, mon_start2: employee.monStart2, mon_end2: employee.monEnd2, mon_start3: employee.monStart3, mon_end3: employee.monEnd3,
+            tue_restday: employee.tueRestday, tue_start1: employee.tueStart1, tue_end1: employee.tueEnd1, tue_start2: employee.tueStart2, tue_end2: employee.tueEnd2, tue_start3: employee.tueStart3, tue_end3: employee.tueEnd3,
+            wed_restday: employee.wedRestday, wed_start1: employee.wedStart1, wed_end1: employee.wedEnd1, wed_start2: employee.wedStart2, wed_end2: employee.wedEnd2, wed_start3: employee.wedStart3, wed_end3: employee.wedEnd3,
+            thu_restday: employee.thuRestday, thu_start1: employee.thuStart1, thu_end1: employee.thuEnd1, thu_start2: employee.thuStart2, thu_end2: employee.thuEnd2, thu_start3: employee.thuStart3, thu_end3: employee.thuEnd3,
+            fri_restday: employee.friRestday, fri_start1: employee.friStart1, fri_end1: employee.friEnd1, fri_start2: employee.friStart2, fri_end2: employee.friEnd2, fri_start3: employee.friStart3, fri_end3: employee.friEnd3,
+            sat_restday: employee.satRestday, sat_start1: employee.satStart1, sat_end1: employee.satEnd1, sat_start2: employee.satStart2, sat_end2: employee.satEnd2, sat_start3: employee.satStart3, sat_end3: employee.satEnd3,
+            sun_restday: employee.sunRestday, sun_start1: employee.sunStart1, sun_end1: employee.sunEnd1, sun_start2: employee.sunStart2, sun_end2: employee.sunEnd2, sun_start3: employee.sunStart3, sun_end3: employee.sunEnd3
         });
     };
 
     // Delete an Employee
     const handleDelete = async (id) => {
         try {
-            await axiosInstance.delete(`/api/employees/delete/${id}`);
+            await axiosInstance.delete(`/employees/delete/${id}`);
             message.success("Employee deleted successfully.");
 
             const updatedEmployees = employees.filter((employee) => employee.id !== id);
@@ -111,29 +150,57 @@ const Employee = () => {
     // Handle Modal Submission (Add or Update Employee)
     const handleModalSubmit = async (values) => {
         try {
-            if (editingEmployee) {
-                await axiosInstance.put(
-                    `/api/employees/update/${editingEmployee.id}`,
-                    null,
-                    {
-                        params: {
-                            ...values,
-                        },
-                    }
-                );
-                message.success("Employee updated successfully.");
-            } else {
-                await axiosInstance.post(
-                    `/api/employees/add`,
-                    null,
-                    {
-                        params: {
-                            ...values,
-                        },
-                    }
-                );
-                message.success("Employee added successfully.");
-            }
+            // Prepare employee data
+            const employeeData = {
+                first_nm: values.first_nm,
+                last_nm: values.last_nm,
+                gender: values.gender,
+                station_id: values.station_id,
+                tin_no: values.tin_no,
+                sss_no: values.sss_no,
+                bday: values.bday,
+                phone_no: values.phone_no,
+                date_hired: values.date_hired,
+                date_end: values.date_end,
+                remarks: values.remarks,
+                face_id: values.face_id,
+                public_key: values.public_key,
+                console_flag: values.console_flag ? 'Y' : 'N',
+                drawer_flag: values.drawer_flag ? 'Y' : 'N',
+                active_flag: values.active_flag ? 'Y' : 'N',
+                pic_filename: values.pic_filename,
+                address: values.address,
+                email: values.email,
+                emp_type_id: values.emp_type_id,
+                emp_status_id: values.emp_status_id,
+                password: values.password,
+                username: values.username,
+                role_id: values.role_id,
+
+                // Weekly schedule fields
+                ...['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].reduce((acc, day) => ({
+                    ...acc,
+                    [`${day}_restday`]: values[`${day}_restday`],
+                    [`${day}_start1`]: values[`${day}_start1`],
+                    [`${day}_end1`]: values[`${day}_end1`],
+                    [`${day}_start2`]: values[`${day}_start2`],
+                    [`${day}_end2`]: values[`${day}_end2`],
+                    [`${day}_start3`]: values[`${day}_start3`],
+                    [`${day}_end3`]: values[`${day}_end3`],
+                }), {})
+            };
+
+            // Choose API method based on edit mode
+            const url = editingEmployee ? `/employees/update/${editingEmployee.id}` : `/employees/add`;
+            const method = editingEmployee ? 'put' : 'post';
+
+            // Send request
+            await axiosInstance[method](url, null, { params: employeeData });
+
+            // Success message
+            message.success(`Employee ${editingEmployee ? 'updated' : 'added'} successfully.`);
+
+            // Close modal and refresh list
             setIsModalVisible(false);
             fetchEmployees();
         } catch (error) {
@@ -333,15 +400,6 @@ const Employee = () => {
                         </Col>
                         <Col span={6}>
                             <Form.Item
-                                name="station_id"
-                                label="Station ID"
-                                rules={[{ required: true, message: "Station ID is required." }]}
-                            >
-                                <Input placeholder="Enter Station ID" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
                                 name="first_nm"
                                 label="First Name"
                                 rules={[{ required: true, message: "First Name is required." }]}
@@ -358,6 +416,7 @@ const Employee = () => {
                                 <Input placeholder="Enter Last Name" />
                             </Form.Item>
                         </Col>
+
                     </Row>
 
                     {/* Second Row */}
@@ -385,6 +444,24 @@ const Employee = () => {
                         </Col>
                         <Col span={6}>
                             <Form.Item
+                                name="station_id"
+                                label="Station"
+                                rules={[{ required: true, message: "Station is required." }]}
+                            >
+                                <Select placeholder="Enter Station">
+                                    <Option value="1">Floor</Option>
+                                    <Option value="2">Kitchen</Option>
+                                    <Option value="3">Bar</Option>
+                                    <Option value="4">Office</Option>
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    {/* Third Row */}
+                    <Row gutter={16}>
+                        <Col span={6}>
+                            <Form.Item
                                 name="tin_no"
                                 label="TIN #"
                                 rules={[{ required: true, message: "TIN # is required." }]}
@@ -392,19 +469,6 @@ const Employee = () => {
                                 <Input placeholder="Enter TIN #" />
                             </Form.Item>
                         </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                name="phone_no"
-                                label="Phone"
-                                rules={[{ required: true, message: "Phone is required." }]}
-                            >
-                                <Input placeholder="Enter Phone" />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-
-                    {/* Third Row */}
-                    <Row gutter={16}>
                         <Col span={6}>
                             <Form.Item
                                 name="sss_no"
@@ -416,13 +480,67 @@ const Employee = () => {
                         </Col>
                         <Col span={6}>
                             <Form.Item
-                                name="employee_type"
+                                name="phone_no"
+                                label="Phone"
+                                rules={[{ required: true, message: "Phone is required." }]}
+                            >
+                                <Input placeholder="Enter Phone" />
+                            </Form.Item>
+                        </Col>
+                    </Row
+                    >
+
+                    {/* Fourth Row */}
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="address"
+                                label="Address"
+                                rules={[{ required: true, message: "Address is required." }]}
+                            >
+                                <Input placeholder="Enter Address" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name="email"
+                                label="Email"
+                                rules={[{ required: true, message: "Email is required." }]}
+                            >
+                                <Input placeholder="Enter Email" />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    {/* Fifth Row */}
+                    <Row gutter={16}>
+                        <Col span={6}>
+                            <Form.Item
+                                name="emp_type_id"
                                 label="Employee Type"
                                 rules={[{ required: true, message: "Employee Type is required." }]}
                             >
                                 <Select placeholder="Select Employee Type">
-                                    <Option value="Weekly">Weekly</Option>
-                                    <Option value="Monthly">Monthly</Option>
+                                    {employeeTypes.map((type) => (
+                                        <Option key={type.empTypeId} value={type.empTypeId}>
+                                            {type.empTypeDesc}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                            <Form.Item
+                                name="emp_status_id"
+                                label="Employee Status"
+                                rules={[{ required: true, message: "Employee Status is required." }]}
+                            >
+                                <Select placeholder="Select Employee Status">
+                                    {employeeStatuses.map((status) => (
+                                        <Option key={status.empStatusId} value={status.empStatusId}>
+                                            {status.empStatusDesc}
+                                        </Option>
+                                    ))}
                                 </Select>
                             </Form.Item>
                         </Col>
@@ -437,25 +555,6 @@ const Employee = () => {
                         </Col>
                         <Col span={6}>
                             <Form.Item
-                                name="employee_status"
-                                label="Employee Status"
-                                rules={[{ required: true, message: "Employee Status is required." }]}
-                            >
-                                <Select placeholder="Select Employee Status">
-                                    <Option value="Casual">Casual</Option>
-                                    <Option value="Probation">Probation</Option>
-                                    <Option value="Regular">Regular</Option>
-                                    <Option value="Terminated">Terminated</Option>
-                                    <Option value="Resigned">Resigned</Option>
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-
-                    {/* Fourth Row */}
-                    <Row gutter={16}>
-                        <Col span={6}>
-                            <Form.Item
                                 name="date_end"
                                 label="Date End"
                             >
@@ -464,9 +563,63 @@ const Employee = () => {
                         </Col>
                     </Row>
 
-                    {/* Time Fields Section */}
+                    {/* Sixth Row */}
+                    <Row gutter={16}>
+                        <Col span={6}>
+                            <Form.Item
+                                name="username"
+                                label="Username"
+                                rules={[{ required: true, message: "Username is required." }]}
+                            >
+                                <Input placeholder="Enter Username" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                            <Form.Item
+                                name="password"
+                                label="Password PIN"
+                                rules={[{ required: true, message: "Password is required." }]}
+                            >
+                                <Input placeholder="Enter Password PIN" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={6}>
+                            <Form.Item
+                                name="role_id"
+                                label="Role"
+                                rules={[{ required: true, message: "Role is required." }]}
+                            >
+                                <Select placeholder="Select Role">
+                                    {roles.map((role) => (
+                                        <Option key={role.id} value={role.id}>
+                                            {role.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+
+                    {/* Work Day Checkboxes */}
                     <div style={{ marginTop: "20px" }}>
                         <h4>Time Schedule</h4>
+                        <Row gutter={16}>
+                            {["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((day) => (
+                                <Col span={3} key={day}>
+                                    <Form.Item
+                                        name={`${day}_restday`}
+                                        valuePropName="checked"
+                                    >
+                                        <Checkbox>{day.toUpperCase()}</Checkbox>
+                                    </Form.Item>
+                                </Col>
+                            ))}
+                        </Row>
+                    </div>
+
+                    {/* Time Fields Section */}
+                    <div style={{ marginTop: "20px" }}>
                         <Row gutter={16}>
                             <Col span={3}><strong>Day</strong></Col>
                             <Col span={3}><strong>Start 1</strong></Col>
