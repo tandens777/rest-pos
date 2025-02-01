@@ -58,6 +58,13 @@ BEGIN
         sat_restday = p_sat_restday, sat_start1 = p_sat_start1, sat_end1 = p_sat_end1, sat_start2 = p_sat_start2, sat_end2 = p_sat_end2, sat_start3 = p_sat_start3, sat_end3 = p_sat_end3,
         sun_restday = p_sun_restday, sun_start1 = p_sun_start1, sun_end1 = p_sun_end1, sun_start2 = p_sun_start2, sun_end2 = p_sun_end2, sun_start3 = p_sun_start3, sun_end3 = p_sun_end3
     WHERE id = p_id;
+
+    update  users
+    set     username = p_username,
+            password = p_password,
+            role_id = p_role_id
+    WHERE id = p_id;
+    
 END;
 $$;
 

@@ -38,8 +38,17 @@ CREATE OR REPLACE PROCEDURE public.insert_employee(
 )
 LANGUAGE plpgsql
 AS $$
+DECLARE 
+    p_id BIGINT;
 BEGIN
-    INSERT INTO employees (
+    -- Insert into users table
+    INSERT INTO users(password, username, role_id)
+    VALUES (p_password, p_username, p_role_id);
+
+    -- Get the ID of the newly inserted user
+    SELECT id INTO p_id FROM users WHERE username = p_username ORDER BY id DESC LIMIT 1;
+
+    INSERT INTO employees (id,
         emp_no, last_nm, first_nm, gender, station_id, tin_no, sss_no, bday, phone_no,
         date_hired, date_end, remarks, face_id, public_key, console_flag, drawer_flag, active_flag, pic_filename,
 
@@ -52,7 +61,7 @@ BEGIN
         fri_restday, fri_start1, fri_end1, fri_start2, fri_end2, fri_start3, fri_end3,
         sat_restday, sat_start1, sat_end1, sat_start2, sat_end2, sat_start3, sat_end3,
         sun_restday, sun_start1, sun_end1, sun_start2, sun_end2, sun_start3, sun_end3
-    ) VALUES (
+    ) VALUES (p_id,
         p_emp_no, p_last_nm, p_first_nm, p_gender, p_station_id, p_tin_no, p_sss_no, p_bday, p_phone_no,
         p_date_hired, p_date_end, p_remarks, p_face_id, p_public_key, p_console_flag, p_drawer_flag, p_active_flag, p_pic_filename,
 

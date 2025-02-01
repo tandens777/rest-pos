@@ -8,6 +8,7 @@ LANGUAGE 'plpgsql'
 AS $BODY$
 BEGIN
   DELETE FROM employees WHERE id = p_id;
+  DELETE FROM users where id = p_id;
 END;
 $BODY$;
 ALTER PROCEDURE public.delete_employee(bigint)
