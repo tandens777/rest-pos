@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
-import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, DatePicker, TimePicker, Col, Row, Checkbox, Upload, Avatar, Switch } from "antd";
+import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, DatePicker, TimePicker, Col, Row, Checkbox, Upload, Avatar, Switch, Tabs } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
+const { TabPane } = Tabs;
 const { Option } = Select;
 
 const Employee = () => {
@@ -527,13 +528,13 @@ const Employee = () => {
 
                         <Row gutter={16}>
                             <Col span={8}>
-                                <Form.Item name="tin_no" label="TIN #">
-                                    <Input placeholder="Enter TIN #" />
+                                <Form.Item name="tin_no" label="TIN Number">
+                                    <Input placeholder="Enter TIN Number" />
                                 </Form.Item>
                             </Col>
                             <Col span={8}>
-                                <Form.Item name="sss_no" label="SSS #">
-                                    <Input placeholder="Enter SSS #" />
+                                <Form.Item name="sss_no" label="SSS Number">
+                                    <Input placeholder="Enter SSS Number" />
                                 </Form.Item>
                             </Col>
                             <Col span={8}>
@@ -741,7 +742,7 @@ const Employee = () => {
                     <Col span={6}>
                         <Form.Item
                             name="username"
-                            label="Username"
+                            label={<span className="custom-label">Username</span>} //"Username"
                             rules={[{ required: true, message: "Username is required." }]}
                         >
                             <Input placeholder="Enter Username" />
@@ -750,7 +751,7 @@ const Employee = () => {
                     <Col span={6}>
                         <Form.Item
                             name="password"
-                            label="Password PIN"
+                            label={<span className="custom-label">Password PIN</span>}//"Password PIN"
                             rules={[{ required: true, message: "Password is required." }]}
                         >
                             <Input placeholder="Enter Password PIN" />
@@ -759,7 +760,7 @@ const Employee = () => {
                     <Col span={6}>
                         <Form.Item
                             name="role_id"
-                            label="Role"
+                            label={<span className="custom-label">Role</span>}//"Role"
                             rules={[{ required: true, message: "Role is required." }]}
                         >
                             <Select placeholder="Select Role">
@@ -772,72 +773,104 @@ const Employee = () => {
                         </Form.Item>
                     </Col>
                 </Row>
+                <style>
+                {`
+                    .custom-label {
+                        color: #333333; /* Blue text */
+                        font-weight: bold; /* Bold text */
+                        padding: 4px 10px; /* Maintain padding if needed */
+                        display: block;
+                        width: 100%;
+                        text-align: left;
+                        box-sizing: border-box; /* Ensure padding is included in the width */
+                    }
+                `}
+                </style>
 
-
-                {/* Work Day Checkboxes */}
-                <div style={{ marginTop: "20px" }}>
-                    <h4>Time Schedule</h4>
-                    <Row gutter={16}>
-                        {["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((day) => (
-                            <Col span={3} key={day}>
-                                <Form.Item
-                                    name={`${day}_restday`}
-                                    valuePropName="checked"
-                                >
-                                    <Checkbox>{day.toUpperCase()}</Checkbox>
-                                </Form.Item>
-                            </Col>
-                        ))}
-                    </Row>
-                </div>
-
-                {/* Time Fields Section */}
-                <div style={{ marginTop: "20px" }}>
-                    <Row gutter={16}>
-                        <Col span={3}><strong>Day</strong></Col>
-                        <Col span={3}><strong>Start 1</strong></Col>
-                        <Col span={3}><strong>End 1</strong></Col>
-                        <Col span={3}><strong>Start 2</strong></Col>
-                        <Col span={3}><strong>End 2</strong></Col>
-                        <Col span={3}><strong>Start 3</strong></Col>
-                        <Col span={3}><strong>End 3</strong></Col>
-                    </Row>
-                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
-                        <Row gutter={16} key={day} style={{ marginTop: "10px" }}>
-                            <Col span={3}><strong>{day}</strong></Col>
-                            <Col span={3}>
-                                <Form.Item name={`${day.toLowerCase()}_start1`}>
-                                    <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                </Form.Item>
-                            </Col>
-                            <Col span={3}>
-                                <Form.Item name={`${day.toLowerCase()}_end1`}>
-                                    <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                </Form.Item>
-                            </Col>
-                            <Col span={3}>
-                                <Form.Item name={`${day.toLowerCase()}_start2`}>
-                                    <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                </Form.Item>
-                            </Col>
-                            <Col span={3}>
-                                <Form.Item name={`${day.toLowerCase()}_end2`}>
-                                    <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                </Form.Item>
-                            </Col>
-                            <Col span={3}>
-                                <Form.Item name={`${day.toLowerCase()}_start3`}>
-                                    <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                </Form.Item>
-                            </Col>
-                            <Col span={3}>
-                                <Form.Item name={`${day.toLowerCase()}_end3`}>
-                                    <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                </Form.Item>
-                            </Col>
+            <Tabs
+              defaultActiveKey="1"
+              tabBarStyle={{
+                backgroundColor: "#fff",
+                borderBottom: "1px solid #d9d9d9",
+                padding: "0 16px",
+                marginBottom: 0,
+              }}
+              tabBarGutter={0}
+            >
+            <TabPane tab="Working Schedule" key="1">
+                <div style={{ border: "1px solid #d9d9d9", borderTop: "none", borderRadius: "0 0 4px 4px", padding: "8px", backgroundColor: "#fff",
+                    //display: "flex",
+                    justifyContent: "center", // Center horizontally
+                    alignItems: "center", // Center vertically
+                    //flexDirection: "column", // Stack children vertically
+                 }}>
+                    {/* Work Day Checkboxes */}
+                    <div style={{ marginTop: "0px" }}>
+                        <Row gutter={16}>
+                            {["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((day) => (
+                                <Col span={3} key={day}>
+                                    <Form.Item
+                                        name={`${day}_restday`}
+                                        valuePropName="checked"
+                                    >
+                                        <Checkbox>{day.toUpperCase()}</Checkbox>
+                                    </Form.Item>
+                                </Col>
+                            ))}
                         </Row>
-                    ))}
-                </div>
+                    </div>
+
+                    {/* Time Fields Section */}
+                    <div style={{ marginTop: "0px" }}>
+                        <Row gutter={16}>
+                            <Col span={3}><strong>Day</strong></Col>
+                            <Col span={3}><strong>Start 1</strong></Col>
+                            <Col span={3}><strong>End 1</strong></Col>
+                            <Col span={3}><strong>Start 2</strong></Col>
+                            <Col span={3}><strong>End 2</strong></Col>
+                            <Col span={3}><strong>Start 3</strong></Col>
+                            <Col span={3}><strong>End 3</strong></Col>
+                        </Row>
+                        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+                            <Row gutter={16} key={day} style={{ marginTop: "0px" }}>
+                                <Col span={3}><strong>{day}</strong></Col>
+                                <Col span={3}>
+                                    <Form.Item name={`${day.toLowerCase()}_start1`}>
+                                        <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={3}>
+                                    <Form.Item name={`${day.toLowerCase()}_end1`}>
+                                        <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={3}>
+                                    <Form.Item name={`${day.toLowerCase()}_start2`}>
+                                        <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={3}>
+                                    <Form.Item name={`${day.toLowerCase()}_end2`}>
+                                        <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={3}>
+                                    <Form.Item name={`${day.toLowerCase()}_start3`}>
+                                        <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
+                                    </Form.Item>
+                                </Col>
+                                <Col span={3}>
+                                    <Form.Item name={`${day.toLowerCase()}_end3`}>
+                                        <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                        ))}
+                        </div>
+                    </div>
+                    </TabPane>
+                </Tabs>
+
 
                 {/* Save and Cancel Buttons */}
                 <div style={{ textAlign: "right", marginTop: "20px" }}>
