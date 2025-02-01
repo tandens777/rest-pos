@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
-import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, DatePicker, TimePicker, Col, Row, Checkbox } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, DatePicker, TimePicker, Col, Row, Checkbox, Upload, Avatar, Switch } from "antd";
+import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 const { Option } = Select;
 
 const Employee = () => {
+    const [picturePreview, setPicturePreview] = useState(null);
     const [employees, setEmployees] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -18,6 +19,15 @@ const Employee = () => {
     const [form] = Form.useForm();
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+
+    // Environment variables for API and file server URLs
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL; // e.g., http://192.168.68.118:8081
+    const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL; // e.g., http://192.168.68.118:8080
+
+    const no_pic_default = `${fileBaseUrl}/uploads/employees/default-avatar.png`;
+
+    console.log("API Base URL:", apiBaseUrl); // Debugging
+    console.log("File Base URL:", fileBaseUrl); // Debugging
 
     // Fetch all employees on component mount
     useEffect(() => {
@@ -134,6 +144,13 @@ const Employee = () => {
                 [`${day}_end3`]: employee[`${day}End3`] ? dayjs(employee[`${day}End3`], "HH:mm:ss") : null,
             }), {}),
         });
+
+        // Set logo preview URL using the file server base URL
+        if (employee.picFilename) {
+            setPicturePreview(`${fileBaseUrl}${employee.picFilename}`);
+        } else {
+            setPicturePreview("");
+        }
     };
 
     // Delete an Employee
@@ -155,6 +172,7 @@ const Employee = () => {
 
     // Handle Modal Submission (Add or Update Employee)
     const handleModalSubmit = async (values) => {
+        console.log('Enter saving data by calling api', values);
         try {
 
             // Prepare employee data
@@ -225,6 +243,46 @@ const Employee = () => {
         setCurrentPage(page);
         setPageSize(pageSize);
     };
+
+
+    // Handle File Upload
+    const handleUpload = async (file) => {
+        const formData = new FormData();
+        formData.append("folder", "employees")
+        formData.append("file", file);
+
+        try {
+            const response = await axiosInstance.post("/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            const filePath = response.data.filePath; // The relative path returned by the backend
+            form.setFieldsValue({ pic_filename: filePath });
+
+            // Set logo preview URL using the file server base URL
+            setPicturePreview(`${fileBaseUrl}${filePath}`);
+            console.log(`Picture to be saved... ${fileBaseUrl}${filePath}`);
+            message.success("Picture uploaded successfully.");
+        } catch (error) {
+            console.error("Upload error:", error); // Debugging
+            message.error("Failed to upload picture.");
+        }
+    };
+
+    // Handle File Removal
+    const handleRemove = async () => {
+        try {
+            // Set logo_filename to an empty string and clear the preview
+            form.setFieldsValue({ pic_filename: "" });
+            setPicturePreview("");
+            message.success("Picture removed successfully.");
+        } catch (error) {
+            console.error("Remove error:", error); // Debugging
+            message.error("Failed to remove picture.");
+        }
+    };    
 
     // Table Columns
     const columns = [
@@ -302,7 +360,7 @@ const Employee = () => {
                     color: "#333",
                 }}
             >
-                Employee Management
+                Employees
             </h1>
             <Space
                 style={{
@@ -382,6 +440,7 @@ const Employee = () => {
                 onChange={handlePageChange}
                 style={{ marginTop: "10px", textAlign: "right" }}
             />
+
             <Modal
                 title={editingEmployee ? "Edit Employee" : "Add New Employee"}
                 visible={isModalVisible}
@@ -398,313 +457,422 @@ const Employee = () => {
                     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
                 }}
             >
-                <Form form={form} layout="vertical" onFinish={handleModalSubmit}>
-                    {/* First Row */}
-                    <Row gutter={16}>
-                        <Col span={6}>
-                            <Form.Item
-                                name="emp_no"
-                                label="Employee No"
-                                rules={[{ required: true, message: "Employee No is required." }]}
-                            >
-                                <Input placeholder="Enter Employee No" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                name="first_nm"
-                                label="First Name"
-                                rules={[{ required: true, message: "First Name is required." }]}
-                            >
-                                <Input placeholder="Enter First Name" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                name="last_nm"
-                                label="Last Name"
-                                rules={[{ required: true, message: "Last Name is required." }]}
-                            >
-                                <Input placeholder="Enter Last Name" />
-                            </Form.Item>
-                        </Col>
+            <Form form={form} layout="vertical" onFinish={handleModalSubmit}>
+                <Row gutter={16}>
+                    {/* First Column: Contains all form fields from Rows 1, 2, and 3 */}
+                    <Col span={18}>
+                        <Row gutter={16}>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="emp_no"
+                                    label="Employee No"
+                                    rules={[{ required: true, message: "Employee No is required." }]}
+                                >
+                                    <Input placeholder="Enter Employee No" />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="first_nm"
+                                    label="First Name"
+                                    rules={[{ required: true, message: "First Name is required." }]}
+                                >
+                                    <Input placeholder="Enter First Name" />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="last_nm"
+                                    label="Last Name"
+                                    rules={[{ required: true, message: "Last Name is required." }]}
+                                >
+                                    <Input placeholder="Enter Last Name" />
+                                </Form.Item>
+                            </Col>
+                        </Row>
 
-                    </Row>
+                        <Row gutter={16}>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="gender"
+                                    label="Gender"
+                                    rules={[{ required: true, message: "Gender is required." }]}
+                                >
+                                    <Select placeholder="Select Gender">
+                                        <Option value="M">Male</Option>
+                                        <Option value="F">Female</Option>
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item name="bday" label="Date of Birth">
+                                    <DatePicker style={{ width: "100%" }} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                    name="station_id"
+                                    label="Station"
+                                    rules={[{ required: true, message: "Station is required." }]}
+                                >
+                                    <Select placeholder="Enter Station">
+                                        <Option value="1">Floor</Option>
+                                        <Option value="2">Kitchen</Option>
+                                        <Option value="3">Bar</Option>
+                                        <Option value="4">Office</Option>
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                        </Row>
 
-                    {/* Second Row */}
-                    <Row gutter={16}>
-                        <Col span={6}>
-                            <Form.Item
-                                name="gender"
-                                label="Gender"
-                                rules={[{ required: true, message: "Gender is required." }]}
-                            >
-                                <Select placeholder="Select Gender">
-                                    <Option value="M">Male</Option>
-                                    <Option value="F">Female</Option>
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                name="bday"
-                                label="Date of Birth"
-                            >
-                                <DatePicker style={{ width: "100%" }} />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                name="station_id"
-                                label="Station"
-                                rules={[{ required: true, message: "Station is required." }]}
-                            >
-                                <Select placeholder="Enter Station">
-                                    <Option value="1">Floor</Option>
-                                    <Option value="2">Kitchen</Option>
-                                    <Option value="3">Bar</Option>
-                                    <Option value="4">Office</Option>
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                    </Row>
+                        <Row gutter={16}>
+                            <Col span={8}>
+                                <Form.Item name="tin_no" label="TIN #">
+                                    <Input placeholder="Enter TIN #" />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item name="sss_no" label="SSS #">
+                                    <Input placeholder="Enter SSS #" />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item name="phone_no" label="Phone">
+                                    <Input placeholder="Enter Phone" />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </Col>
 
-                    {/* Third Row */}
-                    <Row gutter={16}>
-                        <Col span={6}>
-                            <Form.Item
-                                name="tin_no"
-                                label="TIN #"
+                    {/* Second Column: Contains the Avatar and Upload Button */}
+                    <Col span={6}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                height: "100%",
+                                marginTop: 0,
+                            }}
+                        >
+                            <Avatar
+                                src={picturePreview || no_pic_default}
+                                size={120}
+                                shape="square"
+                                style={{
+                                    marginBottom: "10px",
+                                    border: "1px solid #ccc",
+                                    display: "block",
+                                }}
+                            />
+                            <Upload
+                                beforeUpload={(file) => {
+                                    // Handle image upload manually
+                                    handleUpload(file);
+                                    return false; // Prevent automatic upload
+                                }}
+                                maxCount={1}
+                                listType="picture"
+                                fileList={
+                                    picturePreview
+                                        ? [
+                                            {
+                                                uid: "-1",
+                                                name: "Employee Picture",
+                                                status: "done",
+                                                url: picturePreview,
+                                            },
+                                        ]
+                                        : []
+                                }
+                                onRemove={() => {
+                                    handleRemove(); // Remove the image
+                                    return false; // Prevent file browser from opening
+                                }}
+                                showUploadList={false} // Hide default list display
                             >
-                                <Input placeholder="Enter TIN #" />
+                                <Button
+                                    icon={picturePreview ? <DeleteOutlined /> : <UploadOutlined />}
+                                    onClick={(e) => {
+                                        if (picturePreview) {
+                                            e.stopPropagation(); // Prevent triggering file selection
+                                            handleRemove();
+                                        }
+                                    }}
+                                    style={{
+                                        backgroundColor: picturePreview ? "red" : "black",
+                                        color: "white",
+                                        borderRadius: "4px",
+                                        height: "40px",
+                                        padding: "0 20px",
+                                        border: "none",
+                                    }}
+                                >
+                                    {picturePreview ? "Remove Image" : "Upload Image"}
+                                </Button>
+                            </Upload>
+                            <Form.Item name="pic_filename" label="">
+                                    <Input type="hidden" />
                             </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                name="sss_no"
-                                label="SSS #"
-                            >
-                                <Input placeholder="Enter SSS #" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                name="phone_no"
-                                label="Phone"
-                            >
-                                <Input placeholder="Enter Phone" />
-                            </Form.Item>
-                        </Col>
-                    </Row
+                        </div>
+                    </Col>
+                </Row>
+
+                {/* Second Major Row: Continuing with Row 4 and beyond */}
+                {/* Fourth Row */}
+                <Row gutter={16}>
+                    <Col span={12}>
+                        <Form.Item
+                            name="address"
+                            label="Address"
+                        >
+                            <Input placeholder="Enter Address" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            name="email"
+                            label="Email"
+                        >
+                            <Input placeholder="Enter Email" />
+                        </Form.Item>
+                    </Col>
+                </Row>
+
+                {/* Fifth Row */}
+                <Row gutter={16}>
+                    <Col span={6}>
+                        <Form.Item
+                            name="emp_type_id"
+                            label="Employee Type"
+                            rules={[{ required: true, message: "Employee Type is required." }]}
+                        >
+                            <Select placeholder="Select Employee Type">
+                                {employeeTypes.map((type) => (
+                                    <Option key={type.empTypeId} value={type.empTypeId}>
+                                        {type.empTypeDesc}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                        <Form.Item
+                            name="emp_status_id"
+                            label="Employee Status"
+                            rules={[{ required: true, message: "Employee Status is required." }]}
+                        >
+                            <Select placeholder="Select Employee Status">
+                                {employeeStatuses.map((status) => (
+                                    <Option key={status.empStatusId} value={status.empStatusId}>
+                                        {status.empStatusDesc}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                        <Form.Item
+                            name="date_hired"
+                            label="Date Hired"
+                        >
+                            <DatePicker style={{ width: "100%" }} />
+                        </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                        <Form.Item
+                            name="date_end"
+                            label="Date End"
+                        >
+                            <DatePicker style={{ width: "100%" }} />
+                        </Form.Item>
+                    </Col>
+                </Row>
+
+                {/* Console Access, Open Drawer and Active Flag */}
+                <Row gutter={16}>
+                <Col span={8}>
+                    <Form.Item
+                    name="console_flag"
+                    valuePropName="checked"
+                    label="Console Access"
+                    style={{ marginBottom: "15px", display: "flex", alignItems: "center" }}
                     >
+                    <Switch
+                        onChange={(checked) => {
+                        form.setFieldsValue({ console_flag: checked });
+                        }}
+                    />
+                    </Form.Item>
+                </Col>
+                <Col span={8}>
+                    <Form.Item
+                    name="drawer_flag"
+                    valuePropName="checked"
+                    label="Open Cash Drawer"
+                    style={{ marginBottom: "15px", display: "flex", alignItems: "center" }}
+                    >
+                    <Switch
+                        onChange={(checked) => {
+                        form.setFieldsValue({ drawer_flag: checked });
+                        }}
+                    />
+                    </Form.Item>
+                </Col>
+                <Col span={8}>
+                    <Form.Item
+                    name="active_flag"
+                    valuePropName="checked"
+                    label="ACTIVE Employee"
+                    style={{ marginBottom: "15px", display: "flex", alignItems: "center" }}
+                    >
+                    <Switch
+                        onChange={(checked) => {
+                        form.setFieldsValue({ active_flag: checked });
+                        }}
+                    />
+                    </Form.Item>
+                </Col>
 
-                    {/* Fourth Row */}
+                </Row>
+
+                {/* Sixth Row */}
+                <Row gutter={16}>
+                    <Col span={6}>
+                        <Form.Item
+                            name="username"
+                            label="Username"
+                            rules={[{ required: true, message: "Username is required." }]}
+                        >
+                            <Input placeholder="Enter Username" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                        <Form.Item
+                            name="password"
+                            label="Password PIN"
+                            rules={[{ required: true, message: "Password is required." }]}
+                        >
+                            <Input placeholder="Enter Password PIN" />
+                        </Form.Item>
+                    </Col>
+                    <Col span={6}>
+                        <Form.Item
+                            name="role_id"
+                            label="Role"
+                            rules={[{ required: true, message: "Role is required." }]}
+                        >
+                            <Select placeholder="Select Role">
+                                {roles.map((role) => (
+                                    <Option key={role.id} value={role.id}>
+                                        {role.name}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                </Row>
+
+
+                {/* Work Day Checkboxes */}
+                <div style={{ marginTop: "20px" }}>
+                    <h4>Time Schedule</h4>
                     <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="address"
-                                label="Address"
-                            >
-                                <Input placeholder="Enter Address" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                                name="email"
-                                label="Email"
-                            >
-                                <Input placeholder="Enter Email" />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-
-                    {/* Fifth Row */}
-                    <Row gutter={16}>
-                        <Col span={6}>
-                            <Form.Item
-                                name="emp_type_id"
-                                label="Employee Type"
-                                rules={[{ required: true, message: "Employee Type is required." }]}
-                            >
-                                <Select placeholder="Select Employee Type">
-                                    {employeeTypes.map((type) => (
-                                        <Option key={type.empTypeId} value={type.empTypeId}>
-                                            {type.empTypeDesc}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                name="emp_status_id"
-                                label="Employee Status"
-                                rules={[{ required: true, message: "Employee Status is required." }]}
-                            >
-                                <Select placeholder="Select Employee Status">
-                                    {employeeStatuses.map((status) => (
-                                        <Option key={status.empStatusId} value={status.empStatusId}>
-                                            {status.empStatusDesc}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                name="date_hired"
-                                label="Date Hired"
-                            >
-                                <DatePicker style={{ width: "100%" }} />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                name="date_end"
-                                label="Date End"
-                            >
-                                <DatePicker style={{ width: "100%" }} />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-
-                    {/* Sixth Row */}
-                    <Row gutter={16}>
-                        <Col span={6}>
-                            <Form.Item
-                                name="username"
-                                label="Username"
-                                rules={[{ required: true, message: "Username is required." }]}
-                            >
-                                <Input placeholder="Enter Username" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                name="password"
-                                label="Password PIN"
-                                rules={[{ required: true, message: "Password is required." }]}
-                            >
-                                <Input placeholder="Enter Password PIN" />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                            <Form.Item
-                                name="role_id"
-                                label="Role"
-                                rules={[{ required: true, message: "Role is required." }]}
-                            >
-                                <Select placeholder="Select Role">
-                                    {roles.map((role) => (
-                                        <Option key={role.id} value={role.id}>
-                                            {role.name}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-
-
-                    {/* Work Day Checkboxes */}
-                    <div style={{ marginTop: "20px" }}>
-                        <h4>Time Schedule</h4>
-                        <Row gutter={16}>
-                            {["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((day) => (
-                                <Col span={3} key={day}>
-                                    <Form.Item
-                                        name={`${day}_restday`}
-                                        valuePropName="checked"
-                                    >
-                                        <Checkbox>{day.toUpperCase()}</Checkbox>
-                                    </Form.Item>
-                                </Col>
-                            ))}
-                        </Row>
-                    </div>
-
-                    {/* Time Fields Section */}
-                    <div style={{ marginTop: "20px" }}>
-                        <Row gutter={16}>
-                            <Col span={3}><strong>Day</strong></Col>
-                            <Col span={3}><strong>Start 1</strong></Col>
-                            <Col span={3}><strong>End 1</strong></Col>
-                            <Col span={3}><strong>Start 2</strong></Col>
-                            <Col span={3}><strong>End 2</strong></Col>
-                            <Col span={3}><strong>Start 3</strong></Col>
-                            <Col span={3}><strong>End 3</strong></Col>
-                        </Row>
-                        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
-                            <Row gutter={16} key={day} style={{ marginTop: "10px" }}>
-                                <Col span={3}><strong>{day}</strong></Col>
-                                <Col span={3}>
-                                    <Form.Item name={`${day.toLowerCase()}_start1`}>
-                                        <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={3}>
-                                    <Form.Item name={`${day.toLowerCase()}_end1`}>
-                                        <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={3}>
-                                    <Form.Item name={`${day.toLowerCase()}_start2`}>
-                                        <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={3}>
-                                    <Form.Item name={`${day.toLowerCase()}_end2`}>
-                                        <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={3}>
-                                    <Form.Item name={`${day.toLowerCase()}_start3`}>
-                                        <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={3}>
-                                    <Form.Item name={`${day.toLowerCase()}_end3`}>
-                                        <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
+                        {["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((day) => (
+                            <Col span={3} key={day}>
+                                <Form.Item
+                                    name={`${day}_restday`}
+                                    valuePropName="checked"
+                                >
+                                    <Checkbox>{day.toUpperCase()}</Checkbox>
+                                </Form.Item>
+                            </Col>
                         ))}
-                    </div>
+                    </Row>
+                </div>
 
-                    {/* Save and Cancel Buttons */}
-                    <div style={{ textAlign: "right", marginTop: "20px" }}>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            icon={<CheckOutlined />}
-                            style={{
-                                backgroundColor: "#007bff",
-                                color: "white",
-                                borderRadius: "4px",
-                                height: "40px",
-                                padding: "0 20px",
-                                marginRight: "10px",
-                            }}
-                        >
-                            Save
-                        </Button>
-                        <Button
-                            onClick={() => setIsModalVisible(false)}
-                            icon={<ArrowLeftOutlined />}
-                            style={{
-                                backgroundColor: "#dc3545",
-                                color: "white",
-                                borderRadius: "4px",
-                                height: "40px",
-                                padding: "0 20px",
-                            }}
-                        >
-                            Cancel
-                        </Button>
-                    </div>
-                </Form>
-            </Modal>
-        </div>
+                {/* Time Fields Section */}
+                <div style={{ marginTop: "20px" }}>
+                    <Row gutter={16}>
+                        <Col span={3}><strong>Day</strong></Col>
+                        <Col span={3}><strong>Start 1</strong></Col>
+                        <Col span={3}><strong>End 1</strong></Col>
+                        <Col span={3}><strong>Start 2</strong></Col>
+                        <Col span={3}><strong>End 2</strong></Col>
+                        <Col span={3}><strong>Start 3</strong></Col>
+                        <Col span={3}><strong>End 3</strong></Col>
+                    </Row>
+                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+                        <Row gutter={16} key={day} style={{ marginTop: "10px" }}>
+                            <Col span={3}><strong>{day}</strong></Col>
+                            <Col span={3}>
+                                <Form.Item name={`${day.toLowerCase()}_start1`}>
+                                    <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={3}>
+                                <Form.Item name={`${day.toLowerCase()}_end1`}>
+                                    <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={3}>
+                                <Form.Item name={`${day.toLowerCase()}_start2`}>
+                                    <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={3}>
+                                <Form.Item name={`${day.toLowerCase()}_end2`}>
+                                    <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={3}>
+                                <Form.Item name={`${day.toLowerCase()}_start3`}>
+                                    <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={3}>
+                                <Form.Item name={`${day.toLowerCase()}_end3`}>
+                                    <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    ))}
+                </div>
+
+                {/* Save and Cancel Buttons */}
+                <div style={{ textAlign: "right", marginTop: "20px" }}>
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        icon={<CheckOutlined />}
+                        style={{
+                            backgroundColor: "#007bff",
+                            color: "white",
+                            borderRadius: "4px",
+                            height: "40px",
+                            padding: "0 20px",
+                            marginRight: "10px",
+                        }}
+                    >
+                        Save
+                    </Button>
+                    <Button
+                        onClick={() => setIsModalVisible(false)}
+                        icon={<ArrowLeftOutlined />}
+                        style={{
+                            backgroundColor: "#dc3545",
+                            color: "white",
+                            borderRadius: "4px",
+                            height: "40px",
+                            padding: "0 20px",
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                </div>
+            </Form>
+        </Modal>
+    </div>
     );
 };
 
