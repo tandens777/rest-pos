@@ -38,11 +38,11 @@ const Employee = () => {
         const handleResize = () => {
             const screenWidth = window.innerWidth;
             if (screenWidth < 768) {
-                setPageSize(5);
+                setPageSize(4);
             } else if (screenWidth < 1200) {
-                setPageSize(10);
+                setPageSize(8);
             } else {
-                setPageSize(15);
+                setPageSize(12);
             }
         };
 
@@ -100,6 +100,7 @@ const Employee = () => {
         setEditingEmployee(null);
         setIsModalVisible(true);
         form.resetFields();
+        setPicturePreview("");
     };
 
     // Edit an Existing Employee
@@ -402,6 +403,71 @@ const Employee = () => {
                     Add New
                 </Button>
             </Space>
+
+            {/* Employee List Container */}
+            <div
+                style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+                    gap: "20px",
+                    marginTop: "20px",
+                }}
+            >
+                {paginatedEmployees.map((employee) => (
+                    <div
+                        key={employee.id}
+                        style={{
+                            backgroundColor: "#fff",
+                            borderRadius: "8px",
+                            padding: "16px",
+                            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                            textAlign: "center",
+                            opacity: employee.activeFlag === "N" ? 0.6 : 1,
+                        }}
+                    >
+                        <Avatar
+                            src={employee.picFilename ? `${fileBaseUrl}${employee.picFilename}` : no_pic_default}
+                            size={80}
+                            style={{
+                                marginBottom: "10px",
+                                border: "1px solid #ccc",
+                                filter: employee.activeFlag === "N" ? "grayscale(100%)" : "none",
+                            }}
+                        />
+                        <div style={{ fontWeight: "bold", fontSize: "16px" }}>
+                            {employee.lastNm}, {employee.firstNm}
+                        </div>
+                        <div style={{ color: "#666", marginTop: "4px" }}>
+                            {roles.find((role) => role.id === employee.roleId)?.name || "N/A"}
+                        </div>
+                        <div
+                            style={{
+                                marginTop: "8px",
+                                fontWeight: "bold",
+                                color: employee.activeFlag === "Y" ? "red" : "black",
+                            }}
+                        >
+                            {employee.activeFlag === "Y" ? "ACTIVE" : "INACTIVE"}
+                        </div>
+                        <Space style={{ marginTop: "10px" }}>
+                            <Button
+                                icon={<EditOutlined />}
+                                onClick={() => handleEdit(employee)}
+                            />
+                            <Popconfirm
+                                title="Are you sure to delete this employee?"
+                                onConfirm={() => handleDelete(employee.id)}
+                                okText="Yes"
+                                cancelText="No"
+                            >
+                                <Button icon={<DeleteOutlined />} danger />
+                            </Popconfirm>
+                        </Space>
+                    </div>
+                ))}
+            </div>
+
+{/*}
             <Table
                 columns={columns}
                 dataSource={paginatedEmployees}
@@ -434,6 +500,7 @@ const Employee = () => {
                 }}
                 rowClassName="custom-row"
             />
+{*/}
             <Pagination
                 current={currentPage}
                 pageSize={pageSize}
