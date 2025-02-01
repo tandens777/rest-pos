@@ -26,7 +26,7 @@ public class EmployeeStatusController {
     @Autowired
     private EmployeeStatusService empStatusService;
 
-    @PreAuthorize("hasRole('ADMIN','HR')")
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
     @GetMapping("/all")
     public ResponseEntity<List<EmployeeStatus>> getEmployeeStatuses() throws GenericNotFoundException {
         return ResponseEntity.ok(empStatusService.getEmployeeStatuses());
