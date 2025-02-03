@@ -145,4 +145,16 @@ public class EmployeeController {
     public ResponseEntity<List<Employee>> getEmployees(@RequestParam(required = false) String search) throws GenericNotFoundException {
         return ResponseEntity.ok(employeeService.getEmployees(search));
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN','SUPERVISOR','MANAGER','WAITER','CASHIER','KITCHEN1','KITCHEN2','KITCHEN3','BAR')")
+    @PutMapping("/change_pin")
+    public void changePIN(
+        @RequestParam(required = false) String username, 
+        @RequestParam(required = false) String old_password, @RequestParam(required = false) String new_password
+    ) throws GenericNotFoundException {
+        employeeService.changePIN(
+            username, old_password, new_password
+        );
+    }
+
 }

@@ -5,11 +5,14 @@ import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.smartdata.resto_console.model.Employee;
+import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
@@ -194,8 +197,21 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     // Delete Employee
     @Procedure(name = "deleteEmployee")
     void deleteEmployee(@Param("p_id") Long id);
- 
+
+    // Change Employee PIN
+    @Procedure(name = "changeEmployeePIN")
+    void changePIN(       
+        @Param("p_username") String username,
+        @Param("p_new_password") String new_password
+    );
+    
     // Find all employees ordered by ID
     List<Employee> findAllByOrderById();
 
+    @Query("SELECT e FROM Employee e WHERE LOWER(e.username) = :username")
+    Optional<Employee> findByUsername(@Param("username") String username);
+
+    @Query("SELECT e FROM Employee e WHERE e.username <> :username")
+    List<Employee> findByUsernameNot(@Param("username") String username);
+    
 }

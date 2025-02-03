@@ -201,6 +201,14 @@ import java.time.LocalTime;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_id", type = Long.class)
         }
     ),
+    @NamedStoredProcedureQuery(
+        name = "changeEmployeePIN",
+        procedureName = "change_employee_pin",
+        parameters = {
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_username", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_new_password", type = String.class)
+        }
+    ),
 })
 
 public class Employee {

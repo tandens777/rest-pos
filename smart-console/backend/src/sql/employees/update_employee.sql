@@ -39,7 +39,11 @@ CREATE OR REPLACE PROCEDURE public.update_employee(
 )
 LANGUAGE plpgsql
 AS $$
+declare p_old_password character varying;
 BEGIN
+
+    select password into p_old_password from employees where id = p_id;
+
     UPDATE employees
     SET 
         emp_no = p_emp_no, last_nm = p_last_nm, first_nm = p_first_nm, gender = p_gender, station_id = p_station_id,
@@ -48,7 +52,7 @@ BEGIN
         console_flag = p_console_flag, drawer_flag = p_drawer_flag, active_flag = p_active_flag, pic_filename = p_pic_filename,
 
         address = p_address, email = p_email, emp_type_id = p_emp_type_id, emp_status_id = p_emp_status_id,
-        password = p_password, username = p_username, role_id = p_role_id,
+        username = p_username, role_id = p_role_id,
 
         mon_restday = p_mon_restday, mon_start1 = p_mon_start1, mon_end1 = p_mon_end1, mon_start2 = p_mon_start2, mon_end2 = p_mon_end2, mon_start3 = p_mon_start3, mon_end3 = p_mon_end3,
         tue_restday = p_tue_restday, tue_start1 = p_tue_start1, tue_end1 = p_tue_end1, tue_start2 = p_tue_start2, tue_end2 = p_tue_end2, tue_start3 = p_tue_start3, tue_end3 = p_tue_end3,
@@ -61,9 +65,18 @@ BEGIN
 
     update  users
     set     username = p_username,
-            password = p_password,
             role_id = p_role_id
     WHERE id = p_id;
+
+    if p_old_password <> p_password then
+        update  employees
+        set     password = p_password
+        WHERE id = p_id;
+
+        update  users
+        set     password = p_password
+        WHERE id = p_id;
+    END IF;
     
 END;
 $$;

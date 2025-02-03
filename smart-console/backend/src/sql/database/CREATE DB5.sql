@@ -90,3 +90,20 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.employees
     OWNER to postgres;
+
+
+-- Add unique index for username
+ALTER TABLE public.employees
+ADD CONSTRAINT unique_username UNIQUE (username);
+
+-- Add unique index for emp_no
+ALTER TABLE public.employees
+ADD CONSTRAINT unique_emp_no UNIQUE (emp_no);
+
+-- Add unique index for first_nm and last_nm combined
+ALTER TABLE public.employees
+ADD CONSTRAINT unique_first_last_name UNIQUE (first_nm, last_nm);
+
+-- Add unique index for password (not recommended for security reasons)
+ALTER TABLE public.employees
+ADD CONSTRAINT unique_password UNIQUE (password);

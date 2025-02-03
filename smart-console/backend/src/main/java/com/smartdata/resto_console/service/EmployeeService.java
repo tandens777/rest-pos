@@ -6,7 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.smartdata.resto_console.repository.EmployeeRepository;
 import com.smartdata.resto_console.exception.GenericNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
+
 import com.smartdata.resto_console.model.Employee;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,6 +25,8 @@ public class EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Transactional
     public void addEmployee(
@@ -53,19 +60,32 @@ public class EmployeeService {
         LocalTime sun_start2, LocalTime sun_end2, 
         LocalTime sun_start3, LocalTime sun_end3
     ) {
-        employeeRepository.insertEmployee(
-            emp_no, last_nm, first_nm, gender, station_id, tin_no, sss_no, bday, phone_no,
-            date_hired, date_end, remarks, face_id, public_key, console_flag, drawer_flag,
-            active_flag, pic_filename, 
-            address, email, emp_type_id, emp_status_id, password, username, role_id,
-            mon_restday, mon_start1, mon_end1, mon_start2, mon_end2, mon_start3, mon_end3, 
-            tue_restday, tue_start1, tue_end1, tue_start2, tue_end2, tue_start3, tue_end3, 
-            wed_restday, wed_start1, wed_end1, wed_start2, wed_end2, wed_start3, wed_end3, 
-            thu_restday, thu_start1, thu_end1, thu_start2, thu_end2, thu_start3, thu_end3, 
-            fri_restday, fri_start1, fri_end1, fri_start2, fri_end2, fri_start3, fri_end3, 
-            sat_restday, sat_start1, sat_end1, sat_start2, sat_end2, sat_start3, sat_end3, 
-            sun_restday, sun_start1, sun_end1, sun_start2, sun_end2, sun_start3, sun_end3
-        );
+        try{
+            // Check for uniqueness of PIN
+            if (!isPinUnique(password, null)) {
+                throw new GenericNotFoundException("PIN code already in use. Please choose another.");
+            }
+            
+            String hashedPassword = passwordEncoder.encode(password);
+
+            employeeRepository.insertEmployee(
+                emp_no, last_nm, first_nm, gender, station_id, tin_no, sss_no, bday, phone_no,
+                date_hired, date_end, remarks, face_id, public_key, console_flag, drawer_flag,
+                active_flag, pic_filename, 
+                address, email, emp_type_id, emp_status_id, hashedPassword, username, role_id,
+                mon_restday, mon_start1, mon_end1, mon_start2, mon_end2, mon_start3, mon_end3, 
+                tue_restday, tue_start1, tue_end1, tue_start2, tue_end2, tue_start3, tue_end3, 
+                wed_restday, wed_start1, wed_end1, wed_start2, wed_end2, wed_start3, wed_end3, 
+                thu_restday, thu_start1, thu_end1, thu_start2, thu_end2, thu_start3, thu_end3, 
+                fri_restday, fri_start1, fri_end1, fri_start2, fri_end2, fri_start3, fri_end3, 
+                sat_restday, sat_start1, sat_end1, sat_start2, sat_end2, sat_start3, sat_end3, 
+                sun_restday, sun_start1, sun_end1, sun_start2, sun_end2, sun_start3, sun_end3
+            );
+        } catch (DataIntegrityViolationException e) {
+            throw new GenericNotFoundException("Record has duplicate fields. Please check Employee No, Username, FirstName and LastName, or Password PIN.");
+        } catch (Exception e) {
+            throw new GenericNotFoundException("An unexpected error occurred while updating the employee.");
+        }                    
     }
 
     @Transactional
@@ -100,19 +120,51 @@ public class EmployeeService {
         LocalTime sun_start2, LocalTime sun_end2, 
         LocalTime sun_start3, LocalTime sun_end3
     ) {
-        employeeRepository.updateEmployee(
-            id, emp_no, last_nm, first_nm, gender, station_id, tin_no, sss_no, bday, phone_no,
-            date_hired, date_end, remarks, face_id, public_key, console_flag, drawer_flag,
-            active_flag, pic_filename, 
-            address, email, emp_type_id, emp_status_id, password, username, role_id,
-            mon_restday, mon_start1, mon_end1, mon_start2, mon_end2, mon_start3, mon_end3, 
-            tue_restday, tue_start1, tue_end1, tue_start2, tue_end2, tue_start3, tue_end3, 
-            wed_restday, wed_start1, wed_end1, wed_start2, wed_end2, wed_start3, wed_end3, 
-            thu_restday, thu_start1, thu_end1, thu_start2, thu_end2, thu_start3, thu_end3, 
-            fri_restday, fri_start1, fri_end1, fri_start2, fri_end2, fri_start3, fri_end3, 
-            sat_restday, sat_start1, sat_end1, sat_start2, sat_end2, sat_start3, sat_end3, 
-            sun_restday, sun_start1, sun_end1, sun_start2, sun_end2, sun_start3, sun_end3
-        );
+        try{
+            String hashedPassword = "";
+            String oldStoredPassword = "";
+            String oldUsername = "";
+            Optional<Employee> employeeOptional = employeeRepository.findById(id);
+
+            if (employeeOptional.isPresent()) {
+                Employee employee = employeeOptional.get(); // Extract the Employee object
+                oldStoredPassword = employee.getPassword();
+                oldUsername = employee.getUsername();
+                System.out.println("UPDATE EMPLOYEE:  oldUserName:" + oldUsername + "  oldStoredPassword:" + oldStoredPassword);
+            }
+
+            boolean isMatch = password.length() > 6;
+            if (!isMatch){
+                // Check for uniqueness of PIN
+                if (!isPinUnique(password, oldUsername)) {
+                    throw new GenericNotFoundException("PIN code already in use. Please choose another.");
+                }
+                
+                hashedPassword = passwordEncoder.encode(password);
+            } else {
+                hashedPassword = oldStoredPassword;
+            }
+
+            employeeRepository.updateEmployee(
+                id, emp_no, last_nm, first_nm, gender, station_id, tin_no, sss_no, bday, phone_no,
+                date_hired, date_end, remarks, face_id, public_key, console_flag, drawer_flag,
+                active_flag, pic_filename, 
+                address, email, emp_type_id, emp_status_id, hashedPassword, username, role_id,
+                mon_restday, mon_start1, mon_end1, mon_start2, mon_end2, mon_start3, mon_end3, 
+                tue_restday, tue_start1, tue_end1, tue_start2, tue_end2, tue_start3, tue_end3, 
+                wed_restday, wed_start1, wed_end1, wed_start2, wed_end2, wed_start3, wed_end3, 
+                thu_restday, thu_start1, thu_end1, thu_start2, thu_end2, thu_start3, thu_end3, 
+                fri_restday, fri_start1, fri_end1, fri_start2, fri_end2, fri_start3, fri_end3, 
+                sat_restday, sat_start1, sat_end1, sat_start2, sat_end2, sat_start3, sat_end3, 
+                sun_restday, sun_start1, sun_end1, sun_start2, sun_end2, sun_start3, sun_end3
+            );
+        } catch (DataIntegrityViolationException e) {
+            throw new GenericNotFoundException("Record has duplicate fields. Please check Employee No, Username, FirstName and LastName, or Password PIN.");
+        } catch (GenericNotFoundException e) {
+            throw new GenericNotFoundException("PIN code already in use. Please choose another.");
+        } catch (Exception e) {
+            throw new GenericNotFoundException("An unexpected error occurred while updating the employee.");
+        }            
     }
 
     @Transactional
@@ -155,4 +207,58 @@ public class EmployeeService {
         }
         return false;
     }
+
+    public boolean isPinUnique(String rawPin, String skip_username) { 
+        List<Employee> employees;
+    
+        if (skip_username != null) {
+            employees = employeeRepository.findByUsernameNot(skip_username);
+        } else {
+            employees = employeeRepository.findAll(); // Check all employees
+        }
+    
+        for (Employee employee : employees) {
+            System.out.println("ID: " + employee.getId() + 
+                           ", Username: " + employee.getUsername() +
+                           ", Hashed Password: " + employee.getPassword());
+
+            if (passwordEncoder.matches(rawPin, employee.getPassword())) {
+                System.out.println("❌ PIN Matched for User: " + employee.getUsername());
+                return false; // PIN already exists
+            }
+        }
+        return true; // Unique PIN
+    }
+    
+    @Transactional
+    public void changePIN(String username, String old_password, String new_password) throws GenericNotFoundException {
+        Optional<Employee> employeeOptional = employeeRepository.findByUsername(username);
+
+        if (employeeOptional.isPresent()) {
+            Employee employee = employeeOptional.get(); // Extract the Employee object
+    
+            String oldStoredPassword = employee.getPassword();
+
+            System.out.println("Entered old Password  " + old_password);
+            System.out.println("StoredOldPassword  " + oldStoredPassword);
+                
+            // Verify old password before hashing the new password
+            if (!passwordEncoder.matches(old_password, oldStoredPassword)) {
+                throw new GenericNotFoundException("Employee [" + username + "] has entered an invalid password.");    
+            }
+    
+            // Check for uniqueness of PIN
+            if (!isPinUnique(new_password, username)) {
+                throw new GenericNotFoundException("PIN code already in use. Please choose another.");
+            }
+
+            // Hashing the password before storing in DB
+            String hashedNewPassword = passwordEncoder.encode(new_password);
+
+            // Call stored procedure to update the password
+            employeeRepository.changePIN(username, hashedNewPassword);
+        } else {
+            throw new GenericNotFoundException("Employee [" + username + "] not found.");               
+        }    }
+
 }
