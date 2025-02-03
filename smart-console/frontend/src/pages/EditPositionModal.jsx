@@ -144,22 +144,27 @@ const EditPositionModal = ({ visible, onCancel, ttables, ffloors, onSave }) => {
 
   return (
     <Modal
-      title={
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <span>Edit Table Positions</span>
-          <Select
-            value={selectedFloor}
-            onChange={(value) => setSelectedFloor(value)}
-            style={{ width: "120px", marginLeft: "10px" }}
+    title={
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <h2 style={{ margin: 0 }}>Edit Table Positions</h2>
+        {floors.map((floor) => (
+          <Button
+            key={floor.id}
+            type="default"
+            style={{
+              backgroundColor: selectedFloor === floor.id ? "#006400" : "#28a745", // Dark Green when selected
+              color: "white",
+              borderRadius: "5px",
+              padding: "8px 16px",
+              fontWeight: "bold",
+            }}
+            onClick={() => setSelectedFloor(floor.id)}
           >
-            {floors.map((floor) => (
-              <Option key={floor.id} value={floor.id}>
-                {floor.name}
-              </Option>
-            ))}
-          </Select>
-        </div>
-      }
+            {floor.name}
+          </Button>
+        ))}
+      </div>
+    }
       visible={visible}
       onCancel={handleCancel}
       className={styles.modalContent}
