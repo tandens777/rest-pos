@@ -235,8 +235,17 @@ const Employee = () => {
             // Close modal and refresh list
             setIsModalVisible(false);
             fetchEmployees();
+
         } catch (error) {
-            message.error("Failed to save employee. Please try again.");
+            console.error("Error saving employee:", error);
+    
+            // Extract error message from the response
+            const errorMessage =
+                error.response?.data?.message || // Backend error message
+                error.response?.data?.error ||  // Alternative error field
+                "Failed to save employee. Please try again."; // Fallback message
+    
+            message.error(errorMessage); // Display specific error message
         }
     };
 
@@ -821,7 +830,7 @@ const Employee = () => {
                             label={<span className="custom-label">Password PIN</span>}//"Password PIN"
                             rules={[{ required: true, message: "Password is required." }]}
                         >
-                            <Input placeholder="Enter Password PIN" />
+                            <Input.Password placeholder="Enter Password PIN" />
                         </Form.Item>
                     </Col>
                     <Col span={6}>
