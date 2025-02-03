@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Modal, Button } from "antd";
+import { Modal, Button, Select } from "antd";
 import { CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons"; // Import icons
 import styles from "./EditPositionModal.module.css";
 
-const EditPositionModal = ({ visible, onCancel, ttables, onSave }) => {
+const { Option } = Select;
+
+const EditPositionModal = ({ visible, onCancel, ttables, ffloors, onSave }) => {
   // Environment variables for API and file server URLs
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL; // e.g., http://192.168.68.118:8081
   const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL + "/uploads/tables/"; // e.g., http://192.168.68.118:8080
@@ -14,11 +16,20 @@ const EditPositionModal = ({ visible, onCancel, ttables, onSave }) => {
     return JSON.parse(JSON.stringify(ttables));
   });
 
+  // State to store the positions of all tables
+  const [floors, setFloors] = useState(() => {
+    // Create a deep copy of ffloors
+    return JSON.parse(JSON.stringify(ffloors));
+  });
+
   // State to store the original positions when the modal is opened
   const [originalTables, setOriginalTables] = useState([]);
 
   // State to track which table is being dragged
   const [draggedTableId, setDraggedTableId] = useState(null);
+
+  // State to track the selected floor
+  const [selectedFloor, setSelectedFloor] = useState(floors[0]?.id || null);
 
   // Reference to the modal container for relative positioning
   const modalRef = useRef(null);
@@ -128,9 +139,27 @@ const EditPositionModal = ({ visible, onCancel, ttables, onSave }) => {
     billing: "#b3e6ff", // Slightly darker light blue
   };
 
+  // Filter tables based on the selected floor
+  const filteredTables = tables.filter((table) => table.floor_id === selectedFloor);
+
   return (
     <Modal
-      title="Edit Table Positions"
+      title={
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <span>Edit Table Positions</span>
+          <Select
+            value={selectedFloor}
+            onChange={(value) => setSelectedFloor(value)}
+            style={{ width: "120px", marginLeft: "10px" }}
+          >
+            {floors.map((floor) => (
+              <Option key={floor.id} value={floor.id}>
+                {floor.name}
+              </Option>
+            ))}
+          </Select>
+        </div>
+      }
       visible={visible}
       onCancel={handleCancel}
       className={styles.modalContent}
@@ -192,7 +221,7 @@ const EditPositionModal = ({ visible, onCancel, ttables, onSave }) => {
           backgroundColor: "#f0f0f0",
         }}
       >
-        {tables.map((table) => (
+        {filteredTables.map((table) => (
           <div
             key={table.id}
             style={{

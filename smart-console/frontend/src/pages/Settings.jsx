@@ -508,7 +508,9 @@ const Settings = () => {
                 picture: `${fileBaseUrl}${alias.picture}`,
                 tblName: alias.tblName,
                 status: "available",
+                floor_id: alias.floorId,
               }))}
+              ffloors={floors}
               onSave={handleSavePositions}
             />
           </Form>
