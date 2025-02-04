@@ -137,7 +137,7 @@ const Employee = () => {
             // Convert time strings to dayjs objects for TimePicker
             ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].reduce((acc, day) => ({
                 ...acc,
-                [`${day}_restday`]: employee[`${day}Restday`] === "Y",
+                [`${day}_restday`]: employee[`${day}Restday`] === "N",
                 [`${day}_start1`]: employee[`${day}Start1`] ? dayjs(employee[`${day}Start1`], "HH:mm:ss") : null,
                 [`${day}_end1`]: employee[`${day}End1`] ? dayjs(employee[`${day}End1`], "HH:mm:ss") : null,
                 [`${day}_start2`]: employee[`${day}Start2`] ? dayjs(employee[`${day}Start2`], "HH:mm:ss") : null,
@@ -208,7 +208,7 @@ const Employee = () => {
                 // Convert TimePicker values to 'HH:mm:ss' format
                 ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].reduce((acc, day) => ({
                     ...acc,
-                    [`${day}_restday`]: values[`${day}_restday`] ? "Y" : "N",
+                    [`${day}_restday`]: values[`${day}_restday`] ? "N" : "Y",
                     [`${day}_start1`]: values[`${day}_start1`] ? dayjs(values[`${day}_start1`]).format("HH:mm:ss") : null,
                     [`${day}_end1`]: values[`${day}_end1`] ? dayjs(values[`${day}_end1`]).format("HH:mm:ss") : null,
                     [`${day}_start2`]: values[`${day}_start2`] ? dayjs(values[`${day}_start2`]).format("HH:mm:ss") : null,
@@ -863,90 +863,120 @@ const Employee = () => {
                 `}
                 </style>
 
-            <Tabs
-              defaultActiveKey="1"
-              tabBarStyle={{
-                backgroundColor: "#fff",
-                borderBottom: "1px solid #d9d9d9",
-                padding: "0 16px",
-                marginBottom: 0,
-              }}
-              tabBarGutter={0}
-            >
-            <TabPane tab="Working Schedule" key="1">
-                <div style={{ border: "1px solid #d9d9d9", borderTop: "none", borderRadius: "0 0 4px 4px", padding: "8px", backgroundColor: "#fff",
-                    //display: "flex",
-                    justifyContent: "center", // Center horizontally
-                    alignItems: "center", // Center vertically
-                    //flexDirection: "column", // Stack children vertically
-                 }}>
+                <Tabs
+                    defaultActiveKey="1"
+                    tabBarStyle={{
+                        backgroundColor: "#fff",
+                        borderBottom: "1px solid #d9d9d9",
+                        padding: "0 16px",
+                        marginBottom: 0,
+                    }}
+                    tabBarGutter={0}
+                >
+                <TabPane tab="Working Schedule" key="1">
+                    <div
+                    style={{
+                        border: "1px solid #d9d9d9",
+                        borderTop: "none",
+                        borderRadius: "0 0 4px 4px",
+                        padding: "8px",
+                        backgroundColor: "#fff",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                    >
                     {/* Work Day Checkboxes */}
                     <div style={{ marginTop: "0px" }}>
                         <Row gutter={16}>
-                            {["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((day) => (
-                                <Col span={3} key={day}>
-                                    <Form.Item
-                                        name={`${day}_restday`}
-                                        valuePropName="checked"
-                                    >
-                                        <Checkbox>{day.toUpperCase()}</Checkbox>
-                                    </Form.Item>
-                                </Col>
-                            ))}
+                        {["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((day) => (
+                            <Col span={3} key={day}>
+                            <Form.Item name={`${day}_restday`} valuePropName="checked">
+                                <Checkbox>{day.toUpperCase()}</Checkbox>
+                            </Form.Item>
+                            </Col>
+                        ))}
                         </Row>
                     </div>
 
                     {/* Time Fields Section */}
                     <div style={{ marginTop: "0px" }}>
                         <Row gutter={16}>
-                            <Col span={3}><strong>Day</strong></Col>
-                            <Col span={3}><strong>Start 1</strong></Col>
-                            <Col span={3}><strong>End 1</strong></Col>
-                            <Col span={3}><strong>Start 2</strong></Col>
-                            <Col span={3}><strong>End 2</strong></Col>
-                            <Col span={3}><strong>Start 3</strong></Col>
-                            <Col span={3}><strong>End 3</strong></Col>
+                        <Col span={3}><strong>Day</strong></Col>
+                        <Col span={3}><strong>Start 1</strong></Col>
+                        <Col span={3}><strong>End 1</strong></Col>
+                        <Col span={3}><strong>Start 2</strong></Col>
+                        <Col span={3}><strong>End 2</strong></Col>
+                        <Col span={3}><strong>Start 3</strong></Col>
+                        <Col span={3}><strong>End 3</strong></Col>
                         </Row>
-                        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
-                            <Row gutter={16} key={day} style={{ marginTop: "0px" }}>
-                                <Col span={3}><strong>{day}</strong></Col>
-                                <Col span={3}>
-                                    <Form.Item name={`${day.toLowerCase()}_start1`}>
+                        {["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((day) => (
+                        <Form.Item key={day} noStyle shouldUpdate>
+                            {({ getFieldValue }) => {
+                            const isRestDay = getFieldValue(`${day}_restday`);
+                            return (
+                                <Row gutter={16} style={{ marginTop: "0px", padding: "0. 0. 0. 0"}}>
+                                <Col span={3}><strong>{day.toUpperCase()}</strong></Col>
+                                {!isRestDay ? (
+                                    <Col
+                                    span={21}
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center", // Vertically center the text
+                                        height: "55px", // Match the height of the TimePicker boxes
+                                        textAlign: "left", // Left-justify the text
+                                        fontSize: "16px",
+                                        fontWeight: "bold",
+                                        color: "red", // Make the text red
+                                        paddingLeft: "16px", // Add some padding to align with the other columns
+                                        border: "0px solid #d9d9d9", // Optional: Add a border to match the TimePicker style
+                                        borderRadius: "4px", // Optional: Add border radius to match the TimePicker style
+                                    }}
+                                    >
+                                    REST DAY
+                                    </Col>
+                                ) : (
+                                    <>
+                                    <Col span={3}>
+                                        <Form.Item name={`${day}_start1`}>
                                         <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={3}>
-                                    <Form.Item name={`${day.toLowerCase()}_end1`}>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={3}>
+                                        <Form.Item name={`${day}_end1`}>
                                         <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={3}>
-                                    <Form.Item name={`${day.toLowerCase()}_start2`}>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={3}>
+                                        <Form.Item name={`${day}_start2`}>
                                         <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={3}>
-                                    <Form.Item name={`${day.toLowerCase()}_end2`}>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={3}>
+                                        <Form.Item name={`${day}_end2`}>
                                         <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={3}>
-                                    <Form.Item name={`${day.toLowerCase()}_start3`}>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={3}>
+                                        <Form.Item name={`${day}_start3`}>
                                         <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={3}>
-                                    <Form.Item name={`${day.toLowerCase()}_end3`}>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={3}>
+                                        <Form.Item name={`${day}_end3`}>
                                         <TimePicker format="HH:mm:ss" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
+                                        </Form.Item>
+                                    </Col>
+                                    </>
+                                )}
+                                </Row>
+                            );
+                            }}
+                        </Form.Item>
                         ))}
-                        </div>
                     </div>
-                    </TabPane>
+                    </div>
+                </TabPane>
                 </Tabs>
-
 
                 {/* Save and Cancel Buttons */}
                 <div style={{ textAlign: "right", marginTop: "20px" }}>
