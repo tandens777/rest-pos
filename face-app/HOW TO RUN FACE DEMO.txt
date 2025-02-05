@@ -1,0 +1,14 @@
+create a postgresql called face
+
+cd face-app
+mvn spring-boot:run
+
+cd face-app/app
+npm start
+
+open localhost:3000
+go to register, type username and new password and register your face
+
+go to login,  when the green scanner  starts scanning from top to bottom, u can start blinking and u shd be able to login
+press F12 to open console and check parameters...   the ear avg shd be < 0.28 to be considered blinking... two blinks and can go in
+
