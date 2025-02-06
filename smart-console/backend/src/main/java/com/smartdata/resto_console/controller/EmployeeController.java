@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.smartdata.resto_console.model.*;
 import com.smartdata.resto_console.service.EmployeeService;
+//import com.smartdata.resto_console.dto.*;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,7 +36,9 @@ public class EmployeeController {
         @RequestParam String gender, @RequestParam(required = false) Integer station_id, @RequestParam(required = false) String tin_no,
         @RequestParam(required = false) String sss_no, @RequestParam(required = false) LocalDate bday, @RequestParam(required = false) String phone_no,
         @RequestParam(required = false) LocalDate date_hired, @RequestParam(required = false) LocalDate date_end, @RequestParam(required = false) String remarks,
-        @RequestParam(required = false) String face_id, @RequestParam(required = false) String public_key, @RequestParam String console_flag,
+        @RequestParam(required = false) String facial_features,
+        //@RequestBody FacialFeaturesDTO facialFeaturesDTO, // Accept facialFeatures as JSON array 
+        @RequestParam(required = false) String public_key, @RequestParam String console_flag,
         @RequestParam String drawer_flag, @RequestParam String active_flag, @RequestParam(required = false) String pic_filename, 
         @RequestParam(required = false) String address, @RequestParam(required = false) String email,         
         @RequestParam Integer emp_type_id, @RequestParam Integer emp_status_id, 
@@ -66,7 +69,7 @@ public class EmployeeController {
     ) {
         employeeService.addEmployee(
             emp_no, last_nm, first_nm, gender, station_id, tin_no, sss_no, bday, phone_no, date_hired,
-            date_end, remarks, face_id, public_key, console_flag, drawer_flag, active_flag, pic_filename, 
+            date_end, remarks, facial_features, public_key, console_flag, drawer_flag, active_flag, pic_filename, 
             address, email, emp_type_id, emp_status_id, password, username, role_id,
             mon_restday, mon_start1, mon_end1, mon_start2, mon_end2, mon_start3, mon_end3, 
             tue_restday, tue_start1, tue_end1, tue_start2, tue_end2, tue_start3, tue_end3, 
@@ -85,7 +88,9 @@ public class EmployeeController {
         @RequestParam String gender, @RequestParam(required = false) Integer station_id, @RequestParam(required = false) String tin_no,
         @RequestParam(required = false) String sss_no, @RequestParam(required = false) LocalDate bday, @RequestParam(required = false) String phone_no,
         @RequestParam(required = false) LocalDate date_hired, @RequestParam(required = false) LocalDate date_end, @RequestParam(required = false) String remarks,
-        @RequestParam(required = false) String face_id, @RequestParam(required = false) String public_key, @RequestParam String console_flag,
+        @RequestParam(required = false) String facial_features,
+//        @RequestBody FacialFeaturesDTO facialFeaturesDTO, // Accept facialFeatures as JSON array 
+        @RequestParam(required = false) String public_key, @RequestParam String console_flag,
         @RequestParam String drawer_flag, @RequestParam String active_flag, @RequestParam(required = false) String pic_filename, 
         @RequestParam(required = false) String address, @RequestParam(required = false) String email,         
         @RequestParam Integer emp_type_id, @RequestParam Integer emp_status_id, 
@@ -116,7 +121,7 @@ public class EmployeeController {
     ) {
         employeeService.updateEmployee(
             id, emp_no, last_nm, first_nm, gender, station_id, tin_no, sss_no, bday, phone_no, date_hired,
-            date_end, remarks, face_id, public_key, console_flag, drawer_flag, active_flag, pic_filename, 
+            date_end, remarks, facial_features, public_key, console_flag, drawer_flag, active_flag, pic_filename, 
             address, email, emp_type_id, emp_status_id, password, username, role_id,
             mon_restday, mon_start1, mon_end1, mon_start2, mon_end2, mon_start3, mon_end3, 
             tue_restday, tue_start1, tue_end1, tue_start2, tue_end2, tue_start3, tue_end3, 

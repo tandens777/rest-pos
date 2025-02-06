@@ -12,6 +12,7 @@ import java.time.LocalTime;
 
 import java.util.List;
 import java.util.Optional;
+import java.sql.Array;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
@@ -31,7 +32,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
         @Param("p_date_hired") LocalDate date_hired,
         @Param("p_date_end") LocalDate date_end,
         @Param("p_remarks") String remarks,
-        @Param("p_face_id") String face_id,
+        @Param("p_facial_features") String facial_features,
         @Param("p_public_key") String public_key,
         @Param("p_console_flag") String console_flag,
         @Param("p_drawer_flag") String drawer_flag,
@@ -120,7 +121,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
         @Param("p_date_hired") LocalDate date_hired,
         @Param("p_date_end") LocalDate date_end,
         @Param("p_remarks") String remarks,
-        @Param("p_face_id") String face_id,
+        @Param("p_facial_features") String facial_features,
         @Param("p_public_key") String public_key,
         @Param("p_console_flag") String console_flag,
         @Param("p_drawer_flag") String drawer_flag,

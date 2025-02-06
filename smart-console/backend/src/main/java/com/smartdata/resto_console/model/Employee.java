@@ -5,8 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.sql.Array;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -31,7 +36,7 @@ import java.time.LocalTime;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_date_hired", type = LocalDate.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_date_end", type = LocalDate.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_remarks", type = String.class),
-            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_face_id", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_facial_features", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_public_key", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_console_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_drawer_flag", type = String.class),
@@ -121,7 +126,7 @@ import java.time.LocalTime;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_date_hired", type = LocalDate.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_date_end", type = LocalDate.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_remarks", type = String.class),
-            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_face_id", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_facial_features", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_public_key", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_console_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_drawer_flag", type = String.class),
@@ -253,8 +258,8 @@ public class Employee {
     @Column(name = "remarks") 
 	private String remarks;
 
-    @Column(name = "face_id") 
-	private String faceId;
+    @Column(name = "facial_features") 
+    private String facialFeatures; // Store facial feature vector
 
     @Column(name = "public_key") 
 	private String publicKey;
@@ -446,6 +451,36 @@ public class Employee {
 
     @Column(name = "sun_end3")
     private LocalTime sunEnd3;
+
+
+    @JsonIgnore
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    // Convert JSON string to float[]
+    @JsonIgnore
+    public float[] getFacialFeaturesAsArray() {
+        try {
+            if (!(facialFeatures == null || facialFeatures.trim().isEmpty())) {
+                return objectMapper.readValue(facialFeatures, float[].class);
+            } else {
+                return null;
+            }
+        } catch (JsonProcessingException e) {
+            return new float[0]; // Handle conversion error
+        }
+    }
+
+    // Convert float[] to JSON string before storing
+    @JsonIgnore
+    public void setFacialFeaturesFromArray(float[] features) {
+        try {
+            if (features != null) {
+                this.facialFeatures = objectMapper.writeValueAsString(features);
+            } 
+        } catch (JsonProcessingException e) {
+            this.facialFeatures = "[]"; // Handle error
+        }
+    }
 
     // Getters and setters
 }

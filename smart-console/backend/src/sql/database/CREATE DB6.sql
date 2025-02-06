@@ -42,3 +42,11 @@ INSERT INTO employee_status VALUES (10, 'Resigned');
 INSERT INTO employee_status VALUES (11, 'Terminated');
 INSERT INTO employee_status VALUES (12, 'Suspended');
 INSERT INTO employee_status VALUES (13, 'End Contract');
+
+
+ALTER TABLE employees
+ADD COLUMN facial_features character varying,
+DROP COLUMN face_id;
+
+ALTER TABLE users
+ADD COLUMN facial_features character varying;

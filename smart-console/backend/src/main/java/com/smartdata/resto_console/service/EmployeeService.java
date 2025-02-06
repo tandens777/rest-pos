@@ -3,12 +3,14 @@ package com.smartdata.resto_console.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.*;
 
 import com.smartdata.resto_console.repository.EmployeeRepository;
 import com.smartdata.resto_console.exception.GenericNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.smartdata.resto_console.model.Employee;
+import com.smartdata.resto_console.dto.*;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,10 +20,16 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.sql.Array;
+import java.sql.Connection;
+import java.util.Arrays;
 
 
 @Service
 public class EmployeeService {
+
+    @PersistenceContext
+    private EntityManager entityManager;  // Inject EntityManager
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -32,7 +40,9 @@ public class EmployeeService {
     public void addEmployee(
         String emp_no, String last_nm, String first_nm, String gender, Integer station_id,
         String tin_no, String sss_no, LocalDate bday, String phone_no, LocalDate date_hired,
-        LocalDate date_end, String remarks, String face_id, String public_key, String console_flag,
+        LocalDate date_end, String remarks, 
+        String facial_features, 
+        String public_key, String console_flag,
         String drawer_flag, String active_flag, String pic_filename, 
 
         String address, String email, Integer emp_type_id, Integer emp_status_id, 
@@ -65,12 +75,21 @@ public class EmployeeService {
             if (!isPinUnique(password, null)) {
                 throw new GenericNotFoundException("PIN code already in use. Please choose another.");
             }
+
+            FacialFeaturesDTO faceDTO = new FacialFeaturesDTO();
+            faceDTO.setFacialFeatures(facial_features);
+            float[] facialFeaturesArray = faceDTO.getFacialFeaturesAsArray();
+
+            // Check for uniqueness of Face
+             if (!isFaceUnique(facialFeaturesArray, null)) {
+                throw new GenericNotFoundException("Face already registered with another user. Please choose another.");
+            }
             
             String hashedPassword = passwordEncoder.encode(password);
 
             employeeRepository.insertEmployee(
                 emp_no, last_nm, first_nm, gender, station_id, tin_no, sss_no, bday, phone_no,
-                date_hired, date_end, remarks, face_id, public_key, console_flag, drawer_flag,
+                date_hired, date_end, remarks, facial_features, public_key, console_flag, drawer_flag,
                 active_flag, pic_filename, 
                 address, email, emp_type_id, emp_status_id, hashedPassword, username, role_id,
                 mon_restday, mon_start1, mon_end1, mon_start2, mon_end2, mon_start3, mon_end3, 
@@ -92,7 +111,9 @@ public class EmployeeService {
     public void updateEmployee(
         Long id, String emp_no, String last_nm, String first_nm, String gender, Integer station_id,
         String tin_no, String sss_no, LocalDate bday, String phone_no, LocalDate date_hired,
-        LocalDate date_end, String remarks, String face_id, String public_key, String console_flag,
+        LocalDate date_end, String remarks, 
+        String facial_features,
+        String public_key, String console_flag,
         String drawer_flag, String active_flag, String pic_filename, 
         
         String address, String email, Integer emp_type_id, Integer emp_status_id, 
@@ -124,6 +145,7 @@ public class EmployeeService {
             String hashedPassword = "";
             String oldStoredPassword = "";
             String oldUsername = "";
+
             Optional<Employee> employeeOptional = employeeRepository.findById(id);
 
             if (employeeOptional.isPresent()) {
@@ -145,9 +167,18 @@ public class EmployeeService {
                 hashedPassword = oldStoredPassword;
             }
 
+            FacialFeaturesDTO faceDTO = new FacialFeaturesDTO();
+            faceDTO.setFacialFeatures(facial_features);
+            float[] facialFeaturesArray = faceDTO.getFacialFeaturesAsArray();
+
+             // Check for uniqueness of Face
+             if (!isFaceUnique(facialFeaturesArray, oldUsername)) {
+                throw new GenericNotFoundException("Face already registered with another user. Please choose another.");
+            }
+
             employeeRepository.updateEmployee(
                 id, emp_no, last_nm, first_nm, gender, station_id, tin_no, sss_no, bday, phone_no,
-                date_hired, date_end, remarks, face_id, public_key, console_flag, drawer_flag,
+                date_hired, date_end, remarks, facial_features, public_key, console_flag, drawer_flag,
                 active_flag, pic_filename, 
                 address, email, emp_type_id, emp_status_id, hashedPassword, username, role_id,
                 mon_restday, mon_start1, mon_end1, mon_start2, mon_end2, mon_start3, mon_end3, 
@@ -163,7 +194,7 @@ public class EmployeeService {
         } catch (GenericNotFoundException e) {
             throw new GenericNotFoundException("PIN code already in use. Please choose another.");
         } catch (Exception e) {
-            throw new GenericNotFoundException("An unexpected error occurred while updating the employee.");
+            throw new GenericNotFoundException("An unexpected error occurred while updating the employee." + e.getMessage());
         }            
     }
 
@@ -229,7 +260,41 @@ public class EmployeeService {
         }
         return true; // Unique PIN
     }
+
     
+    public boolean isFaceUnique(float[] newFacialFeatures, String skip_username) { 
+        List<Employee> employees;
+    
+        UserService svc = new UserService();
+    
+        if (skip_username != null) {
+            employees = employeeRepository.findByUsernameNot(skip_username);
+        } else {
+            employees = employeeRepository.findAll(); // Check all employees
+        }
+    
+        // Skip comparison if newFacialFeatures is null
+        if (newFacialFeatures == null) {
+            return true; // No face features provided, assume unique
+        }
+    
+        for (Employee employee : employees) {
+            float[] existingFacialFeatures = employee.getFacialFeaturesAsArray();
+    
+            // Skip comparison if existing facial features are null
+            if (existingFacialFeatures == null) {
+                continue; // Skip this employee, as they have no stored facial features
+            }
+    
+            if (svc.compareFacialFeatures(newFacialFeatures, existingFacialFeatures)) {
+                System.out.println("❌ Face Matched for User: " + employee.getUsername());
+                return false; // Face already exists
+            }
+        }
+    
+        return true; // Unique Face
+    }
+
     @Transactional
     public void changePIN(String username, String old_password, String new_password) throws GenericNotFoundException {
         Optional<Employee> employeeOptional = employeeRepository.findByUsername(username);

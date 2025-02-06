@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE public.insert_employee(
     IN p_date_hired DATE,
     IN p_date_end DATE,
     IN p_remarks CHARACTER VARYING,
-    IN p_face_id CHARACTER VARYING,
+    IN p_facial_features CHARACTER VARYING,
     IN p_public_key CHARACTER VARYING,
     IN p_console_flag CHARACTER VARYING,
     IN p_drawer_flag CHARACTER VARYING,
@@ -50,7 +50,7 @@ BEGIN
 
     INSERT INTO employees (id,
         emp_no, last_nm, first_nm, gender, station_id, tin_no, sss_no, bday, phone_no,
-        date_hired, date_end, remarks, face_id, public_key, console_flag, drawer_flag, active_flag, pic_filename,
+        date_hired, date_end, remarks, facial_features, public_key, console_flag, drawer_flag, active_flag, pic_filename,
 
         address, email, emp_type_id, emp_status_id, password, username, role_id,
 
@@ -63,7 +63,7 @@ BEGIN
         sun_restday, sun_start1, sun_end1, sun_start2, sun_end2, sun_start3, sun_end3
     ) VALUES (p_id,
         p_emp_no, p_last_nm, p_first_nm, p_gender, p_station_id, p_tin_no, p_sss_no, p_bday, p_phone_no,
-        p_date_hired, p_date_end, p_remarks, p_face_id, p_public_key, p_console_flag, p_drawer_flag, p_active_flag, p_pic_filename,
+        p_date_hired, p_date_end, p_remarks, p_facial_features, p_public_key, p_console_flag, p_drawer_flag, p_active_flag, p_pic_filename,
 
         p_address, p_email, p_emp_type_id, p_emp_status_id, p_password, p_username, p_role_id,
 
