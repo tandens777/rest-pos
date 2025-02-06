@@ -253,7 +253,7 @@ const Settings = () => {
             <Button
               type="primary"
               icon={<EditOutlined />}
-              style={{ backgroundColor: "#52c41a" }}
+              style={{ backgroundColor: "#28a745" }}  //"#52c41a"
               onClick={() => setEditPositionsModalVisible(true)}
             >
               Edit Positions

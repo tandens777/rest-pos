@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
 import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, DatePicker, TimePicker, Col, Row, Checkbox, Upload, Avatar, Switch, Tabs } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined, UploadOutlined, CameraOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import FaceRegister from "./FaceRegister"; 
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -16,6 +17,9 @@ const Employee = () => {
     const [employeeTypes, setEmployeeTypes] = useState([]);
     const [employeeStatuses, setEmployeeStatuses] = useState([]);
     const [roles, setRoles] = useState([]);
+
+    const [isFaceRegisterVisible, setIsFaceRegisterVisible] = useState(false);
+    const [facialFeatures, setFacialFeatures] = useState(null);
 
     const [form] = Form.useForm();
     const [currentPage, setCurrentPage] = useState(1);
@@ -101,6 +105,7 @@ const Employee = () => {
         setIsModalVisible(true);
         form.resetFields();
         setPicturePreview("");
+        setFacialFeatures("");
     };
 
     // Edit an Existing Employee
@@ -153,6 +158,13 @@ const Employee = () => {
         } else {
             setPicturePreview("");
         }
+
+        if (employee.facialFeatures) {
+            setFacialFeatures(employee.facialFeatures);
+        } else {
+            setFacialFeatures("");
+        }
+
     };
 
     // Delete an Employee
@@ -191,7 +203,7 @@ const Employee = () => {
                 date_hired: values.date_hired ? dayjs(values.date_hired).format("YYYY-MM-DD") : null,
                 date_end: values.date_end ? dayjs(values.date_end).format("YYYY-MM-DD") : null,
                 remarks: values.remarks,
-                facial_features: values.facial_features,
+                facial_features: facialFeatures,
                 public_key: values.public_key,
                 console_flag: values.console_flag ? 'Y' : 'N',
                 drawer_flag: values.drawer_flag ? 'Y' : 'N',
@@ -294,6 +306,24 @@ const Employee = () => {
             message.error("Failed to remove picture.");
         }
     };    
+
+
+    // Handles Face Recognition
+    const handleRegisterFacialRecognition = () => {
+        setIsFaceRegisterVisible(true);
+    };
+
+    const handleRemoveFacialRecognition = () => {
+        setFacialFeatures(null);
+        message.success("Facial recognition data removed successfully!");
+    };
+
+    const handleSaveFacialFeatures = (features) => {
+        setFacialFeatures(features);
+        form.setFieldsValue({ facial_features: features });
+    };
+
+
 
     // Table Columns
     const columns = [
@@ -688,9 +718,41 @@ const Employee = () => {
                                     {picturePreview ? "Remove Image" : "Upload Image"}
                                 </Button>
                             </Upload>
-                            <Form.Item name="pic_filename" label="">
-                                    <Input type="hidden" />
+                            <Form.Item name="pic_filename" label="" style={{ height: 0, overflow: 'hidden', margin: 0, padding: 0 }}>
+                                <Input type="hidden" />
                             </Form.Item>
+
+
+                            {/* Add the facial recognition buttons below the Upload Picture button */}
+                            <div style={{ marginTop: "20px" }}>
+                                <Button
+                                    icon={facialFeatures ? <DeleteOutlined /> : <CameraOutlined />}
+                                    onClick={(e) => {
+                                        if (facialFeatures) {
+                                            handleRemoveFacialRecognition();
+                                        } else {
+                                            handleRegisterFacialRecognition();
+                                        }
+                                    }}
+                                    style={{
+                                        backgroundColor: facialFeatures ? "red" : "#28a745",
+                                        color: "white",
+                                        borderRadius: "4px",
+                                        height: "40px",
+                                        border: "none",
+                                    }}
+                                >
+                                    {facialFeatures ? "Remove Facial Recognition" : "Register Facial Recognition"}
+                                </Button>
+
+                            </div>
+
+                            {/* Add the FaceRegister modal */}
+                            <FaceRegister
+                                visible={isFaceRegisterVisible}
+                                onCancel={() => setIsFaceRegisterVisible(false)}
+                                onSave={handleSaveFacialFeatures}
+                            />                            
                         </div>
                     </Col>
                 </Row>
