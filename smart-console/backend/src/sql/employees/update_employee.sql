@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE public.update_employee(
     IN p_date_hired DATE,
     IN p_date_end DATE,
     IN p_remarks CHARACTER VARYING,
-    IN p_face_id CHARACTER VARYING,
+    IN p_facial_features CHARACTER VARYING,
     IN p_public_key CHARACTER VARYING,
     IN p_console_flag CHARACTER VARYING,
     IN p_drawer_flag CHARACTER VARYING,
@@ -48,7 +48,7 @@ BEGIN
     SET 
         emp_no = p_emp_no, last_nm = p_last_nm, first_nm = p_first_nm, gender = p_gender, station_id = p_station_id,
         tin_no = p_tin_no, sss_no = p_sss_no, bday = p_bday, phone_no = p_phone_no, date_hired = p_date_hired, 
-        date_end = p_date_end, remarks = p_remarks, face_id = p_face_id, public_key = p_public_key,
+        date_end = p_date_end, remarks = p_remarks, facial_features = p_facial_features, public_key = p_public_key,
         console_flag = p_console_flag, drawer_flag = p_drawer_flag, active_flag = p_active_flag, pic_filename = p_pic_filename,
 
         address = p_address, email = p_email, emp_type_id = p_emp_type_id, emp_status_id = p_emp_status_id,

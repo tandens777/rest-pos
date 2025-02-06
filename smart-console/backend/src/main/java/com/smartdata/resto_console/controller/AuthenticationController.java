@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.smartdata.resto_console.model.User;
 import com.smartdata.resto_console.security.JwtUtil;
 import com.smartdata.resto_console.security.LoginRequest;
+import com.smartdata.resto_console.security.FaceLoginRequest;
 import com.smartdata.resto_console.security.LoginResponse;
 import com.smartdata.resto_console.service.UserService;
 
@@ -35,5 +36,20 @@ public class AuthenticationController {
 
         return ResponseEntity.status(401).body("Invalid PIN");
     }
+
+    @PostMapping("/face_login")
+    public ResponseEntity<?> login(@RequestBody FaceLoginRequest loginRequest) {
+        Optional<User> userOptional = userService.findByFacialFeatures(loginRequest.getFacialFeatures());
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            String role = user.getRole().getName();
+            String token = jwtUtil.generateToken(user.getUsername(), role);
+            return ResponseEntity.ok(new LoginResponse(user.getUsername(), role, token));
+        }
+
+        return ResponseEntity.status(401).body("Face not recognized.");
+    }
+
 }
 
