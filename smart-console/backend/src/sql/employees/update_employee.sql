@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE public.update_employee(
     IN p_date_hired DATE,
     IN p_date_end DATE,
     IN p_remarks CHARACTER VARYING,
-    IN p_facial_features CHARACTER VARYING,
+    IN p_facial_features TEXT,
     IN p_public_key CHARACTER VARYING,
     IN p_console_flag CHARACTER VARYING,
     IN p_drawer_flag CHARACTER VARYING,
@@ -65,7 +65,8 @@ BEGIN
 
     update  users
     set     username = p_username,
-            role_id = p_role_id
+            role_id = p_role_id,
+            facial_features = p_facial_features
     WHERE id = p_id;
 
     if p_old_password <> p_password then
@@ -83,7 +84,7 @@ $$;
 
 ALTER PROCEDURE public.update_employee(
     BIGINT, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, INTEGER, CHARACTER VARYING, CHARACTER VARYING, DATE, CHARACTER VARYING,
-    DATE, DATE, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING,
+    DATE, DATE, CHARACTER VARYING, TEXT, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING,
 
     CHARACTER VARYING, CHARACTER VARYING, int, int, CHARACTER VARYING, CHARACTER VARYING, BIGINT,
 

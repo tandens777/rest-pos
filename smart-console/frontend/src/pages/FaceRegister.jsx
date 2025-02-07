@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Modal, Button, message } from "antd";
 import { CameraOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import * as faceapi from 'face-api.js';
-import './FaceRegister.css';
+import styles from './FaceRegister.module.css';
 
 const FaceRegister = ({ visible, onCancel, onSave }) => {
     const [facialFeatures, setFacialFeatures] = useState(null);
@@ -33,7 +33,12 @@ const FaceRegister = ({ visible, onCancel, onSave }) => {
     const startVideo = () => {
         navigator.mediaDevices.getUserMedia({ video: true })
             .then((stream) => {
-                videoRef.current.srcObject = stream;
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                } else {
+                    console.error("videoRef.current is undefined, retrying...");
+                    setTimeout(startVideo, 500);  // Retry after 500ms
+                }
             })
             .catch((err) => console.error("Error accessing webcam:", err));
     };
@@ -69,7 +74,7 @@ const FaceRegister = ({ visible, onCancel, onSave }) => {
             faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
         }, 100);
     };
-    
+
     const handleCapture = async () => {
         const detection = await faceapi.detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions())
             .withFaceLandmarks()
@@ -110,9 +115,11 @@ const FaceRegister = ({ visible, onCancel, onSave }) => {
                 </Button>
             ]}
             >
-            <div className='display-flex justify-content-center position-relative'>
+            <div className={styles["display-flex"] + " " + styles["justify-content-center"] + " " + styles["position-relative"]}>
+            <div className={styles["video-container"]}>
                 <video ref={videoRef} autoPlay muted height={videoHeight} width={videoWidth} onPlay={handleVideoOnPlay} />
                 <canvas ref={canvasRef} className='position-absolute' />
+            </div>
             </div>
 
             <div style={{ textAlign: "center", marginTop: "10px" }}>

@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE public.insert_employee(
     IN p_date_hired DATE,
     IN p_date_end DATE,
     IN p_remarks CHARACTER VARYING,
-    IN p_facial_features CHARACTER VARYING,
+    IN p_facial_features TEXT,
     IN p_public_key CHARACTER VARYING,
     IN p_console_flag CHARACTER VARYING,
     IN p_drawer_flag CHARACTER VARYING,
@@ -42,8 +42,8 @@ DECLARE
     p_id BIGINT;
 BEGIN
     -- Insert into users table
-    INSERT INTO users(password, username, role_id)
-    VALUES (p_password, p_username, p_role_id);
+    INSERT INTO users(password, username, role_id, facial_features)
+    VALUES (p_password, p_username, p_role_id, p_facial_features);
 
     -- Get the ID of the newly inserted user
     SELECT id INTO p_id FROM users WHERE username = p_username ORDER BY id DESC LIMIT 1;
@@ -80,7 +80,7 @@ $$;
 
 ALTER PROCEDURE public.insert_employee(
     CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, INTEGER, CHARACTER VARYING, CHARACTER VARYING, DATE, CHARACTER VARYING,
-    DATE, DATE, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING,
+    DATE, DATE, CHARACTER VARYING, TEXT, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING, CHARACTER VARYING,
 
     CHARACTER VARYING, CHARACTER VARYING, int, int, CHARACTER VARYING, CHARACTER VARYING, BIGINT,
 

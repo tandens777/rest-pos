@@ -40,7 +40,7 @@ video {
   height: auto;
 }
 
-canvas {
+.video-container canvas {
   position: absolute;
   top: 0;
   left: 0;

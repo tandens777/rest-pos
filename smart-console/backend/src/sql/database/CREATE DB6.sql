@@ -50,3 +50,10 @@ DROP COLUMN face_id;
 
 ALTER TABLE users
 ADD COLUMN facial_features character varying;
+
+ALTER TABLE employees
+ALTER COLUMN facial_features TYPE TEXT;
+
+
+ALTER TABLE users
+ALTER COLUMN facial_features TYPE TEXT;

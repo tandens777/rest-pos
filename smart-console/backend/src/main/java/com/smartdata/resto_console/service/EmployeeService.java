@@ -190,7 +190,7 @@ public class EmployeeService {
                 sun_restday, sun_start1, sun_end1, sun_start2, sun_end2, sun_start3, sun_end3
             );
         } catch (DataIntegrityViolationException e) {
-            throw new GenericNotFoundException("Record has duplicate fields. Please check Employee No, Username, FirstName and LastName, or Password PIN.");
+            throw new GenericNotFoundException("Record has duplicate fields. Please check Employee No, Username, FirstName and LastName, or Password PIN." + e.getMessage());
         } catch (GenericNotFoundException e) {
             throw new GenericNotFoundException("PIN code already in use. Please choose another.");
         } catch (Exception e) {
