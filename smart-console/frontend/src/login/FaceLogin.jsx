@@ -4,6 +4,7 @@ import { CameraOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import * as faceapi from 'face-api.js';
 import axios from 'axios';
 import styles from './FaceLogin.module.css';
+import "./FaceLogin.css";
 import { useNavigate } from "react-router-dom";
 
 const FaceLogin = () => {

@@ -24,10 +24,7 @@
     animation: scanning 2s linear infinite;
 }
 
-@keyframes scanning {
-    0% { top: 0; }
-    100% { top: 100%; }
-}
+
 
 .video-container {
   position: relative;
