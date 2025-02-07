@@ -34,7 +34,7 @@ public class UserService {
                 .findFirst();
     }
 
-    public Optional<User> findByFacialFeatures(float[] facialFeatures) {
+    public Optional<User> findByFacialFeatures(double[] facialFeatures) {
         if (facialFeatures == null || facialFeatures.length == 0) {
             System.out.println("Facial features are empty or null, skipping comparison.");
             return Optional.empty(); // Return empty if the input is invalid
@@ -42,20 +42,20 @@ public class UserService {
     
          return userRepository.findAll().stream()
                 .filter(user -> {
-                    float[] storedFeatures = user.getFacialFeaturesAsArray();
+                    double[] storedFeatures = user.getFacialFeaturesAsArray();
                     System.out.println("USER" + user.getUsername() + "  Facial:" + user.getFacialFeatures());
                     return storedFeatures != null && storedFeatures.length > 0 && compareFacialFeatures(storedFeatures, facialFeatures);
                 })
                 .findFirst();
     }
     
-    public boolean compareFacialFeatures(float[] storedFeatures, float[] inputFeatures) {
+    public boolean compareFacialFeatures(double[] storedFeatures, double[] inputFeatures) {
         // Use cosine similarity or Euclidean distance to compare feature vectors
         double similarity = cosineSimilarity(storedFeatures, inputFeatures);
         return similarity > 0.95; // Adjust threshold as needed
     }
 
-    private double cosineSimilarity(float[] vectorA, float[] vectorB) {
+    private double cosineSimilarity(double[] vectorA, double[] vectorB) {
         double dotProduct = 0.0;
         double normA = 0.0;
         double normB = 0.0;

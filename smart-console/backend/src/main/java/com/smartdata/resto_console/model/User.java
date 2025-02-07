@@ -46,17 +46,17 @@ public class User {
 
     // Convert JSON string to float[]
     @JsonIgnore
-    public float[] getFacialFeaturesAsArray() {
+    public double[] getFacialFeaturesAsArray() {
         try {
-            return objectMapper.readValue(facialFeatures, float[].class);
+            return objectMapper.readValue(facialFeatures, double[].class);
         } catch (JsonProcessingException e) {
-            return new float[0]; // Handle conversion error
+            return new double[0]; // Handle conversion error
         }
     }
 
     // Convert float[] to JSON string before storing
     @JsonIgnore
-    public void setFacialFeaturesFromArray(float[] features) {
+    public void setFacialFeaturesFromArray(double[] features) {
         try {
             this.facialFeatures = objectMapper.writeValueAsString(features);
         } catch (JsonProcessingException e) {

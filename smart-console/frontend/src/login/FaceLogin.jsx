@@ -112,7 +112,7 @@ const FaceLogin = () => {
         }
     
         let variance = laplacianSum / totalPixels;
-        console.log("Texture Variance:", variance);
+        //console.log("Texture Variance:", variance);
     
         return variance < 100; // Threshold for detecting real texture
     };
@@ -175,7 +175,7 @@ const FaceLogin = () => {
         // EAR threshold for blinking
         const EAR_THRESHOLD = 0.28;
 
-        console.log(`Left EAR: ${leftEAR}, Right EAR: ${rightEAR}, Average EAR: ${ear}`);
+        //console.log(`Left EAR: ${leftEAR}, Right EAR: ${rightEAR}, Average EAR: ${ear}`);
 
         return ear < EAR_THRESHOLD; // If EAR is low, the user blinked
     };
@@ -206,7 +206,7 @@ const FaceLogin = () => {
         while (!loginSuccess) {
             console.log("calling handleLogin...");
 
-/*            if (!detectTexture()) {
+            if (!detectTexture()) {
                 console.log("Spoofing detected! Possible screen replay attack.");
                 setError("Spoofing detected! Please use a real face.");
                 await new Promise(resolve => setTimeout(resolve, 2000));
@@ -219,7 +219,7 @@ const FaceLogin = () => {
                 await new Promise(resolve => setTimeout(resolve, 2000)); // Wait before retrying
                 continue; // Skip the rest of the loop and retry
             }
-*/
+
             const detection = await faceapi.detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions())
                 .withFaceLandmarks()
                 .withFaceExpressions()

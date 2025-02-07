@@ -19,19 +19,19 @@ public class FacialFeaturesDTO {
         this.facialFeatures = facialFeatures;
     }
 
-    public float[] getFacialFeaturesAsArray() {
+    public double[] getFacialFeaturesAsArray() {
         try {
             if (!(facialFeatures == null || facialFeatures.trim().isEmpty())) {
-                return objectMapper.readValue(facialFeatures, float[].class);
+                return objectMapper.readValue(facialFeatures, double[].class);
             } else {
                 return null;
             }
         } catch (JsonProcessingException e) {
-            return new float[0]; // Handle error gracefully
+            return new double[0]; // Handle error gracefully
         }
     }
 
-    public void setFacialFeaturesFromArray(float[] features) {
+    public void setFacialFeaturesFromArray(double[] features) {
         try {
             if (features != null) {
                 this.facialFeatures = objectMapper.writeValueAsString(features);

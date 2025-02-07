@@ -61,7 +61,7 @@ public class AuthenticationController {
     public ResponseEntity<?> login(@RequestBody FacialFeaturesDTO loginRequest) {
         
 //        System.out.println("FACE LOGIN REQUEST: " + loginRequest.getFacialFeatures());
-        float[] loginFacialFeatures = loginRequest.getFacialFeaturesAsArray();
+        double[] loginFacialFeatures = loginRequest.getFacialFeaturesAsArray();
 //        System.out.println("FACE LOGIN REQUEST ARRAY: " + Arrays.toString(loginFacialFeatures));
 
         if (loginRequest.getFacialFeatures() == null || loginFacialFeatures.length == 0) {
@@ -76,7 +76,7 @@ public class AuthenticationController {
         employees = employeeService.getEmployees(null); // Check all employees
     
         for (Employee employee : employees) {
-            float[] existingFacialFeatures = employee.getFacialFeaturesAsArray();
+            double[] existingFacialFeatures = employee.getFacialFeaturesAsArray();
     
             // Skip comparison if existing facial features are null
             if (existingFacialFeatures == null) {

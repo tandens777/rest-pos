@@ -78,7 +78,7 @@ public class EmployeeService {
 
             FacialFeaturesDTO faceDTO = new FacialFeaturesDTO();
             faceDTO.setFacialFeatures(facial_features);
-            float[] facialFeaturesArray = faceDTO.getFacialFeaturesAsArray();
+            double[] facialFeaturesArray = faceDTO.getFacialFeaturesAsArray();
 
             // Check for uniqueness of Face
              if (!isFaceUnique(facialFeaturesArray, null)) {
@@ -171,7 +171,7 @@ public class EmployeeService {
 
             FacialFeaturesDTO faceDTO = new FacialFeaturesDTO();
             faceDTO.setFacialFeatures(facial_features);
-            float[] facialFeaturesArray = faceDTO.getFacialFeaturesAsArray();
+            double[] facialFeaturesArray = faceDTO.getFacialFeaturesAsArray();
 
             System.out.println("FACIAL ARRAY: " + Arrays.toString(facialFeaturesArray));
 
@@ -266,7 +266,7 @@ public class EmployeeService {
     }
 
     
-    public boolean isFaceUnique(float[] newFacialFeatures, String skip_username) { 
+    public boolean isFaceUnique(double[] newFacialFeatures, String skip_username) { 
         List<Employee> employees;
     
         UserService svc = new UserService();
@@ -283,7 +283,7 @@ public class EmployeeService {
         }
     
         for (Employee employee : employees) {
-            float[] existingFacialFeatures = employee.getFacialFeaturesAsArray();
+            double[] existingFacialFeatures = employee.getFacialFeaturesAsArray();
     
             // Skip comparison if existing facial features are null
             if (existingFacialFeatures == null) {
