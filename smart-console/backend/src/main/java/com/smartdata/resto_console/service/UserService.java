@@ -5,6 +5,7 @@ import com.smartdata.resto_console.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.smartdata.resto_console.exception.GenericNotFoundException;
 
 import java.util.Optional;
 
@@ -17,6 +18,16 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    public Optional<User> getUser(Long id) throws GenericNotFoundException {
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isPresent()) {
+            return user;
+        } else {
+            throw new GenericNotFoundException("User not found with id: " + id);
+        }
+    }
+
     public Optional<User> findByPinCode(String rawPincode) {
         return userRepository.findAll().stream()
                 .filter(user -> passwordEncoder.matches(rawPincode, user.getPassword()))
@@ -24,11 +35,20 @@ public class UserService {
     }
 
     public Optional<User> findByFacialFeatures(float[] facialFeatures) {
-        return userRepository.findAll().stream()
-                .filter(user -> compareFacialFeatures(user.getFacialFeaturesAsArray(), facialFeatures))
+        if (facialFeatures == null || facialFeatures.length == 0) {
+            System.out.println("Facial features are empty or null, skipping comparison.");
+            return Optional.empty(); // Return empty if the input is invalid
+        }
+    
+         return userRepository.findAll().stream()
+                .filter(user -> {
+                    float[] storedFeatures = user.getFacialFeaturesAsArray();
+                    System.out.println("USER" + user.getUsername() + "  Facial:" + user.getFacialFeatures());
+                    return storedFeatures != null && storedFeatures.length > 0 && compareFacialFeatures(storedFeatures, facialFeatures);
+                })
                 .findFirst();
     }
-
+    
     public boolean compareFacialFeatures(float[] storedFeatures, float[] inputFeatures) {
         // Use cosine similarity or Euclidean distance to compare feature vectors
         double similarity = cosineSimilarity(storedFeatures, inputFeatures);

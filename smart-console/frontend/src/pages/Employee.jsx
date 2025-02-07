@@ -186,7 +186,7 @@ const Employee = () => {
 
     // Handle Modal Submission (Add or Update Employee)
     const handleModalSubmit = async (values) => {
-        console.log('Enter saving data by calling api', values);
+        //console.log('Enter saving data by calling api', values);
         try {
             // Prepare employee data
             const employeeData = {
@@ -227,6 +227,8 @@ const Employee = () => {
                 }), {}),
             };
 
+            console.log('Enter saving data by calling api', employeeData);
+
             const url = editingEmployee ? `/employees/update/${editingEmployee.id}` : `/employees/add`;
             const method = editingEmployee ? 'put' : 'post';
     
@@ -240,7 +242,7 @@ const Employee = () => {
                     },
                 }
             );
-            
+
             // Success message
             message.success(`Employee ${editingEmployee ? 'updated' : 'added'} successfully.`);
 

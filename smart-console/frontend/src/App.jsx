@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './login/Login';
+import FaceLogin from './login/FaceLogin';
 import RootLayout from './layouts/RootLayout';
 import AllApps from './pages/AllApps';
 import Analytics from './pages/Analytics';
@@ -43,6 +44,11 @@ const App = () => {
       <Route
         path="/login"
         element={isAuthenticated ? <Navigate to="/" /> : <Login />}
+      />
+      {/* Route for the Login page (no RootLayout) */}
+      <Route
+        path="/face_login"
+        element={isAuthenticated ? <Navigate to="/" /> : <FaceLogin />}
       />
 
       {/* If authenticated, render RootLayout with nested routes */}

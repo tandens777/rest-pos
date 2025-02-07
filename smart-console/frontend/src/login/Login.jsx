@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import companyLogo from '../assets/images/smartPOS.png'; // Import the logo
+import { TbFaceId } from "react-icons/tb";
+import { faSmile } from '@fortawesome/free-solid-svg-icons'; // Facial recognition icon
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const containerStyle = {
   display: 'flex',
@@ -260,6 +263,34 @@ function Login() {
                   boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Optional: Add a subtle shadow
                 }}
               />
+
+              {/* Facial Recognition Login Button */}
+            <button
+              onClick={() => navigate('/face_login')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '10px',
+                padding: '10px',
+                fontSize: '16px',
+                width: '100%',
+                backgroundColor: '#28a745', // Green color for facial recognition login
+                color: '#fff',
+                border: 'none',
+                borderRadius: '8px',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)',
+                cursor: 'pointer',
+                transition: 'background-color 0.3s, box-shadow 0.3s',
+              }}
+              onMouseOver={(e) => (e.target.style.backgroundColor = '#218838')}
+              onMouseOut={(e) => (e.target.style.backgroundColor = '#28a745')}
+            >
+              <TbFaceId style={{ marginRight: '10px', fontSize: '24px' }} />
+              Face Login
+            </button>
+
+
             </div>
             <p style={{ color: message === 'Invalid credentials' ? 'red' : 'black' }}>{message}</p>
           </div>
