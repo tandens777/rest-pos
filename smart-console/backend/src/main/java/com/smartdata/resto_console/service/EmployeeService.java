@@ -102,6 +102,8 @@ public class EmployeeService {
             );
         } catch (DataIntegrityViolationException e) {
             throw new GenericNotFoundException("Record has duplicate fields. Please check Employee No, Username, FirstName and LastName, or Password PIN.");
+        } catch (GenericNotFoundException e) {
+            throw new GenericNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new GenericNotFoundException("An unexpected error occurred while updating the employee.");
         }                    
@@ -171,6 +173,8 @@ public class EmployeeService {
             faceDTO.setFacialFeatures(facial_features);
             float[] facialFeaturesArray = faceDTO.getFacialFeaturesAsArray();
 
+            System.out.println("FACIAL ARRAY: " + Arrays.toString(facialFeaturesArray));
+
              // Check for uniqueness of Face
              if (!isFaceUnique(facialFeaturesArray, oldUsername)) {
                 throw new GenericNotFoundException("Face already registered with another user. Please choose another.");
@@ -192,7 +196,7 @@ public class EmployeeService {
         } catch (DataIntegrityViolationException e) {
             throw new GenericNotFoundException("Record has duplicate fields. Please check Employee No, Username, FirstName and LastName, or Password PIN." + e.getMessage());
         } catch (GenericNotFoundException e) {
-            throw new GenericNotFoundException("PIN code already in use. Please choose another.");
+            throw new GenericNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new GenericNotFoundException("An unexpected error occurred while updating the employee." + e.getMessage());
         }            
@@ -324,6 +328,8 @@ public class EmployeeService {
             employeeRepository.changePIN(username, hashedNewPassword);
         } else {
             throw new GenericNotFoundException("Employee [" + username + "] not found.");               
-        }    }
+        }
+    }
+
 
 }
