@@ -188,7 +188,6 @@ const Employee = () => {
     const handleModalSubmit = async (values) => {
         console.log('Enter saving data by calling api', values);
         try {
-
             // Prepare employee data
             const employeeData = {
                 emp_no: values.emp_no,
@@ -203,7 +202,7 @@ const Employee = () => {
                 date_hired: values.date_hired ? dayjs(values.date_hired).format("YYYY-MM-DD") : null,
                 date_end: values.date_end ? dayjs(values.date_end).format("YYYY-MM-DD") : null,
                 remarks: values.remarks,
-                facial_features: facialFeatures,
+                facial_features: facialFeatures, // Now passed in the request body
                 public_key: values.public_key,
                 console_flag: values.console_flag ? 'Y' : 'N',
                 drawer_flag: values.drawer_flag ? 'Y' : 'N',
@@ -216,8 +215,6 @@ const Employee = () => {
                 password: values.password,
                 username: values.username,
                 role_id: values.role_id,
-
-                // Convert TimePicker values to 'HH:mm:ss' format
                 ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].reduce((acc, day) => ({
                     ...acc,
                     [`${day}_restday`]: values[`${day}_restday`] ? "N" : "Y",
@@ -228,38 +225,41 @@ const Employee = () => {
                     [`${day}_start3`]: values[`${day}_start3`] ? dayjs(values[`${day}_start3`]).format("HH:mm:ss") : null,
                     [`${day}_end3`]: values[`${day}_end3`] ? dayjs(values[`${day}_end3`]).format("HH:mm:ss") : null,
                 }), {}),
-
             };
 
-            console.log("Form values on submit:", employeeData);
-
-
-            // Choose API method based on edit mode
             const url = editingEmployee ? `/employees/update/${editingEmployee.id}` : `/employees/add`;
             const method = editingEmployee ? 'put' : 'post';
-
-            // Send request
-            await axiosInstance[method](url, null, { params: employeeData });
-
+    
+            await axiosInstance[method](
+                url,
+                employeeData, // Now passing entire employeeData as JSON
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    },
+                }
+            );
+            
             // Success message
             message.success(`Employee ${editingEmployee ? 'updated' : 'added'} successfully.`);
 
             // Close modal and refresh list
             setIsModalVisible(false);
             fetchEmployees();
-
         } catch (error) {
             console.error("Error saving employee:", error);
-    
+
             // Extract error message from the response
             const errorMessage =
                 error.response?.data?.message || // Backend error message
                 error.response?.data?.error ||  // Alternative error field
                 "Failed to save employee. Please try again."; // Fallback message
-    
+
             message.error(errorMessage); // Display specific error message
         }
     };
+
 
     // Pagination handlers
     const handlePageChange = (page, pageSize) => {
