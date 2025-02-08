@@ -22,6 +22,8 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_active_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_table_count", type = Integer.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_pic_filename", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_app_add_pcnt", type = Double.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_app_add_amt", type = Double.class),
         }
     ),
     @NamedStoredProcedureQuery(
@@ -34,6 +36,8 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_active_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_table_count", type = Integer.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_pic_filename", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_app_add_pcnt", type = Double.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_app_add_amt", type = Double.class),
         }
     ),
     @NamedStoredProcedureQuery(
@@ -66,6 +70,12 @@ public class DeliveryApp {
 
     @Column(name = "pic_filename") // Map the snake_case column name
     private String picFilename;    
+
+    @Column(name = "app_add_pcnt") // Map the snake_case column name
+    private Double appAddPcnt;    
+
+    @Column(name = "app_add_amt") // Map the snake_case column name
+    private Double appAddAmt;    
 
     // Getters and setters
 }

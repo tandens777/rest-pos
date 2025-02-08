@@ -28,14 +28,16 @@ public class DeliveryAppController {
 
     @PreAuthorize("hasRole('ADMIN')")  // allows only ADMIN role to access this api /add, if more than one role use hasAnyRole('','')
     @PostMapping("/add")
-    public void addDeliveryApp(@RequestParam String app_nm, @RequestParam String order_type, @RequestParam String active_flag, @RequestParam Integer table_count, @RequestParam String pic_filename) {
-        dlvryAppService.addDeliveryApp(app_nm, order_type, active_flag, table_count, pic_filename);
+    public void addDeliveryApp(@RequestParam String app_nm, @RequestParam String order_type, @RequestParam String active_flag, 
+            @RequestParam Integer table_count, @RequestParam String pic_filename, @RequestParam Double app_add_pcnt, @RequestParam Double app_add_amt) {
+        dlvryAppService.addDeliveryApp(app_nm, order_type, active_flag, table_count, pic_filename, app_add_pcnt, app_add_amt);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{id}")
-    public void updateDeliveryApp(@PathVariable Integer id, @RequestParam String app_nm, @RequestParam String order_type, @RequestParam String active_flag, @RequestParam Integer table_count, @RequestParam String pic_filename) {
-        dlvryAppService.updateDeliveryApp(id, app_nm, order_type, active_flag, table_count, pic_filename);
+    public void updateDeliveryApp(@PathVariable Integer id, @RequestParam String app_nm, @RequestParam String order_type, @RequestParam String active_flag, 
+            @RequestParam Integer table_count, @RequestParam String pic_filename, @RequestParam Double app_add_pcnt, @RequestParam Double app_add_amt) {
+        dlvryAppService.updateDeliveryApp(id, app_nm, order_type, active_flag, table_count, pic_filename, app_add_pcnt, app_add_amt);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

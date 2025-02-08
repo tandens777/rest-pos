@@ -17,13 +17,13 @@ public class DeliveryAppService {
     private DeliveryAppRepository dlvryAppRepository;
 
     @Transactional
-    public void addDeliveryApp(String app_nm, String order_type, String active_flag, Integer table_count, String pic_filename) {
-        dlvryAppRepository.addDeliveryApp(app_nm, order_type, active_flag, table_count, pic_filename);
+    public void addDeliveryApp(String app_nm, String order_type, String active_flag, Integer table_count, String pic_filename, Double app_add_pcnt, Double app_add_amt) {
+        dlvryAppRepository.addDeliveryApp(app_nm, order_type, active_flag, table_count, pic_filename, app_add_pcnt, app_add_amt);
     }
 
     @Transactional
-    public void updateDeliveryApp(Integer id, String app_nm, String order_type, String active_flag, Integer table_count, String pic_filename) {
-        dlvryAppRepository.updateDeliveryApp(id, app_nm, order_type, active_flag, table_count, pic_filename);
+    public void updateDeliveryApp(Integer id, String app_nm, String order_type, String active_flag, Integer table_count, String pic_filename, Double app_add_pcnt, Double app_add_amt) {
+        dlvryAppRepository.updateDeliveryApp(id, app_nm, order_type, active_flag, table_count, pic_filename, app_add_pcnt, app_add_amt);
     }
 
     @Transactional
