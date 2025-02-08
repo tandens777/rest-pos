@@ -14,11 +14,13 @@ public interface DeliveryAppRepository extends JpaRepository<DeliveryApp, Intege
     // declare stored procedure mapping here for use in service
     @Procedure(name = "addDeliveryApp")
     void addDeliveryApp(@Param("p_app_nm") String app_nm, @Param("p_order_type") String order_type, @Param("p_active_flag") String active_flag, 
-        @Param("p_table_count") Integer table_count, @Param("p_pic_filename") String pic_filename);
+        @Param("p_table_count") Integer table_count, @Param("p_pic_filename") String pic_filename, @Param("p_app_add_pcnt") Double app_add_pcnt,
+        @Param("p_app_add_amt") Double app_add_amt);
 
     @Procedure(name = "updateDeliveryApp")
     void updateDeliveryApp(@Param("p_app_id") Integer id, @Param("p_app_nm") String app_nm, @Param("p_order_type") String order_type, @Param("p_active_flag") String active_flag, 
-        @Param("p_table_count") Integer table_count, @Param("p_pic_filename") String pic_filename);
+        @Param("p_table_count") Integer table_count, @Param("p_pic_filename") String pic_filename, @Param("p_app_add_pcnt") Double app_add_pcnt,
+        @Param("p_app_add_amt") Double app_add_amt);
 
     @Procedure(name = "deleteDeliveryApp")
     void deleteDeliveryApp(@Param("p_app_id") Integer id);

@@ -6,7 +6,9 @@ CREATE OR REPLACE PROCEDURE public.update_delivery_app(
     IN p_order_type character varying,
     IN p_active_flag character varying,
     IN p_table_count int,
-    IN p_pic_filename character varying)
+    IN p_pic_filename character varying,
+    IN p_app_add_pcnt double precision,
+    IN p_app_add_amt double precision)
 LANGUAGE 'plpgsql'
 AS $BODY$
 declare old_order_type char(1);
@@ -18,7 +20,9 @@ BEGIN
             order_type = p_order_type,
             active_flag = p_active_flag,
             table_count = p_table_count,
-            pic_filename = p_pic_filename
+            pic_filename = p_pic_filename,
+            app_add_pcnt = p_app_add_pcnt,
+            app_add_amt = p_app_add_amt
     WHERE   app_id = p_app_id;
 
 	update 	order_type
@@ -39,6 +43,6 @@ BEGIN
 	
 END;
 $BODY$;
-ALTER PROCEDURE public.update_delivery_app(int, character varying, character varying, character varying, int, character varying)
+ALTER PROCEDURE public.update_delivery_app(int, character varying, character varying, character varying, int, character varying, double precision, double precision)
     OWNER TO postgres;
 

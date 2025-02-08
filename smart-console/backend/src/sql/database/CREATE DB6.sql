@@ -57,3 +57,11 @@ ALTER COLUMN facial_features TYPE TEXT;
 
 ALTER TABLE users
 ALTER COLUMN facial_features TYPE TEXT;
+
+
+alter table food_delivery_app
+add column app_add_pcnt double precision;
+
+alter table food_delivery_app
+add column app_add_amt double precision;
+

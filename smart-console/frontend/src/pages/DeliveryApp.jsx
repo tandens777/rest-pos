@@ -91,6 +91,8 @@ const DeliveryApp = () => {
             active_flag: activeFlagBoolean,
             table_count: deliveryApp.tableCount,
             pic_filename: deliveryApp.picFilename,
+            app_add_pcnt: deliveryApp.appAddPcnt,
+            app_add_amt: deliveryApp.appAddAmt
         });
 
         // Set logo preview URL using the file server base URL
@@ -178,6 +180,8 @@ const DeliveryApp = () => {
                             active_flag: values.active_flag ? 'Y' : 'N',
                             table_count: values.table_count,
                             pic_filename: values.pic_filename,
+                            app_add_pcnt: values.app_add_pcnt,
+                            app_add_amt: values.app_add_amt
                         },
                     }
                 );
@@ -194,6 +198,8 @@ const DeliveryApp = () => {
                             active_flag: values.active_flag ? 'Y' : 'N',
                             table_count: values.table_count,
                             pic_filename: values.pic_filename,
+                            app_add_pcnt: values.app_add_pcnt,
+                            app_add_amt: values.app_add_amt
                         },
                     }
                 );
@@ -488,74 +494,115 @@ const DeliveryApp = () => {
                     form={form}
                     layout="vertical"
                     onFinish={handleModalSubmit}
+                    initialValues={{
+                        app_add_pcnt: 0, // Default value 0.00
+                        app_add_amt: 0,   // Default value 0.00
+                    }}
                 >
-                    <Form.Item
-                        name="app_nm"
-                        label="App Name"
-                        rules={[{ required: true, message: "App name is required." }]}
-                    >
-                        <Input placeholder="Enter app name" />
-                    </Form.Item>
-                    <Form.Item
-                        name="order_type"
-                        label="Order Type"
-                        rules={[{ required: true, message: "Order type is required." }]}
-                    >
-                        <Input placeholder="Enter order type" />
-                    </Form.Item>
-                    <Form.Item name="pic_filename" label="App Logo"
-                        rules={[{ required: true, message: "Picture filename is required." }]}
-                    >
-                        <Upload
-                            beforeUpload={(file) => {
-                                handleUpload(file);
-                                return false;
-                            }}
-                            maxCount={1}
-                            listType="picture"
-                            fileList={
-                                logoPreview
-                                    ? [
-                                          {
-                                              uid: "-1",
-                                              name: "App Logo",
-                                              status: "done",
-                                              url: logoPreview,
-                                          },
-                                      ]
-                                    : []
-                            }
-                            onRemove={handleRemove}
-                        >
-                            {!logoPreview && (
-                                <Button
-                                    icon={<UploadOutlined />}
-                                    style={{
-                                        backgroundColor: "black",
-                                        color: "white",
-                                        borderRadius: "4px",
-                                        height: "40px",
-                                        padding: "0 20px",
-                                        border: "none",
-                                    }}
-                                >
-                                    Upload Photo
-                                </Button>
-                            )}
-                        </Upload>
-                    </Form.Item>
 
-                    <Form.Item
-                        name="active_flag"
-                        label="Active"
-                        valuePropName="checked"
-                    >
-                    <Switch
-                        onChange={(checked) => {
-                        form.setFieldsValue({ active_flag: checked });
-                        }}
-                    />                        
-                    </Form.Item>
+                    {/* App Name and Order Type in the same row */}
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="app_nm"
+                                label="App Name"
+                                rules={[{ required: true, message: "App name is required." }]}
+                            >
+                                <Input placeholder="Enter app name" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name="order_type"
+                                label="Order Type"
+                                rules={[{ required: true, message: "Order type is required." }]}
+                            >
+                                <Input placeholder="Enter order type" />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    {/* Price Plus Percentage and Price Plus Amount in the same row */}
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="app_add_pcnt"
+                                label="Add-on Percentage"
+                                rules={[{ required: true, message: "Add-on Percentage is required." }]}
+                            >
+                                <InputNumber min={0} step={0.01} style={{ width: "100%" }} placeholder="Enter percentage" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name="app_add_amt"
+                                label="Add-on Amount"
+                                rules={[{ required: true, message: "Add-on Amount is required." }]}
+                            >
+                                <InputNumber min={0} step={0.01} style={{ width: "100%" }} placeholder="Enter amount" />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    
+                    {/* App Logo and Active Flag in the same row */}
+                    <Row gutter={16} align="middle">
+                        <Col span={12}>
+                            <Form.Item name="pic_filename" label="App Logo"
+                                rules={[{ required: true, message: "Picture filename is required." }]}
+                            >
+                                <Upload
+                                    beforeUpload={(file) => {
+                                        handleUpload(file);
+                                        return false;
+                                    }}
+                                    maxCount={1}
+                                    listType="picture"
+                                    fileList={
+                                        logoPreview
+                                            ? [
+                                                {
+                                                    uid: "-1",
+                                                    name: "App Logo",
+                                                    status: "done",
+                                                    url: logoPreview,
+                                                },
+                                            ]
+                                            : []
+                                    }
+                                    onRemove={handleRemove}
+                                >
+                                    {!logoPreview && (
+                                        <Button
+                                            icon={<UploadOutlined />}
+                                            style={{
+                                                backgroundColor: "black",
+                                                color: "white",
+                                                borderRadius: "4px",
+                                                height: "40px",
+                                                padding: "0 20px",
+                                                border: "none",
+                                            }}
+                                        >
+                                            Upload Photo
+                                        </Button>
+                                    )}
+                                </Upload>
+                            </Form.Item>
+                        </Col>           
+                    <Col span={12}>                                 
+                        <Form.Item
+                            name="active_flag"
+                            label="Active"
+                            valuePropName="checked"
+                        >
+                        <Switch
+                            onChange={(checked) => {
+                            form.setFieldsValue({ active_flag: checked });
+                            }}
+                        />                        
+                        </Form.Item>
+                    </Col>
+                </Row>
 
 
                     <div style={{ border: "1px solid #d9d9d9", borderTop: "none", borderRadius: "0 0 4px 4px", padding: "16px", backgroundColor: "#fff" }}>
