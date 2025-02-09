@@ -29,8 +29,8 @@ public class PayMethodController {
     @PreAuthorize("hasRole('ADMIN')")  // allows only ADMIN role to access this api /add, if more than one role use hasAnyRole('','')
     @PostMapping("/add")
     public void addPayMethod(@RequestParam String pay_mtd_desc, @RequestParam(required = false) Integer parent_pay_mtd_id, @RequestParam String is_category, @RequestParam(required = false) String picture_src, 
-            @RequestParam String need_ref, @RequestParam String need_expdt, @RequestParam String short_nm, @RequestParam String active_flag, 
-            @RequestParam Double bank_charges, @RequestParam Integer sm_pay_type) {
+            @RequestParam String need_ref, @RequestParam String need_expdt, @RequestParam(required = false) String short_nm, @RequestParam String active_flag, 
+            @RequestParam(required = false) Double bank_charges, @RequestParam(required = false) Integer sm_pay_type) {
         payMethodService.addPayMethod(pay_mtd_desc, parent_pay_mtd_id, is_category, picture_src, need_ref, 
             need_expdt, short_nm, active_flag, bank_charges, sm_pay_type);
     }
@@ -38,8 +38,8 @@ public class PayMethodController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{id}")
     public void updatePayMethod(@PathVariable Integer id, @RequestParam String pay_mtd_desc, @RequestParam(required = false) Integer parent_pay_mtd_id, @RequestParam String is_category, @RequestParam(required = false) String picture_src, 
-            @RequestParam String need_ref, @RequestParam String need_expdt, @RequestParam String short_nm, @RequestParam String active_flag, 
-            @RequestParam Double bank_charges, @RequestParam Integer sm_pay_type) {
+            @RequestParam String need_ref, @RequestParam String need_expdt, @RequestParam(required = false) String short_nm, @RequestParam String active_flag, 
+            @RequestParam(required = false) Double bank_charges, @RequestParam(required = false) Integer sm_pay_type) {
         payMethodService.updatePayMethod(id, pay_mtd_desc, parent_pay_mtd_id, is_category, picture_src, need_ref, 
             need_expdt, short_nm, active_flag, bank_charges, sm_pay_type);
     }

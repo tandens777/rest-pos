@@ -286,26 +286,42 @@ const PaymentMethod = () => {
                     <div
                         key={method.id}
                         style={{
-                            backgroundColor: "#fff",
+                            backgroundColor: "#fff", // Always white background
                             borderRadius: "8px",
                             padding: "16px",
                             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
                             textAlign: "center",
                             opacity: method.activeFlag === "N" ? 0.6 : 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            height: "260px", // Adjust height for proper spacing
+                            overflow: "hidden",
                         }}
                     >
-                        <Avatar
-                            src={method.pictureSrc ? `${fileBaseUrl}${method.pictureSrc}` : no_pic_default}
-                            size={80}
+                        {/* Image Background Section (White Background if No Picture) */}
+                        <div
                             style={{
-                                marginBottom: "10px",
-                                border: "1px solid #ccc",
-                                filter: method.activeFlag === "N" ? "grayscale(100%)" : "none",
+                                width: "100%",
+                                height: "65%", // Image section occupies 2/3 of the container
+                                backgroundImage: method.pictureSrc ? `url(${fileBaseUrl}${method.pictureSrc})` : "none",
+                                backgroundSize: "contain", // Ensures the image fits without cropping
+                                backgroundPosition: "center",
+                                backgroundRepeat: "no-repeat",
+                                borderRadius: "8px 8px 0 0", // Rounded top corners
+                                backgroundColor: "#ffffff", // Always white background
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
                             }}
-                        />
-                        <div style={{ fontWeight: "bold", fontSize: "16px" }}>
+                        ></div>
+
+                        {/* Payment Method Name */}
+                        <div style={{ fontWeight: "bold", fontSize: "16px", marginTop: "10px" }}>
                             {method.payMtdDesc}
                         </div>
+
+                        {/* Active/Inactive Status */}
                         <div
                             style={{
                                 marginTop: "8px",
@@ -315,11 +331,10 @@ const PaymentMethod = () => {
                         >
                             {method.activeFlag === "Y" ? "ACTIVE" : "INACTIVE"}
                         </div>
+
+                        {/* Action Buttons */}
                         <Space style={{ marginTop: "10px" }}>
-                            <Button
-                                icon={<EditOutlined />}
-                                onClick={() => handleEdit(method)}
-                            />
+                            <Button icon={<EditOutlined />} onClick={() => handleEdit(method)} />
                             <Popconfirm
                                 title="Are you sure to delete this payment method?"
                                 onConfirm={() => handleDelete(method.id)}
@@ -330,6 +345,7 @@ const PaymentMethod = () => {
                             </Popconfirm>
                         </Space>
                     </div>
+
                 ))}
             </div>
 
@@ -377,7 +393,6 @@ const PaymentMethod = () => {
                             <Form.Item
                                 name="short_nm"
                                 label="Short Name on Bill"
-                                rules={[{ required: true, message: "Short Name is required." }]}
                             >
                                 <Input placeholder="Enter Short Name" />
                             </Form.Item>
@@ -525,7 +540,6 @@ const PaymentMethod = () => {
                             <Form.Item
                                 name="bank_charges"
                                 label="Bank Charges (%)"
-                                rules={[{ required: true, message: "Bank Charges is required." }]}
                             >
                                 <Input type="number" placeholder="Enter Bank Charges" />
                             </Form.Item>
@@ -534,7 +548,6 @@ const PaymentMethod = () => {
                             <Form.Item
                                 name="sm_pay_type"
                                 label="SM Payment Type"
-                                rules={[{ required: true, message: "SM Payment Type is required." }]}
                             >
                                 <Select placeholder="Select SM Payment Type">
                                     {smPayTypes.map((type) => (
