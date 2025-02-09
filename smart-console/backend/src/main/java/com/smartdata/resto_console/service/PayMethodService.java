@@ -61,4 +61,16 @@ public class PayMethodService {
         }
     }
 
+    public List<PayMethod> getPayMethodCategories() {
+        List<PayMethod> payMethods;
+        payMethods = payMethodRepository.findByIsCategoryContainingIgnoreCaseOrderById("Y");
+
+        if (!payMethods.isEmpty()) {
+            return payMethods;
+        } else {
+            return null;
+        }
+    }
+
+
 }
