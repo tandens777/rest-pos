@@ -196,7 +196,7 @@ const Floor = () => {
                     color: "#333",
                 }}
             >
-                Floor Management
+                Dine-in Floors
             </h1>
             <Space
                 style={{
