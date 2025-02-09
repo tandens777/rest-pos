@@ -23,9 +23,9 @@ public class SurDiscController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
-    public void addSurchargeDiscount(@RequestParam String disc_desc, @RequestParam String disc_type, @RequestParam Integer parent_disc_id, 
+    public void addSurchargeDiscount(@RequestParam String disc_desc, @RequestParam String disc_type, @RequestParam(required = false) Integer parent_disc_id, 
                                      @RequestParam String is_category, @RequestParam Double percentage, @RequestParam Double amt, 
-                                     @RequestParam String picture_src, @RequestParam String need_ref, @RequestParam String short_nm, 
+                                     @RequestParam(required = false) String picture_src, @RequestParam String need_ref, @RequestParam String short_nm, 
                                      @RequestParam String auto_flag, @RequestParam String need_authorization, @RequestParam String check_senior, 
                                      @RequestParam String active_flag, @RequestParam Integer sm_discount_type, @RequestParam String pcnt_on_nv_flag) {
         surDiscService.addSurchargeDiscount(disc_desc, disc_type, parent_disc_id, is_category, percentage, amt, picture_src, 
@@ -35,8 +35,8 @@ public class SurDiscController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{id}")
     public void updateSurchargeDiscount(@PathVariable Integer id, @RequestParam String disc_desc, @RequestParam String disc_type, 
-                                        @RequestParam Integer parent_disc_id, @RequestParam String is_category, @RequestParam Double percentage, 
-                                        @RequestParam Double amt, @RequestParam String picture_src, @RequestParam String need_ref, 
+                                        @RequestParam(required = false) Integer parent_disc_id, @RequestParam String is_category, @RequestParam Double percentage, 
+                                        @RequestParam Double amt, @RequestParam(required = false) String picture_src, @RequestParam String need_ref, 
                                         @RequestParam String short_nm, @RequestParam String auto_flag, @RequestParam String need_authorization, 
                                         @RequestParam String check_senior, @RequestParam String active_flag, @RequestParam Integer sm_discount_type, 
                                         @RequestParam String pcnt_on_nv_flag) {
