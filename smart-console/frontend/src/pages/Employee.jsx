@@ -22,6 +22,7 @@ const Employee = () => {
     const [facialFeatures, setFacialFeatures] = useState(null);
 
     const [form] = Form.useForm();
+    const [searchForm] = Form.useForm();  // Separate form for search
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
 
@@ -95,6 +96,7 @@ const Employee = () => {
 
     // Reset search
     const handleReset = () => {
+        searchForm.resetFields();
         setSearchTerm("");
         fetchEmployees();
     };
@@ -414,27 +416,39 @@ const Employee = () => {
                 }}
             >
                 <Space style={{ marginBottom: "10px" }}>
-                    <Input
-                        placeholder="Search employees..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ width: "200px" }}
-                    />
-                    <Button
-                        type="primary"
-                        icon={<SearchOutlined />}
-                        onClick={handleSearch}
+                    <Form form={searchForm}
+                        layout="inline"
                     >
-                        Search
-                    </Button>
-                    <Button
-                        type="default"
-                        onClick={handleReset}
-                        style={{ backgroundColor: "#1890ff", color: "#fff" }}
-                    >
-                        Reset
-                    </Button>
-                </Space>
+                        <Form.Item name="search">  
+                            <Input
+                                placeholder="Search employees..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{ width: "200px" }}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                icon={<SearchOutlined />}
+                                htmlType="submit" 
+                                onClick={handleSearch}
+                            >
+                                Search
+                            </Button>
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button
+                            type="default"
+                            onClick={handleReset}
+                            style={{ backgroundColor: "#1890ff", color: "#fff" }}
+                            >
+                                Reset
+                            </Button>
+                        </Form.Item>
+                    </Form>
+               </Space>
                 <Button
                     type="primary"
                     icon={<PlusOutlined />}
@@ -442,7 +456,7 @@ const Employee = () => {
                     style={{ backgroundColor: "#28a745", borderColor: "#28a745", color: "#fff" }}
                 >
                     Add New
-                </Button>
+                </Button>                    
             </Space>
 
             {/* Employee List Container */}
@@ -576,6 +590,9 @@ const Employee = () => {
                                     name="emp_no"
                                     label="Employee No"
                                     rules={[{ required: true, message: "Employee No is required." }]}
+                                    onChange={(e) => {
+                                        form.setFieldsValue({ emp_no: e.target.value.toUpperCase() });
+                                    }}
                                 >
                                     <Input placeholder="Enter Employee No" />
                                 </Form.Item>
@@ -585,6 +602,12 @@ const Employee = () => {
                                     name="first_nm"
                                     label="First Name"
                                     rules={[{ required: true, message: "First Name is required." }]}
+                                    onChange={(e) => {
+                                        const formattedValue = e.target.value
+                                            .toLowerCase()
+                                            .replace(/\b\w/g, (char) => char.toUpperCase());
+                                        form.setFieldsValue({ first_nm: formattedValue });
+                                    }}
                                 >
                                     <Input placeholder="Enter First Name" />
                                 </Form.Item>
@@ -594,6 +617,12 @@ const Employee = () => {
                                     name="last_nm"
                                     label="Last Name"
                                     rules={[{ required: true, message: "Last Name is required." }]}
+                                    onChange={(e) => {
+                                        const formattedValue = e.target.value
+                                            .toLowerCase()
+                                            .replace(/\b\w/g, (char) => char.toUpperCase());
+                                        form.setFieldsValue({ last_nm: formattedValue });
+                                    }}
                                 >
                                     <Input placeholder="Enter Last Name" />
                                 </Form.Item>
@@ -884,6 +913,9 @@ const Employee = () => {
                             name="username"
                             label={<span className="custom-label">Username</span>} //"Username"
                             rules={[{ required: true, message: "Username is required." }]}
+                            onChange={(e) => {
+                                form.setFieldsValue({ pay_mtd_desc: e.target.value.toLowerCase() });
+                            }}
                         >
                             <Input placeholder="Enter Username" />
                         </Form.Item>

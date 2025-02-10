@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
-import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, Upload, Avatar, Switch, Row, Col, Checkbox } from "antd";
+import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, Upload, Avatar, Switch, Row, Col, Checkbox, Radio } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
-const PaymentMethod = () => {
+const SurchargeDiscount = () => {
     const [picturePreview, setPicturePreview] = useState(null);
-    const [paymentMethods, setPaymentMethods] = useState([]);
+    const [surchargeDiscounts, setSurchargeDiscounts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [editingPaymentMethod, setEditingPaymentMethod] = useState(null);
-    const [smPayTypes, setSmPayTypes] = useState([]);
-    const [payMethodCategories, setPayMethodCategories] = useState([]);
+    const [editingSurchargeDiscount, setEditingSurchargeDiscount] = useState(null);
+    const [smDiscountTypes, setSmDiscountTypes] = useState([]);
+    const [surDiscCategories, setSurDiscCategories] = useState([]);
+    const [discType, setDiscType] = useState("LP");
 
     const [form] = Form.useForm();
     const [searchForm] = Form.useForm();  // Separate form for search
@@ -23,11 +24,11 @@ const PaymentMethod = () => {
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL; // e.g., http://192.168.68.118:8081
     const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL; // e.g., http://192.168.68.118:8080
 
-    const no_pic_default = `${fileBaseUrl}/uploads/payment_methods/default.png`;
+    const no_pic_default = `${fileBaseUrl}/uploads/surcharge_discounts/default.png`;
 
-    // Fetch all payment methods on component mount
+    // Fetch all surcharge discounts on component mount
     useEffect(() => {
-        fetchPaymentMethods();
+        fetchSurchargeDiscounts();
         fetchDropdownData();
 
         const handleResize = () => {
@@ -49,36 +50,36 @@ const PaymentMethod = () => {
         };
     }, []);
 
-    // Fetch Payment Methods from API
-    const fetchPaymentMethods = async () => {
+    // Fetch Surcharge Discounts from API
+    const fetchSurchargeDiscounts = async () => {
         try {
-            const response = await axiosInstance.get("/pay_method/all");
-            setPaymentMethods(response.data);
+            const response = await axiosInstance.get("/surcharge_discount/all");
+            setSurchargeDiscounts(response.data);
         } catch (error) {
-            message.error("Failed to fetch payment methods.");
+            message.error("Failed to fetch surcharge discounts.");
         }
     };
 
     const fetchDropdownData = async () => {
         try {
-            const [payTypesResponse, categoriesResponse] = await Promise.all([
-                axiosInstance.get("/sm_pay_types"),
-                axiosInstance.get("/pay_method/getcategories"),
+            const [discountTypesResponse, categoriesResponse] = await Promise.all([
+                axiosInstance.get("/sm_disc_types"),
+                axiosInstance.get("/surcharge_discount/getcategories"),
             ]);
-            setSmPayTypes(payTypesResponse.data);
-            setPayMethodCategories(categoriesResponse.data);
+            setSmDiscountTypes(discountTypesResponse.data);
+            setSurDiscCategories(categoriesResponse.data);
         } catch (error) {
             message.error("Failed to fetch dropdown data.");
         }
     };
 
-    // Search for Payment Methods
+    // Search for Surcharge Discounts
     const handleSearch = async () => {
         try {
-            const response = await axiosInstance.get(`/pay_method/all?search=${searchTerm}`);
-            setPaymentMethods(response.data);
+            const response = await axiosInstance.get(`/surcharge_discount/all?search=${searchTerm}`);
+            setSurchargeDiscounts(response.data);
         } catch (error) {
-            message.error("Failed to search payment methods.");
+            message.error("Failed to search surcharge discounts.");
         }
     };
 
@@ -86,87 +87,97 @@ const PaymentMethod = () => {
     const handleReset = () => {
         searchForm.resetFields();
         setSearchTerm("");
-        fetchPaymentMethods();
+        fetchSurchargeDiscounts();
     };
 
-    // Add a New Payment Method
+    // Add a New Surcharge Discount
     const handleAdd = () => {
-        setEditingPaymentMethod(null);
+        setEditingSurchargeDiscount(null);
         setIsModalVisible(true);
         form.resetFields();
         setPicturePreview("");
+        setDiscType("LP");
     };
 
-    // Edit an Existing Payment Method
-    const handleEdit = (paymentMethod) => {
-        setEditingPaymentMethod(paymentMethod);
+    // Edit an Existing Surcharge Discount
+    const handleEdit = (surchargeDiscount) => {
+        setEditingSurchargeDiscount(surchargeDiscount);
         setIsModalVisible(true);
         form.setFieldsValue({
-            pay_mtd_desc: paymentMethod.payMtdDesc,
-            short_nm: paymentMethod.shortNm,
-            parent_pay_mtd_id: paymentMethod.parentPayMtdId,
-            is_category: paymentMethod.isCategory === "Y",
-            active_flag: paymentMethod.activeFlag === "Y",
-            need_ref: paymentMethod.needRef === "Y",
-            need_expdt: paymentMethod.needExpdt === "Y",
-            bank_charges: paymentMethod.bankCharges,
-            sm_pay_type: paymentMethod.smPayType,
+            disc_desc: surchargeDiscount.discDesc,
+            short_nm: surchargeDiscount.shortNm,
+            parent_disc_id: surchargeDiscount.parentDiscId,
+            is_category: surchargeDiscount.isCategory === "Y",
+            active_flag: surchargeDiscount.activeFlag === "Y",
+            disc_type: surchargeDiscount.discType,
+            amount_or_percentage: surchargeDiscount.discType === "LP" || surchargeDiscount.discType === "AP" ? surchargeDiscount.percentage : surchargeDiscount.amt,            need_ref: surchargeDiscount.needRef === "Y",
+            auto_flag: surchargeDiscount.autoFlag === "Y",
+            need_authorization: surchargeDiscount.needAuthorization === "Y",
+            check_senior: surchargeDiscount.checkSenior === "Y",
+            pcnt_on_nv_flag: surchargeDiscount.pcntOnNvFlag === "Y",
+            sm_discount_type: surchargeDiscount.smDiscountType,
         });
 
+        setDiscType(surchargeDiscount.discType);
         // Set picture preview URL using the file server base URL
-        if (paymentMethod.pictureSrc) {
-            setPicturePreview(`${fileBaseUrl}${paymentMethod.pictureSrc}`);
+        if (surchargeDiscount.pictureSrc) {
+            setPicturePreview(`${fileBaseUrl}${surchargeDiscount.pictureSrc}`);
         } else {
             setPicturePreview("");
         }
     };
 
-    // Delete a Payment Method
+    // Delete a Surcharge Discount
     const handleDelete = async (id) => {
         try {
-            await axiosInstance.delete(`/pay_method/delete/${id}`);
-            message.success("Payment method deleted successfully.");
+            await axiosInstance.delete(`/surcharge_discount/delete/${id}`);
+            message.success("Surcharge discount deleted successfully.");
 
-            const updatedPaymentMethods = paymentMethods.filter((method) => method.id !== id);
-            setPaymentMethods(updatedPaymentMethods);
+            const updatedSurchargeDiscounts = surchargeDiscounts.filter((discount) => discount.id !== id);
+            setSurchargeDiscounts(updatedSurchargeDiscounts);
 
-            if (updatedPaymentMethods.length === 0) {
+            if (updatedSurchargeDiscounts.length === 0) {
                 setCurrentPage(1);
             }
         } catch (error) {
-            message.error("Failed to delete payment method.");
+            message.error("Failed to delete surcharge discount.");
         }
     };
 
-    // Handle Modal Submission (Add or Update Payment Method)
+    // Handle Modal Submission (Add or Update Surcharge Discount)
     const handleModalSubmit = async (values) => {
         try {
-            const paymentMethodData = {
-                pay_mtd_desc: values.pay_mtd_desc,
+            const surchargeDiscountData = {
+                disc_desc: values.disc_desc,
                 short_nm: values.short_nm,
-                parent_pay_mtd_id: values.parent_pay_mtd_id,
+                parent_disc_id: values.parent_disc_id,
                 is_category: values.is_category ? "Y" : "N",
                 active_flag: values.active_flag ? "Y" : "N",
+                disc_type: values.disc_type,
+                percentage: values.disc_type === "LP" || values.disc_type === "AP" ? values.amount_or_percentage : 0,
+                amt: values.disc_type === "LA" || values.disc_type === "AA" ? values.amount_or_percentage : 0,
                 need_ref: values.need_ref ? "Y" : "N",
-                need_expdt: values.need_expdt ? "Y" : "N",
-                bank_charges: values.bank_charges,
-                sm_pay_type: values.sm_pay_type,
+                auto_flag: values.auto_flag ? "Y" : "N",
+                need_authorization: values.need_authorization ? "Y" : "N",
+                check_senior: values.check_senior ? "Y" : "N",
+                pcnt_on_nv_flag: values.pcnt_on_nv_flag ? "Y" : "N",
+                sm_discount_type: values.sm_discount_type,
                 picture_src: values.picture_src,
             };
 
-            console.log("sending paymethodData: ", paymentMethodData);
+            console.log("submit data:", surchargeDiscountData);
 
-            const url = editingPaymentMethod ? `/pay_method/update/${editingPaymentMethod.id}` : `/pay_method/add`;
-            const method = editingPaymentMethod ? 'put' : 'post';
+            const url = editingSurchargeDiscount ? `/surcharge_discount/update/${editingSurchargeDiscount.id}` : `/surcharge_discount/add`;
+            const method = editingSurchargeDiscount ? 'put' : 'post';
 
-            await axiosInstance[method](url, null, { params: paymentMethodData });
+            await axiosInstance[method](url, null, { params: surchargeDiscountData });
 
-            message.success(`Payment method ${editingPaymentMethod ? 'updated' : 'added'} successfully.`);
+            message.success(`Surcharge discount ${editingSurchargeDiscount ? 'updated' : 'added'} successfully.`);
             setIsModalVisible(false);
-            fetchPaymentMethods();
+            fetchSurchargeDiscounts();
         } catch (error) {
-            console.error("Error saving payment method:", error);
-            message.error(error.response?.data?.message || "Failed to save payment method. Please try again.");
+            console.error("Error saving surcharge discount:", error);
+            message.error(error.response?.data?.message || "Failed to save surcharge discount. Please try again.");
         }
     };
 
@@ -179,7 +190,7 @@ const PaymentMethod = () => {
     // Handle File Upload
     const handleUpload = async (file) => {
         const formData = new FormData();
-        formData.append("folder", "payment_methods");
+        formData.append("folder", "surcharge_discounts");
         formData.append("file", file);
 
         try {
@@ -206,8 +217,8 @@ const PaymentMethod = () => {
         message.success("Picture removed successfully.");
     };
 
-    // Paginate payment methods
-    const paginatedPaymentMethods = paymentMethods.slice(
+    // Paginate surcharge discounts
+    const paginatedSurchargeDiscounts = surchargeDiscounts.slice(
         (currentPage - 1) * pageSize,
         currentPage * pageSize
     );
@@ -233,7 +244,7 @@ const PaymentMethod = () => {
                     color: "#333",
                 }}
             >
-                Payment Methods
+                Surcharge Discounts
             </h1>
             <Space
                 style={{
@@ -249,7 +260,7 @@ const PaymentMethod = () => {
                     >
                         <Form.Item name="search">  
                             <Input
-                                placeholder="Search payment methods..."
+                                placeholder="Search surcharge discounts..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 style={{ width: "200px" }}
@@ -287,7 +298,7 @@ const PaymentMethod = () => {
                 </Button>
             </Space>
 
-            {/* Payment Method List Container */}
+            {/* Surcharge Discount List Container */}
             <div
                 style={{
                     display: "grid",
@@ -296,11 +307,11 @@ const PaymentMethod = () => {
                     marginTop: "20px",
                 }}
             >
-                {paginatedPaymentMethods.map((method) => (
+                {paginatedSurchargeDiscounts.map((discount) => (
                     <div
-                        key={method.id}
+                        key={discount.id}
                         style={{
-                            backgroundColor: "#fff", // Always white background
+                            backgroundColor: "#fff",
                             borderRadius: "8px",
                             padding: "16px",
                             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
@@ -308,31 +319,31 @@ const PaymentMethod = () => {
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            height: "260px", // Adjust height for proper spacing
+                            height: "260px",
                             overflow: "hidden",
                         }}
                     >
-                        {/* Image Background Section (Only Greyed When Inactive) */}
+                        {/* Image Background Section */}
                         <div
                             style={{
                                 width: "100%",
-                                height: "65%", // Image section occupies 2/3 of the container
-                                backgroundImage: method.pictureSrc ? `url(${fileBaseUrl}${method.pictureSrc})` : "none",
-                                backgroundSize: "contain", // Ensures the image fits without cropping
+                                height: "65%",
+                                backgroundImage: discount.pictureSrc ? `url(${fileBaseUrl}${discount.pictureSrc})` : "none",
+                                backgroundSize: "contain",
                                 backgroundPosition: "center",
                                 backgroundRepeat: "no-repeat",
-                                borderRadius: "8px 8px 0 0", // Rounded top corners
-                                backgroundColor: "#ffffff", // Always white background
+                                borderRadius: "8px 8px 0 0",
+                                backgroundColor: "#ffffff",
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
-                                filter: method.activeFlag === "N" ? "grayscale(100%)" : "none", // Only greys the image when inactive
+                                filter: discount.activeFlag === "N" ? "grayscale(100%)" : "none",
                             }}
                         ></div>
 
-                        {/* Payment Method Name */}
+                        {/* Surcharge Discount Name */}
                         <div style={{ fontWeight: "bold", fontSize: "16px", marginTop: "10px" }}>
-                            {method.payMtdDesc}
+                            {discount.discDesc}
                         </div>
 
                         {/* Active/Inactive Status */}
@@ -340,18 +351,18 @@ const PaymentMethod = () => {
                             style={{
                                 marginTop: "8px",
                                 fontWeight: "bold",
-                                color: method.activeFlag === "Y" ? "red" : "black",
+                                color: discount.activeFlag === "Y" ? "red" : "black",
                             }}
                         >
-                            {method.activeFlag === "Y" ? "ACTIVE" : "INACTIVE"}
+                            {discount.activeFlag === "Y" ? "ACTIVE" : "INACTIVE"}
                         </div>
 
                         {/* Action Buttons */}
                         <Space style={{ marginTop: "10px" }}>
-                            <Button icon={<EditOutlined />} onClick={() => handleEdit(method)} />
+                            <Button icon={<EditOutlined />} onClick={() => handleEdit(discount)} />
                             <Popconfirm
-                                title="Are you sure to delete this payment method?"
-                                onConfirm={() => handleDelete(method.id)}
+                                title="Are you sure to delete this surcharge discount?"
+                                onConfirm={() => handleDelete(discount.id)}
                                 okText="Yes"
                                 cancelText="No"
                             >
@@ -359,14 +370,13 @@ const PaymentMethod = () => {
                             </Popconfirm>
                         </Space>
                     </div>
-
                 ))}
             </div>
 
             <Pagination
                 current={currentPage}
                 pageSize={pageSize}
-                total={paymentMethods.length}
+                total={surchargeDiscounts.length}
                 onChange={(page, size) => {
                     setCurrentPage(page);
                     setPageSize(size);
@@ -375,7 +385,7 @@ const PaymentMethod = () => {
             />
 
             <Modal
-                title={editingPaymentMethod ? "Edit Payment Method" : "Add New Payment Method"}
+                title={editingSurchargeDiscount ? "Edit Surcharge Discount" : "Add New Surcharge Discount"}
                 visible={isModalVisible}
                 onCancel={() => setIsModalVisible(false)}
                 footer={null}
@@ -392,20 +402,22 @@ const PaymentMethod = () => {
             >
                 <Form form={form} layout="vertical" onFinish={handleModalSubmit}
                     initialValues={{
-                        bank_charges: 0, // Default value 0.00
-                    }}
-                >
+                        percentage: 0, // Default value 0.00
+                        amt: 0,
+                        disc_type: "LP",
+                        amount_or_percentage: 0,
+                }}>
                     <Row gutter={16}>
                         <Col span={18}>
                             <Form.Item
-                                name="pay_mtd_desc"
-                                label="Payment Method Name"
-                                rules={[{ required: true, message: "Payment Method Name is required." }]}
+                                name="disc_desc"
+                                label="Surcharge Discount Name"
+                                rules={[{ required: true, message: "Surcharge Discount Name is required." }]}
                                 onChange={(e) => {
-                                    form.setFieldsValue({ pay_mtd_desc: e.target.value.toUpperCase() });
+                                    form.setFieldsValue({ disc_desc: e.target.value.toUpperCase() });
                                 }}
                             >
-                                <Input placeholder="Enter Payment Method Name" />
+                                <Input placeholder="Enter Surcharge Discount Name" />
                             </Form.Item>
                             <Form.Item
                                 name="short_nm"
@@ -417,14 +429,14 @@ const PaymentMethod = () => {
                                 <Input placeholder="Enter Short Name" />
                             </Form.Item>
                             <Form.Item
-                                name="parent_pay_mtd_id"
+                                name="parent_disc_id"
                                 label="Parent Category"
                             >
                                 <Select placeholder="Select Parent Category">
-                                    {Array.isArray(payMethodCategories) && payMethodCategories.length > 0 ? (
-                                        payMethodCategories.map((category) => (
+                                    {Array.isArray(surDiscCategories) && surDiscCategories.length > 0 ? (
+                                        surDiscCategories.map((category) => (
                                             <Option key={category.id} value={category.id}>
-                                                {category.payMtdDesc}
+                                                {category.discDesc}
                                             </Option>
                                         ))
                                     ) : (
@@ -465,7 +477,7 @@ const PaymentMethod = () => {
                                             ? [
                                                 {
                                                     uid: "-1",
-                                                    name: "Payment Method Picture",
+                                                    name: "Surcharge Discount Picture",
                                                     status: "done",
                                                     url: picturePreview,
                                                 },
@@ -514,7 +526,7 @@ const PaymentMethod = () => {
                             >
                                 <Switch
                                     onChange={(checked) => {
-                                    form.setFieldsValue({ is_category: checked });
+                                        form.setFieldsValue({ is_category: checked });
                                     }}
                                 />
                             </Form.Item>
@@ -527,7 +539,7 @@ const PaymentMethod = () => {
                             >
                                 <Switch
                                     onChange={(checked) => {
-                                    form.setFieldsValue({ active_flag: checked });
+                                        form.setFieldsValue({ active_flag: checked });
                                     }}
                                 />
                             </Form.Item>
@@ -537,42 +549,67 @@ const PaymentMethod = () => {
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
+                                name="disc_type"
+                                label="Type"
+                                rules={[{ required: true, message: "Type is required." }]}
+                            >
+                                     <Radio.Group onChange={(e) => {
+                                        form.setFieldsValue({ disc_type: e.target.value });
+                                        setDiscType(e.target.value);
+                                    }}>
+                                        <Radio value="LP" style={{ display: 'block' }}>Less % Payment</Radio>
+                                        <Radio value="LA" style={{ display: 'block' }}>Less Amount</Radio>
+                                        <Radio value="AP" style={{ display: 'block' }}>Add % Payment</Radio>
+                                        <Radio value="AA" style={{ display: 'block' }}>Add Amount</Radio>
+                                    </Radio.Group>
+                                </Form.Item>
+                                <Form.Item
+                                    name="amount_or_percentage"
+                                    label={discType === "LP" || discType === "AP" ? "Percentage" : "Amount"}
+                                    rules={[{ required: true, message: "This field is required." }]}
+                                >
+                                    <Input type="number" placeholder="Enter value" />
+                                </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
                                 name="need_ref"
-                                label="Need Reference"
                                 valuePropName="checked"
                             >
-                                <Checkbox />
+                                <Checkbox>Need Reference</Checkbox>
                             </Form.Item>
-                        </Col>
-                        <Col span={12}>
                             <Form.Item
-                                name="need_expdt"
-                                label="Need Expiry Date"
+                                name="auto_flag"
                                 valuePropName="checked"
                             >
-                                <Checkbox />
+                                <Checkbox>Auto insert to bill</Checkbox>
                             </Form.Item>
-                        </Col>
-                    </Row>
-
-                    <Row gutter={16}>
-                        <Col span={12}>
                             <Form.Item
-                                name="bank_charges"
-                                label="Bank Charges (%)"
+                                name="need_authorization"
+                                valuePropName="checked"
                             >
-                                <Input type="number" placeholder="Enter Bank Charges" />
+                                <Checkbox>Need Authorization</Checkbox>
                             </Form.Item>
-                        </Col>
-                        <Col span={12}>
                             <Form.Item
-                                name="sm_pay_type"
-                                label="SM Payment Type"
+                                name="check_senior"
+                                valuePropName="checked"
                             >
-                                <Select placeholder="Select SM Payment Type">
-                                    {smPayTypes.map((type) => (
-                                        <Option key={type.smpayType} value={type.smpayType}>
-                                            {type.smpayTypeDesc}
+                                <Checkbox>Ask for Senior/PWD count</Checkbox>
+                            </Form.Item>
+                            <Form.Item
+                                name="pcnt_on_nv_flag"
+                                valuePropName="checked"
+                            >
+                                <Checkbox>% Charge on NV Sales</Checkbox>
+                            </Form.Item>
+                            <Form.Item
+                                name="sm_discount_type"
+                                label="SM Discount Type"
+                            >
+                                <Select placeholder="Select SM Discount Type">
+                                    {smDiscountTypes.map((type) => (
+                                        <Option key={type.smdiscType} value={type.smdiscType}>
+                                            {type.smdiscTypeDesc}
                                         </Option>
                                     ))}
                                 </Select>
@@ -617,4 +654,4 @@ const PaymentMethod = () => {
     );
 };
 
-export default PaymentMethod;
+export default SurchargeDiscount;

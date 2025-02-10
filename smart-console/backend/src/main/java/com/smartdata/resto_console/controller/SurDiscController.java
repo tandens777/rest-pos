@@ -25,9 +25,9 @@ public class SurDiscController {
     @PostMapping("/add")
     public void addSurchargeDiscount(@RequestParam String disc_desc, @RequestParam String disc_type, @RequestParam(required = false) Integer parent_disc_id, 
                                      @RequestParam String is_category, @RequestParam Double percentage, @RequestParam Double amt, 
-                                     @RequestParam(required = false) String picture_src, @RequestParam String need_ref, @RequestParam String short_nm, 
+                                     @RequestParam(required = false) String picture_src, @RequestParam String need_ref, @RequestParam(required = false) String short_nm, 
                                      @RequestParam String auto_flag, @RequestParam String need_authorization, @RequestParam String check_senior, 
-                                     @RequestParam String active_flag, @RequestParam Integer sm_discount_type, @RequestParam String pcnt_on_nv_flag) {
+                                     @RequestParam String active_flag, @RequestParam(required = false) Integer sm_discount_type, @RequestParam String pcnt_on_nv_flag) {
         surDiscService.addSurchargeDiscount(disc_desc, disc_type, parent_disc_id, is_category, percentage, amt, picture_src, 
                                             need_ref, short_nm, auto_flag, need_authorization, check_senior, active_flag, sm_discount_type, pcnt_on_nv_flag);
     }
@@ -37,8 +37,8 @@ public class SurDiscController {
     public void updateSurchargeDiscount(@PathVariable Integer id, @RequestParam String disc_desc, @RequestParam String disc_type, 
                                         @RequestParam(required = false) Integer parent_disc_id, @RequestParam String is_category, @RequestParam Double percentage, 
                                         @RequestParam Double amt, @RequestParam(required = false) String picture_src, @RequestParam String need_ref, 
-                                        @RequestParam String short_nm, @RequestParam String auto_flag, @RequestParam String need_authorization, 
-                                        @RequestParam String check_senior, @RequestParam String active_flag, @RequestParam Integer sm_discount_type, 
+                                        @RequestParam(required = false) String short_nm, @RequestParam String auto_flag, @RequestParam String need_authorization, 
+                                        @RequestParam String check_senior, @RequestParam String active_flag, @RequestParam(required = false) Integer sm_discount_type, 
                                         @RequestParam String pcnt_on_nv_flag) {
         surDiscService.updateSurchargeDiscount(id, disc_desc, disc_type, parent_disc_id, is_category, percentage, amt, picture_src, 
                                                need_ref, short_nm, auto_flag, need_authorization, check_senior, active_flag, sm_discount_type, pcnt_on_nv_flag);
@@ -61,4 +61,11 @@ public class SurDiscController {
     public ResponseEntity<List<SurchargeDiscount>> getSurchargeDiscounts(@RequestParam(required = false) String search) throws GenericNotFoundException {
         return ResponseEntity.ok(surDiscService.getSurchargeDiscounts(search));
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getcategories")
+    public ResponseEntity<List<SurchargeDiscount>> getSurDiscCategories() {
+        return ResponseEntity.ok(surDiscService.getSurDiscCategories());
+    }    
+
 }

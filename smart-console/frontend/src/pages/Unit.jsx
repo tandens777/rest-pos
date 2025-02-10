@@ -9,6 +9,7 @@ const Unit = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingUnit, setEditingUnit] = useState(null);
     const [form] = Form.useForm();
+    const [searchForm] = Form.useForm();  // Separate form for search
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
 
@@ -56,6 +57,7 @@ const Unit = () => {
 
     // Reset search
     const handleReset = () => {
+        searchForm.resetFields();
         setSearchTerm("");
         fetchUnits();
     };
@@ -72,8 +74,8 @@ const Unit = () => {
         setEditingUnit(unit);
         setIsModalVisible(true);
         form.setFieldsValue({
-            unit_code: unit.unit_code,
-            unit_desc: unit.unit_desc,
+            unit_code: unit.unitCode,
+            unit_desc: unit.unitDesc,
         });
     };
 
@@ -216,26 +218,38 @@ const Unit = () => {
                 }}
             >
                 <Space style={{ marginBottom: "10px" }}>
-                    <Input
-                        placeholder="Search units..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ width: "200px" }}
-                    />
-                    <Button
-                        type="primary"
-                        icon={<SearchOutlined />}
-                        onClick={handleSearch}
+                    <Form form={searchForm}
+                        layout="inline"
                     >
-                        Search
-                    </Button>
-                    <Button
-                        type="default"
-                        onClick={handleReset}
-                        style={{ backgroundColor: "#1890ff", color: "#fff" }}
-                    >
-                        Reset
-                    </Button>
+                        <Form.Item name="search">  
+                            <Input
+                                placeholder="Search units..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{ width: "200px" }}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                icon={<SearchOutlined />}
+                                htmlType="submit" 
+                                onClick={handleSearch}
+                            >
+                                Search
+                            </Button>
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button
+                            type="default"
+                            onClick={handleReset}
+                            style={{ backgroundColor: "#1890ff", color: "#fff" }}
+                            >
+                                Reset
+                            </Button>
+                        </Form.Item>
+                    </Form>
                 </Space>
                 <Button
                     type="primary"
@@ -314,6 +328,9 @@ const Unit = () => {
                         name="unit_code"
                         label="Unit Code"
                         rules={[{ required: true, message: "Unit code is required." }]}
+                        onChange={(e) => {
+                            form.setFieldsValue({ unit_code: e.target.value.toUpperCase() });
+                        }}
                     >
                         <Input placeholder="Enter unit code" />
                     </Form.Item>
