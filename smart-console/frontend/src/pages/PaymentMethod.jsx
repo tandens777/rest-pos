@@ -111,6 +111,7 @@ const PaymentMethod = () => {
             need_expdt: paymentMethod.needExpdt === "Y",
             bank_charges: paymentMethod.bankCharges,
             sm_pay_type: paymentMethod.smPayType,
+            picture_src: paymentMethod.pictureSrc,
         });
 
         // Set picture preview URL using the file server base URL
@@ -164,6 +165,7 @@ const PaymentMethod = () => {
             message.success(`Payment method ${editingPaymentMethod ? 'updated' : 'added'} successfully.`);
             setIsModalVisible(false);
             fetchPaymentMethods();
+            fetchDropdownData();
         } catch (error) {
             console.error("Error saving payment method:", error);
             message.error(error.response?.data?.message || "Failed to save payment method. Please try again.");
@@ -300,38 +302,43 @@ const PaymentMethod = () => {
                     <div
                         key={method.id}
                         style={{
-                            backgroundColor: "#fff", // Always white background
+                            backgroundColor: "#fff",
                             borderRadius: "8px",
                             padding: "16px",
                             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
                             textAlign: "center",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            height: "260px", // Adjust height for proper spacing
-                            overflow: "hidden",
+                            opacity: method.activeFlag === "N" ? 0.6 : 1, // Lower opacity if inactive
                         }}
                     >
-                        {/* Image Background Section (Only Greyed When Inactive) */}
+                        {/* Image Background Section */}
                         <div
                             style={{
                                 width: "100%",
-                                height: "65%", // Image section occupies 2/3 of the container
-                                backgroundImage: method.pictureSrc ? `url(${fileBaseUrl}${method.pictureSrc})` : "none",
-                                backgroundSize: "contain", // Ensures the image fits without cropping
+                                height: "120px",
+                                backgroundImage: method.pictureSrc
+                                    ? `url(${fileBaseUrl}${method.pictureSrc})`
+                                    : "none",
+                                backgroundSize: "contain",
                                 backgroundPosition: "center",
                                 backgroundRepeat: "no-repeat",
-                                borderRadius: "8px 8px 0 0", // Rounded top corners
-                                backgroundColor: "#ffffff", // Always white background
+                                borderRadius: "8px 8px 0 0",
+                                backgroundColor: "#ffffff",
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
-                                filter: method.activeFlag === "N" ? "grayscale(100%)" : "none", // Only greys the image when inactive
+                                filter: method.activeFlag === "N" ? "grayscale(100%)" : "none", // Grayscale for inactive items
                             }}
                         ></div>
 
                         {/* Payment Method Name */}
-                        <div style={{ fontWeight: "bold", fontSize: "16px", marginTop: "10px" }}>
+                        <div
+                            style={{
+                                fontWeight: "bold",
+                                fontSize: "16px",
+                                marginTop: "10px",
+                                color: method.activeFlag === "N" ? "#666" : "#000", // Greyed-out text if inactive
+                            }}
+                        >
                             {method.payMtdDesc}
                         </div>
 
@@ -359,7 +366,6 @@ const PaymentMethod = () => {
                             </Popconfirm>
                         </Space>
                     </div>
-
                 ))}
             </div>
 

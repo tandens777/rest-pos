@@ -116,6 +116,7 @@ const SurchargeDiscount = () => {
             check_senior: surchargeDiscount.checkSenior === "Y",
             pcnt_on_nv_flag: surchargeDiscount.pcntOnNvFlag === "Y",
             sm_discount_type: surchargeDiscount.smDiscountType,
+            picture_src: surchargeDiscount.pictureSrc,
         });
 
         setDiscType(surchargeDiscount.discType);
@@ -175,6 +176,7 @@ const SurchargeDiscount = () => {
             message.success(`Surcharge discount ${editingSurchargeDiscount ? 'updated' : 'added'} successfully.`);
             setIsModalVisible(false);
             fetchSurchargeDiscounts();
+            fetchDropdownData();
         } catch (error) {
             console.error("Error saving surcharge discount:", error);
             message.error(error.response?.data?.message || "Failed to save surcharge discount. Please try again.");
@@ -316,19 +318,17 @@ const SurchargeDiscount = () => {
                             padding: "16px",
                             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
                             textAlign: "center",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            height: "260px",
-                            overflow: "hidden",
+                            opacity: discount.activeFlag === "N" ? 0.6 : 1, // Lower opacity if inactive
                         }}
                     >
                         {/* Image Background Section */}
                         <div
                             style={{
                                 width: "100%",
-                                height: "65%",
-                                backgroundImage: discount.pictureSrc ? `url(${fileBaseUrl}${discount.pictureSrc})` : "none",
+                                height: "120px",
+                                backgroundImage: discount.pictureSrc
+                                    ? `url(${fileBaseUrl}${discount.pictureSrc})`
+                                    : "none",
                                 backgroundSize: "contain",
                                 backgroundPosition: "center",
                                 backgroundRepeat: "no-repeat",
@@ -337,12 +337,19 @@ const SurchargeDiscount = () => {
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
-                                filter: discount.activeFlag === "N" ? "grayscale(100%)" : "none",
+                                filter: discount.activeFlag === "N" ? "grayscale(100%)" : "none", // Grayscale for inactive items
                             }}
                         ></div>
 
                         {/* Surcharge Discount Name */}
-                        <div style={{ fontWeight: "bold", fontSize: "16px", marginTop: "10px" }}>
+                        <div
+                            style={{
+                                fontWeight: "bold",
+                                fontSize: "16px",
+                                marginTop: "10px",
+                                color: discount.activeFlag === "N" ? "#666" : "#000", // Greyed-out text if inactive
+                            }}
+                        >
                             {discount.discDesc}
                         </div>
 
