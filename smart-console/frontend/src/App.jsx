@@ -16,6 +16,7 @@ import DeliveryApp from './pages/DeliveryApp';
 import Employee from './pages/Employee';
 import ChangePin from './pages/ChangePin';
 import PaymentMethod from './pages/PaymentMethod';
+import SurchargeDiscount from './pages/SurchargeDiscount';
 
 const App = () => {
   // Use state to track authentication status
@@ -70,6 +71,7 @@ const App = () => {
                 <Route path="/food-delivery-apps" element={<DeliveryApp />} />
                 <Route path="/change-pin" element={<ChangePin />} />
                 <Route path="/payment-method" element={<PaymentMethod />} />
+                <Route path="/surcharge-discounts" element={<SurchargeDiscount />} />
                 <Route path="/build/:bID" element={<Build />} />
                 <Route path="/analytics/:aID" element={<Analytics />} />
               </Routes>

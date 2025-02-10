@@ -61,4 +61,16 @@ public class SurDiscService {
             throw new GenericNotFoundException("No surcharge discounts found.");
         }
     }
+
+    public List<SurchargeDiscount> getSurDiscCategories() {
+        List<SurchargeDiscount> surDiscs;
+        surDiscs = surDiscRepository.findByIsCategoryContainingIgnoreCaseOrderById("Y");
+
+        if (!surDiscs.isEmpty()) {
+            return surDiscs;
+        } else {
+            return null;
+        }
+    }
+
 }
