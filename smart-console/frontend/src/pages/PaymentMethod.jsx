@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
 import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, Upload, Avatar, Switch, Row, Col, Checkbox } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
+import { CgCornerLeftUp } from "react-icons/cg";
 
 const { Option } = Select;
 
@@ -13,6 +14,7 @@ const PaymentMethod = () => {
     const [editingPaymentMethod, setEditingPaymentMethod] = useState(null);
     const [smPayTypes, setSmPayTypes] = useState([]);
     const [payMethodCategories, setPayMethodCategories] = useState([]);
+    const [parentCategoryId, setParentCategoryId] = useState(null);     
 
     const [form] = Form.useForm();
     const [searchForm] = Form.useForm();  // Separate form for search
@@ -27,7 +29,8 @@ const PaymentMethod = () => {
 
     // Fetch all payment methods on component mount
     useEffect(() => {
-        fetchPaymentMethods();
+        //fetchPaymentMethods();
+        handleCategoryClick(0, null);
         fetchDropdownData();
 
         const handleResize = () => {
@@ -59,6 +62,25 @@ const PaymentMethod = () => {
         }
     };
 
+    // Fetch Payment Methods from API
+    const handleCategoryClick = async (id, parentPayMtdId) => {
+        try {
+            console.log("parent id: ", id);
+            const response = await axiosInstance.get(`/pay_method/all_subitems/${id || 0}`);
+    
+            console.log('response.data: ', response.data);
+
+            console.log("new parent id: ", parentPayMtdId);
+            setParentCategoryId(parentPayMtdId);        
+            console.log("parent id: ", parentCategoryId);
+
+            setPaymentMethods(response.data); // Update the displayed list
+    
+        } catch (error) {
+            message.error("Failed to fetch child payment methods.");
+        }
+    };
+
     const fetchDropdownData = async () => {
         try {
             const [payTypesResponse, categoriesResponse] = await Promise.all([
@@ -86,7 +108,8 @@ const PaymentMethod = () => {
     const handleReset = () => {
         searchForm.resetFields();
         setSearchTerm("");
-        fetchPaymentMethods();
+        //fetchPaymentMethods();
+        handleCategoryClick(0, null);
     };
 
     // Add a New Payment Method
@@ -164,7 +187,8 @@ const PaymentMethod = () => {
 
             message.success(`Payment method ${editingPaymentMethod ? 'updated' : 'added'} successfully.`);
             setIsModalVisible(false);
-            fetchPaymentMethods();
+            handleCategoryClick(0, null);
+            //fetchPaymentMethods();
             fetchDropdownData();
         } catch (error) {
             console.error("Error saving payment method:", error);
@@ -277,6 +301,26 @@ const PaymentMethod = () => {
                                 Reset
                             </Button>
                         </Form.Item>
+
+                        {/* Go Up One Level Button - Placed beside RESET */}
+                        { (
+                            <Button
+                                onClick={() => handleCategoryClick(parentCategoryId, null)}
+                                icon={<CgCornerLeftUp />} 
+                                style={{
+                                    backgroundColor: "#ff9800", // Yellowish to differentiate
+                                    color: "white",
+                                    border: "1px solid #a36b00",
+                                    borderRadius: "4px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                Go Up One Level
+                            </Button>
+                        )}
+
                     </Form>
                 </Space>
                 <Button
@@ -289,85 +333,112 @@ const PaymentMethod = () => {
                 </Button>
             </Space>
 
-            {/* Payment Method List Container */}
+{/* Payment Method List Container */}
+<div
+    style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+        gap: "20px",
+        marginTop: "20px",
+    }}
+>
+    {paginatedPaymentMethods.map((method) => {
+        const isCategory = method.isCategory === "Y";
+
+        return (
             <div
+                key={method.id}
+                onClick={() => {
+                    // Run category click handler only for categories
+                    if (isCategory) {
+                        handleCategoryClick(method.id, method.parentPayMtdId);
+                    }
+                }}
                 style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-                    gap: "20px",
-                    marginTop: "20px",
+                    backgroundColor: isCategory ? "#E6F7FF" : "#fff", // Soft blue for categories
+                    borderRadius: "8px",
+                    padding: "16px",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                    textAlign: "center",
+                    opacity: method.activeFlag === "N" ? 0.6 : 1, // Lower opacity if inactive
+                    cursor: isCategory ? "pointer" : "default", // Make category clickable
+                    transition: "background-color 0.2s, border 0.2s",
+                    border: isCategory ? "2px solid #1890ff" : "1px solid #ddd", // Blue border for categories
+
+                    /* ✅ Inline Hover Effect */
+                    ...(isCategory && {
+                        ":hover": {
+                            backgroundColor: "#D6EFFA", // Slightly darker blue when hovered
+                        },
+                    }),
                 }}
             >
-                {paginatedPaymentMethods.map((method) => (
-                    <div
-                        key={method.id}
-                        style={{
-                            backgroundColor: "#fff",
-                            borderRadius: "8px",
-                            padding: "16px",
-                            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                            textAlign: "center",
-                            opacity: method.activeFlag === "N" ? 0.6 : 1, // Lower opacity if inactive
+                {/* Image Background Section */}
+                <div
+                    style={{
+                        width: "100%",
+                        height: "120px",
+                        backgroundImage: method.pictureSrc
+                            ? `url(${fileBaseUrl}${method.pictureSrc})`
+                            : "none",
+                        backgroundSize: "contain",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                        borderRadius: "8px 8px 0 0",
+                        backgroundColor: "#ffffff",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        filter: method.activeFlag === "N" ? "grayscale(100%)" : "none", // Grayscale for inactive items
+                    }}
+                ></div>
+
+                {/* Payment Method Name */}
+                <div
+                    style={{
+                        fontWeight: "bold",
+                        fontSize: "16px",
+                        marginTop: "10px",
+                        color: method.activeFlag === "N" ? "#666" : "#000", // Greyed-out text if inactive
+                    }}
+                >
+                    {method.payMtdDesc}
+                </div>
+
+                {/* Active/Inactive Status */}
+                <div
+                    style={{
+                        marginTop: "8px",
+                        fontWeight: "bold",
+                        color: method.activeFlag === "Y" ? "red" : "black",
+                    }}
+                >
+                    {method.activeFlag === "Y" ? "ACTIVE" : "INACTIVE"}
+                </div>
+
+                {/* Action Buttons (Edit & Delete Always Visible) */}
+                <Space style={{ marginTop: "10px" }}>
+                    <Button icon={<EditOutlined />} onClick={() => {
+                         handleEdit(method);
+                         e.stopPropagation(); // Prevents category click from triggering
+                    }} />
+                    <Popconfirm
+                        title="Are you sure to delete this payment method?"
+                        onConfirm={() => {
+                            handleDelete(method.id);
+                            e.stopPropagation(); // Prevents category click from triggering
                         }}
+                        okText="Yes"
+                        cancelText="No"
                     >
-                        {/* Image Background Section */}
-                        <div
-                            style={{
-                                width: "100%",
-                                height: "120px",
-                                backgroundImage: method.pictureSrc
-                                    ? `url(${fileBaseUrl}${method.pictureSrc})`
-                                    : "none",
-                                backgroundSize: "contain",
-                                backgroundPosition: "center",
-                                backgroundRepeat: "no-repeat",
-                                borderRadius: "8px 8px 0 0",
-                                backgroundColor: "#ffffff",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                filter: method.activeFlag === "N" ? "grayscale(100%)" : "none", // Grayscale for inactive items
-                            }}
-                        ></div>
-
-                        {/* Payment Method Name */}
-                        <div
-                            style={{
-                                fontWeight: "bold",
-                                fontSize: "16px",
-                                marginTop: "10px",
-                                color: method.activeFlag === "N" ? "#666" : "#000", // Greyed-out text if inactive
-                            }}
-                        >
-                            {method.payMtdDesc}
-                        </div>
-
-                        {/* Active/Inactive Status */}
-                        <div
-                            style={{
-                                marginTop: "8px",
-                                fontWeight: "bold",
-                                color: method.activeFlag === "Y" ? "red" : "black",
-                            }}
-                        >
-                            {method.activeFlag === "Y" ? "ACTIVE" : "INACTIVE"}
-                        </div>
-
-                        {/* Action Buttons */}
-                        <Space style={{ marginTop: "10px" }}>
-                            <Button icon={<EditOutlined />} onClick={() => handleEdit(method)} />
-                            <Popconfirm
-                                title="Are you sure to delete this payment method?"
-                                onConfirm={() => handleDelete(method.id)}
-                                okText="Yes"
-                                cancelText="No"
-                            >
-                                <Button icon={<DeleteOutlined />} danger />
-                            </Popconfirm>
-                        </Space>
-                    </div>
-                ))}
+                        <Button icon={<DeleteOutlined />} danger />
+                    </Popconfirm>
+                </Space>
             </div>
+        );
+    })}
+</div>
+
 
             <Pagination
                 current={currentPage}

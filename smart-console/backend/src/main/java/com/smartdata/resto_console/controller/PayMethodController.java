@@ -63,6 +63,12 @@ public class PayMethodController {
     }    
 
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all_subitems/{parentPayMtdId}")
+    public ResponseEntity<List<PayMethod>> getChildPayMethods(@PathVariable Integer parentPayMtdId) throws GenericNotFoundException {
+        return ResponseEntity.ok(payMethodService.getChildPayMethods(parentPayMtdId));
+    }    
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getcategories")
     public ResponseEntity<List<PayMethod>> getPayMethodCategories() {
         return ResponseEntity.ok(payMethodService.getPayMethodCategories());
