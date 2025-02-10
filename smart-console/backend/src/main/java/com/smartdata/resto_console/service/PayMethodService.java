@@ -8,8 +8,8 @@ import com.smartdata.resto_console.repository.PayMethodRepository;
 import com.smartdata.resto_console.exception.GenericNotFoundException;
 import java.util.Optional;
 import java.util.List;
+import java.util.ArrayList;
 import com.smartdata.resto_console.model.PayMethod;
-
 @Service
 public class PayMethodService {
 
@@ -72,5 +72,16 @@ public class PayMethodService {
         }
     }
 
+
+    public List<PayMethod> getChildPayMethods(Integer parentPayMtdId) {
+        if (parentPayMtdId == null) {
+            parentPayMtdId = 0; // Return empty list if parent_id is null
+        }
+    
+        List<PayMethod> payMethods = payMethodRepository.findChildPayMethods(parentPayMtdId);
+    
+        return payMethods != null ? payMethods : new ArrayList<>(); // Ensure non-null return
+    }
+    
 
 }
