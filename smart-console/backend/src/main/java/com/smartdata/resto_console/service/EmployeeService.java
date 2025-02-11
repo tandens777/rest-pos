@@ -220,14 +220,14 @@ public class EmployeeService {
     public List<Employee> getEmployees(String searchTerm) {
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
             // If searchTerm is empty, return all employees ordered by ID
-            return employeeRepository.findAllByOrderById();
+            return employeeRepository.findAllByOrderByName();
         }
 
         // Split the searchTerm into individual words
         String[] searchWords = searchTerm.trim().split("\\s+");
 
         // Create a stream of employees and filter based on the search words
-        return employeeRepository.findAllByOrderById().stream()
+        return employeeRepository.findAllByOrderByName().stream()
                 .filter(employee -> matchesSearchTerm(employee, searchWords))
                 .collect(Collectors.toList());
     }
