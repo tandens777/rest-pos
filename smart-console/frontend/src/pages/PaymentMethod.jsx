@@ -75,7 +75,10 @@ const PaymentMethod = () => {
             console.log("parent id: ", parentCategoryId);
 
             setPaymentMethods(response.data); // Update the displayed list
-    
+
+            // ✅ Reset the pagination to page 1
+            setCurrentPage(1);
+
         } catch (error) {
             message.error("Failed to fetch child payment methods.");
         }
@@ -348,9 +351,9 @@ const PaymentMethod = () => {
         return (
             <div
                 key={method.id}
-                onClick={() => {
-                    // Run category click handler only for categories
-                    if (isCategory) {
+                onClick={(e) => {
+                    // Ensure category click only happens when clicking outside of buttons
+                    if (isCategory && !e.target.closest(".edit-delete-buttons")) {
                         handleCategoryClick(method.id, method.parentPayMtdId);
                     }
                 }}
@@ -373,37 +376,54 @@ const PaymentMethod = () => {
                     }),
                 }}
             >
-                {/* Image Background Section */}
-                <div
-                    style={{
-                        width: "100%",
-                        height: "120px",
-                        backgroundImage: method.pictureSrc
-                            ? `url(${fileBaseUrl}${method.pictureSrc})`
-                            : "none",
-                        backgroundSize: "contain",
-                        backgroundPosition: "center",
-                        backgroundRepeat: "no-repeat",
-                        borderRadius: "8px 8px 0 0",
-                        backgroundColor: "#ffffff",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        filter: method.activeFlag === "N" ? "grayscale(100%)" : "none", // Grayscale for inactive items
-                    }}
-                ></div>
+{/* Image or Large Centered Text */}
+<div
+    style={{
+        width: "100%",
+        height: "120px",
+        borderRadius: "8px 8px 0 0",
+        backgroundColor: method.pictureSrc ? "#ffffff" : isCategory ? "#E6F7FF" : "#ffffff", // Blue for category, White for non-category
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundSize: "contain",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundImage: method.pictureSrc ? `url(${fileBaseUrl}${method.pictureSrc})` : "none",
+        filter: method.activeFlag === "N" ? "grayscale(100%)" : "none", // Grayscale for inactive items
+    }}
+>
+    {/* Show Text only if there's NO picture */}
+    {!method.pictureSrc && (
+        <span
+            style={{
+                fontSize: "20px", // Make text larger
+                fontWeight: "bold",
+                textAlign: "center",
+                color: "#333", // Dark text for contrast
+                maxWidth: "80%", // Prevent text overflow
+                wordWrap: "break-word",
+            }}
+        >
+            {method.payMtdDesc}
+        </span>
+    )}
+</div>
 
-                {/* Payment Method Name */}
-                <div
-                    style={{
-                        fontWeight: "bold",
-                        fontSize: "16px",
-                        marginTop: "10px",
-                        color: method.activeFlag === "N" ? "#666" : "#000", // Greyed-out text if inactive
-                    }}
-                >
-                    {method.payMtdDesc}
-                </div>
+
+{/* Payment Method Name - Keep space even when hidden */}
+<div
+    style={{
+        fontWeight: "bold",
+        fontSize: "16px",
+        marginTop: "10px",
+        color: method.activeFlag === "N" ? "#666" : "#000", // Greyed-out text if inactive
+        visibility: method.pictureSrc || isCategory ? "visible" : "hidden", // Keep space even when hidden
+        minHeight: "20px", // Ensures consistent height even when empty
+    }}
+>
+    {method.pictureSrc ? method.payMtdDesc : ""}
+</div>
 
                 {/* Active/Inactive Status */}
                 <div
@@ -417,21 +437,23 @@ const PaymentMethod = () => {
                 </div>
 
                 {/* Action Buttons (Edit & Delete Always Visible) */}
-                <Space style={{ marginTop: "10px" }}>
+                <Space className="edit-delete-buttons" style={{ marginTop: "10px" }}>
                     <Button icon={<EditOutlined />} onClick={() => {
                          handleEdit(method);
-                         e.stopPropagation(); // Prevents category click from triggering
                     }} />
                     <Popconfirm
                         title="Are you sure to delete this payment method?"
                         onConfirm={() => {
+                            //e?.stopPropagation(); // Prevents category click from triggering
                             handleDelete(method.id);
-                            e.stopPropagation(); // Prevents category click from triggering
                         }}
+                        onCancel={(e) => e.stopPropagation()} // Prevents category click when canceling
                         okText="Yes"
                         cancelText="No"
                     >
-                        <Button icon={<DeleteOutlined />} danger />
+                        <Button icon={<DeleteOutlined />} danger 
+                        onClick={(e) => e.stopPropagation()}
+                        />
                     </Popconfirm>
                 </Space>
             </div>
@@ -497,7 +519,16 @@ const PaymentMethod = () => {
                                 name="parent_pay_mtd_id"
                                 label="Parent Category"
                             >
-                                <Select placeholder="Select Parent Category">
+                                <Select 
+                                        placeholder="Select Parent Category"
+                                        allowClear  
+                                        onChange={(value) => {
+                                            form.setFieldsValue({ parent_pay_mtd_id: value || null });
+                                        }}
+                                >
+                                     {/* Add an empty option at the top */}
+                                    <Option value={null}>None</Option>  
+
                                     {Array.isArray(payMethodCategories) && payMethodCategories.length > 0 ? (
                                         payMethodCategories.map((category) => (
                                             <Option key={category.id} value={category.id}>
