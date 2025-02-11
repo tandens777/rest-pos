@@ -63,6 +63,12 @@ public class SurDiscController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all_subitems/{parentDiscId}")
+    public ResponseEntity<List<SurchargeDiscount>> getChildSurchargeDiscounts(@PathVariable Integer parentDiscId) throws GenericNotFoundException {
+        return ResponseEntity.ok(surDiscService.getChildSurchargeDiscounts(parentDiscId));
+    }   
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getcategories")
     public ResponseEntity<List<SurchargeDiscount>> getSurDiscCategories() {
         return ResponseEntity.ok(surDiscService.getSurDiscCategories());

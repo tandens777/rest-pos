@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
 import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, Upload, Avatar, Switch, Row, Col, Checkbox, Radio } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
+import { CgCornerLeftUp } from "react-icons/cg";
 
 const { Option } = Select;
 
@@ -14,6 +15,7 @@ const SurchargeDiscount = () => {
     const [smDiscountTypes, setSmDiscountTypes] = useState([]);
     const [surDiscCategories, setSurDiscCategories] = useState([]);
     const [discType, setDiscType] = useState("LP");
+    const [parentCategoryId, setParentCategoryId] = useState(null);     
 
     const [form] = Form.useForm();
     const [searchForm] = Form.useForm();  // Separate form for search
@@ -28,7 +30,8 @@ const SurchargeDiscount = () => {
 
     // Fetch all surcharge discounts on component mount
     useEffect(() => {
-        fetchSurchargeDiscounts();
+        //fetchSurchargeDiscounts();
+        handleCategoryClick(0, null);
         fetchDropdownData();
 
         const handleResize = () => {
@@ -60,6 +63,28 @@ const SurchargeDiscount = () => {
         }
     };
 
+    // Fetch Surcharge Discounts from API
+    const handleCategoryClick = async (id, parentDiscId) => {
+        try {
+            console.log("parent id: ", id);
+            const response = await axiosInstance.get(`/surcharge_discount/all_subitems/${id || 0}`);
+    
+            console.log('response.data: ', response.data);
+
+            console.log("new parent id: ", parentDiscId);
+            setParentCategoryId(parentDiscId);        
+            console.log("parent id: ", parentCategoryId);
+
+            setSurchargeDiscounts(response.data); // Update the displayed list
+
+            // ✅ Reset the pagination to page 1
+            setCurrentPage(1);
+
+        } catch (error) {
+            message.error("Failed to fetch child surcharge discounts.");
+        }
+    };
+
     const fetchDropdownData = async () => {
         try {
             const [discountTypesResponse, categoriesResponse] = await Promise.all([
@@ -87,7 +112,8 @@ const SurchargeDiscount = () => {
     const handleReset = () => {
         searchForm.resetFields();
         setSearchTerm("");
-        fetchSurchargeDiscounts();
+        //fetchSurchargeDiscounts();
+        handleCategoryClick(0, null);
     };
 
     // Add a New Surcharge Discount
@@ -175,7 +201,8 @@ const SurchargeDiscount = () => {
 
             message.success(`Surcharge discount ${editingSurchargeDiscount ? 'updated' : 'added'} successfully.`);
             setIsModalVisible(false);
-            fetchSurchargeDiscounts();
+            handleCategoryClick(0, null);
+            //fetchSurchargeDiscounts();
             fetchDropdownData();
         } catch (error) {
             console.error("Error saving surcharge discount:", error);
@@ -257,10 +284,8 @@ const SurchargeDiscount = () => {
                 }}
             >
                 <Space style={{ marginBottom: "10px" }}>
-                    <Form form={searchForm}
-                        layout="inline"
-                    >
-                        <Form.Item name="search">  
+                    <Form form={searchForm} layout="inline">
+                        <Form.Item name="search">
                             <Input
                                 placeholder="Search surcharge discounts..."
                                 value={searchTerm}
@@ -272,22 +297,38 @@ const SurchargeDiscount = () => {
                             <Button
                                 type="primary"
                                 icon={<SearchOutlined />}
-                                htmlType="submit" 
+                                htmlType="submit"
                                 onClick={handleSearch}
                             >
                                 Search
                             </Button>
                         </Form.Item>
-
                         <Form.Item>
                             <Button
-                            type="default"
-                            onClick={handleReset}
-                            style={{ backgroundColor: "#1890ff", color: "#fff" }}
+                                type="default"
+                                onClick={handleReset}
+                                style={{ backgroundColor: "#1890ff", color: "#fff" }}
                             >
                                 Reset
                             </Button>
                         </Form.Item>
+                        {(
+                            <Button
+                                onClick={() => handleCategoryClick(parentCategoryId, null)}
+                                icon={<CgCornerLeftUp />}
+                                style={{
+                                    backgroundColor: "#ff9800",
+                                    color: "white",
+                                    border: "1px solid #a36b00",
+                                    borderRadius: "4px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                Go Up One Level
+                            </Button>
+                        )}
                     </Form>
                 </Space>
                 <Button
@@ -309,75 +350,107 @@ const SurchargeDiscount = () => {
                     marginTop: "20px",
                 }}
             >
-                {paginatedSurchargeDiscounts.map((discount) => (
-                    <div
-                        key={discount.id}
-                        style={{
-                            backgroundColor: "#fff",
-                            borderRadius: "8px",
-                            padding: "16px",
-                            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                            textAlign: "center",
-                            opacity: discount.activeFlag === "N" ? 0.6 : 1, // Lower opacity if inactive
-                        }}
-                    >
-                        {/* Image Background Section */}
-                        <div
-                            style={{
-                                width: "100%",
-                                height: "120px",
-                                backgroundImage: discount.pictureSrc
-                                    ? `url(${fileBaseUrl}${discount.pictureSrc})`
-                                    : "none",
-                                backgroundSize: "contain",
-                                backgroundPosition: "center",
-                                backgroundRepeat: "no-repeat",
-                                borderRadius: "8px 8px 0 0",
-                                backgroundColor: "#ffffff",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                filter: discount.activeFlag === "N" ? "grayscale(100%)" : "none", // Grayscale for inactive items
-                            }}
-                        ></div>
+                {paginatedSurchargeDiscounts.map((discount) => {
+                    const isCategory = discount.isCategory === "Y";
 
-                        {/* Surcharge Discount Name */}
+                    return (
                         <div
+                            key={discount.id}
+                            onClick={(e) => {
+                                if (isCategory && !e.target.closest(".edit-delete-buttons")) {
+                                    handleCategoryClick(discount.id, discount.parentDiscId);
+                                }
+                            }}
                             style={{
-                                fontWeight: "bold",
-                                fontSize: "16px",
-                                marginTop: "10px",
-                                color: discount.activeFlag === "N" ? "#666" : "#000", // Greyed-out text if inactive
+                                backgroundColor: isCategory ? "#E6F7FF" : "#fff",
+                                borderRadius: "8px",
+                                padding: "16px",
+                                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                                textAlign: "center",
+                                opacity: discount.activeFlag === "N" ? 0.6 : 1,
+                                cursor: isCategory ? "pointer" : "default",
+                                transition: "background-color 0.2s, border 0.2s",
+                                border: isCategory ? "2px solid #1890ff" : "1px solid #ddd",
+                                ...(isCategory && {
+                                    ":hover": {
+                                        backgroundColor: "#D6EFFA",
+                                    },
+                                }),
                             }}
                         >
-                            {discount.discDesc}
-                        </div>
-
-                        {/* Active/Inactive Status */}
-                        <div
-                            style={{
-                                marginTop: "8px",
-                                fontWeight: "bold",
-                                color: discount.activeFlag === "Y" ? "red" : "black",
-                            }}
-                        >
-                            {discount.activeFlag === "Y" ? "ACTIVE" : "INACTIVE"}
-                        </div>
-
-                        {/* Action Buttons */}
-                        <Space style={{ marginTop: "10px" }}>
-                            <Button icon={<EditOutlined />} onClick={() => handleEdit(discount)} />
-                            <Popconfirm
-                                title="Are you sure to delete this surcharge discount?"
-                                onConfirm={() => handleDelete(discount.id)}
-                                okText="Yes"
-                                cancelText="No"
+                            {/* Image or Large Centered Text */}
+                            <div
+                                style={{
+                                    width: "100%",
+                                    height: "120px",
+                                    borderRadius: "8px 8px 0 0",
+                                    backgroundColor: discount.pictureSrc ? "#ffffff" : isCategory ? "#E6F7FF" : "#ffffff",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    backgroundSize: "contain",
+                                    backgroundPosition: "center",
+                                    backgroundRepeat: "no-repeat",
+                                    backgroundImage: discount.pictureSrc ? `url(${fileBaseUrl}${discount.pictureSrc})` : "none",
+                                    filter: discount.activeFlag === "N" ? "grayscale(100%)" : "none",
+                                }}
                             >
-                                <Button icon={<DeleteOutlined />} danger />
-                            </Popconfirm>
-                        </Space>
-                    </div>
-                ))}
+                                {!discount.pictureSrc && (
+                                    <span
+                                        style={{
+                                            fontSize: "20px",
+                                            fontWeight: "bold",
+                                            textAlign: "center",
+                                            color: "#333",
+                                            maxWidth: "80%",
+                                            wordWrap: "break-word",
+                                        }}
+                                    >
+                                        {discount.discDesc}
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Surcharge Discount Name */}
+                            <div
+                                style={{
+                                    fontWeight: "bold",
+                                    fontSize: "16px",
+                                    marginTop: "10px",
+                                    color: discount.activeFlag === "N" ? "#666" : "#000",
+                                    visibility: discount.pictureSrc || isCategory ? "visible" : "hidden",
+                                    minHeight: "20px",
+                                }}
+                            >
+                                {discount.pictureSrc ? discount.discDesc : ""}
+                            </div>
+
+                            {/* Active/Inactive Status */}
+                            <div
+                                style={{
+                                    marginTop: "8px",
+                                    fontWeight: "bold",
+                                    color: discount.activeFlag === "Y" ? "red" : "black",
+                                }}
+                            >
+                                {discount.activeFlag === "Y" ? "ACTIVE" : "INACTIVE"}
+                            </div>
+
+                            {/* Action Buttons */}
+                            <Space className="edit-delete-buttons" style={{ marginTop: "10px" }}>
+                                <Button icon={<EditOutlined />} onClick={() => handleEdit(discount)} />
+                                <Popconfirm
+                                    title="Are you sure to delete this surcharge discount?"
+                                    onConfirm={() => handleDelete(discount.id)}
+                                    okText="Yes"
+                                    cancelText="No"
+                                >
+                                    <Button icon={<DeleteOutlined />} danger />
+                                </Popconfirm>
+                            </Space>
+                        </div>
+                    );
+                })}
             </div>
 
             <Pagination
@@ -439,7 +512,13 @@ const SurchargeDiscount = () => {
                                 name="parent_disc_id"
                                 label="Parent Category"
                             >
-                                <Select placeholder="Select Parent Category">
+                                <Select 
+                                    placeholder="Select Parent Category"
+                                    allowClear  
+                                    onChange={(value) => {
+                                        form.setFieldsValue({ parent_disc_id: value || null });
+                                    }}
+                                >
                                     {Array.isArray(surDiscCategories) && surDiscCategories.length > 0 ? (
                                         surDiscCategories.map((category) => (
                                             <Option key={category.id} value={category.id}>
