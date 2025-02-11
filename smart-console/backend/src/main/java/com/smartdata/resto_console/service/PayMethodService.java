@@ -49,9 +49,9 @@ public class PayMethodService {
     public List<PayMethod> getPayMethods(String searchTerm) throws GenericNotFoundException {
         List<PayMethod> payMethods;
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            payMethods = payMethodRepository.findByPayMtdDescContainingIgnoreCaseOrderById(searchTerm);
+            payMethods = payMethodRepository.findByPayMtdDescContainingIgnoreCaseOrderByPayMtdDesc(searchTerm);
         } else {
-            payMethods = payMethodRepository.findAllByOrderById();
+            payMethods = payMethodRepository.findAllByOrderByPayMtdDesc();
         }
 
         if (!payMethods.isEmpty()) {
@@ -63,7 +63,7 @@ public class PayMethodService {
 
     public List<PayMethod> getPayMethodCategories() {
         List<PayMethod> payMethods;
-        payMethods = payMethodRepository.findByIsCategoryContainingIgnoreCaseOrderById("Y");
+        payMethods = payMethodRepository.findByIsCategoryContainingIgnoreCaseOrderByPayMtdDesc("Y");
 
         if (!payMethods.isEmpty()) {
             return payMethods;
