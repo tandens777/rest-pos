@@ -207,7 +207,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     );
     
     // Find all employees ordered by ID
-    List<Employee> findAllByOrderById();
+    @Query("SELECT e FROM Employee e ORDER BY e.lastNm ASC, e.firstNm ASC")
+    List<Employee> findAllByOrderByName();
 
     @Query("SELECT e FROM Employee e WHERE LOWER(e.username) = :username")
     Optional<Employee> findByUsername(@Param("username") String username);

@@ -45,9 +45,9 @@ public class FloorService {
     public List<Floor> getFloors(String searchTerm) throws GenericNotFoundException {
         List<Floor> floors;
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            floors = floorRepository.findByNameContainingIgnoreCaseOrderById(searchTerm);
+            floors = floorRepository.findByNameContainingIgnoreCaseOrderByName(searchTerm);
         } else {
-            floors = floorRepository.findAllByOrderById();
+            floors = floorRepository.findAllByOrderByName();
         }
 
         if (!floors.isEmpty()) {

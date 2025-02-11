@@ -45,9 +45,9 @@ public class DeliveryAppService {
     public List<DeliveryApp> getDeliveryApps(String searchTerm) throws GenericNotFoundException {
         List<DeliveryApp> dlvryApps;
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            dlvryApps = dlvryAppRepository.findByAppNmContainingIgnoreCaseOrderById(searchTerm);
+            dlvryApps = dlvryAppRepository.findByAppNmContainingIgnoreCaseOrderByAppNm(searchTerm);
         } else {
-            dlvryApps = dlvryAppRepository.findAllByOrderById();
+            dlvryApps = dlvryAppRepository.findAllByOrderByAppNm();
         }
 
         if (!dlvryApps.isEmpty()) {
