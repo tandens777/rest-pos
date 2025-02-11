@@ -8,6 +8,7 @@ import com.smartdata.resto_console.repository.SurDiscRepository;
 import com.smartdata.resto_console.exception.GenericNotFoundException;
 import java.util.Optional;
 import java.util.List;
+import java.util.ArrayList;
 import com.smartdata.resto_console.model.SurchargeDiscount;
 
 @Service
@@ -50,9 +51,9 @@ public class SurDiscService {
     public List<SurchargeDiscount> getSurchargeDiscounts(String searchTerm) throws GenericNotFoundException {
         List<SurchargeDiscount> surchargeDiscounts;
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            surchargeDiscounts = surDiscRepository.findByDiscDescContainingIgnoreCaseOrderById(searchTerm);
+            surchargeDiscounts = surDiscRepository.findByDiscDescContainingIgnoreCaseOrderByDiscDesc(searchTerm);
         } else {
-            surchargeDiscounts = surDiscRepository.findAllByOrderById();
+            surchargeDiscounts = surDiscRepository.findAllByOrderByDiscDesc();
         }
 
         if (!surchargeDiscounts.isEmpty()) {
@@ -64,7 +65,7 @@ public class SurDiscService {
 
     public List<SurchargeDiscount> getSurDiscCategories() {
         List<SurchargeDiscount> surDiscs;
-        surDiscs = surDiscRepository.findByIsCategoryContainingIgnoreCaseOrderById("Y");
+        surDiscs = surDiscRepository.findByIsCategoryContainingIgnoreCaseOrderByDiscDesc("Y");
 
         if (!surDiscs.isEmpty()) {
             return surDiscs;
@@ -72,5 +73,16 @@ public class SurDiscService {
             return null;
         }
     }
+
+    public List<SurchargeDiscount> getChildSurchargeDiscounts(Integer parentDiscId) {
+        if (parentDiscId == null) {
+            parentDiscId = 0; // Return empty list if parent_id is null
+        }
+    
+        List<SurchargeDiscount> surDiscs = surDiscRepository.findChildSurchargeDiscounts(parentDiscId);
+    
+        return surDiscs != null ? surDiscs : new ArrayList<>(); // Ensure non-null return
+    }
+
 
 }
