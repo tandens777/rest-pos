@@ -30,7 +30,8 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_check_senior", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_active_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_sm_discount_type", type = Integer.class),
-            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_pcnt_on_nv_flag", type = String.class)
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_pcnt_on_nv_flag", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_sort_order", type = Integer.class)
         }
     ),
     @NamedStoredProcedureQuery(
@@ -52,7 +53,8 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_check_senior", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_active_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_sm_discount_type", type = Integer.class),
-            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_pcnt_on_nv_flag", type = String.class)
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_pcnt_on_nv_flag", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_sort_order", type = Integer.class)
         }
     ),
     @NamedStoredProcedureQuery(
@@ -115,4 +117,7 @@ public class SurchargeDiscount {
 
     @Column(name = "pcnt_on_nv_flag")
     private String pcntOnNvFlag;
+
+    @Column(name = "sort_order") // Map the snake_case column name
+    private Integer sortOrder;    
 }

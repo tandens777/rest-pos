@@ -18,16 +18,16 @@ public class PayMethodService {
 
     @Transactional
     public void addPayMethod(String pay_mtd_desc, Integer parent_pay_mtd_id, String is_category, String picture_src, String need_ref, 
-    String need_expdt, String short_nm, String active_flag, Double bank_charges, Integer sm_pay_type) {
+    String need_expdt, String short_nm, String active_flag, Double bank_charges, Integer sm_pay_type, Integer sort_order) {
         payMethodRepository.addPayMethod(pay_mtd_desc, parent_pay_mtd_id, is_category, picture_src, need_ref, 
-        need_expdt, short_nm, active_flag, bank_charges, sm_pay_type);
+        need_expdt, short_nm, active_flag, bank_charges, sm_pay_type, sort_order);
     }
 
     @Transactional
     public void updatePayMethod(Integer id, String pay_mtd_desc, Integer parent_pay_mtd_id, String is_category, String picture_src, String need_ref, 
-        String need_expdt, String short_nm, String active_flag, Double bank_charges, Integer sm_pay_type) {
+        String need_expdt, String short_nm, String active_flag, Double bank_charges, Integer sm_pay_type, Integer sort_order) {
         payMethodRepository.updatePayMethod(id, pay_mtd_desc, parent_pay_mtd_id, is_category, picture_src, need_ref, 
-        need_expdt, short_nm, active_flag, bank_charges, sm_pay_type);
+        need_expdt, short_nm, active_flag, bank_charges, sm_pay_type, sort_order);
     }
 
     @Transactional
@@ -49,9 +49,9 @@ public class PayMethodService {
     public List<PayMethod> getPayMethods(String searchTerm) throws GenericNotFoundException {
         List<PayMethod> payMethods;
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            payMethods = payMethodRepository.findByPayMtdDescContainingIgnoreCaseOrderByPayMtdDesc(searchTerm);
+            payMethods = payMethodRepository.findByPayMtdDescContainingIgnoreCaseOrderBySortOrder(searchTerm);
         } else {
-            payMethods = payMethodRepository.findAllByOrderByPayMtdDesc();
+            payMethods = payMethodRepository.findAllByOrderBySortOrder();
         }
 
         if (!payMethods.isEmpty()) {
@@ -63,7 +63,7 @@ public class PayMethodService {
 
     public List<PayMethod> getPayMethodCategories() {
         List<PayMethod> payMethods;
-        payMethods = payMethodRepository.findByIsCategoryContainingIgnoreCaseOrderByPayMtdDesc("Y");
+        payMethods = payMethodRepository.findByIsCategoryContainingIgnoreCaseOrderBySortOrder("Y");
 
         if (!payMethods.isEmpty()) {
             return payMethods;

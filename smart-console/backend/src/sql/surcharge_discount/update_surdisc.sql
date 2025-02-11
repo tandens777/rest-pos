@@ -16,7 +16,8 @@ CREATE OR REPLACE PROCEDURE public.update_surcharge_discount(
     IN p_check_senior character varying,
     IN p_active_flag character varying,
     IN p_sm_discount_type int,
-    IN p_pcnt_on_nv_flag character varying
+    IN p_pcnt_on_nv_flag character varying,
+    IN p_sort_order int
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
@@ -38,7 +39,8 @@ BEGIN
         check_senior = p_check_senior,
         active_flag = p_active_flag,
         sm_discount_type = p_sm_discount_type,
-        pcnt_on_nv_flag = p_pcnt_on_nv_flag
+        pcnt_on_nv_flag = p_pcnt_on_nv_flag,
+        sort_order = p_sort_order
     WHERE disc_id = p_disc_id;
 
     -- If no rows were updated, raise an exception
@@ -56,5 +58,5 @@ ALTER PROCEDURE public.update_surcharge_discount(
     int, character varying, character varying, int, character varying, double precision, 
     double precision, character varying, character varying, character varying, 
     character varying, character varying, character varying, character varying, 
-    int, character varying
+    int, character varying, int
 ) OWNER TO postgres;
