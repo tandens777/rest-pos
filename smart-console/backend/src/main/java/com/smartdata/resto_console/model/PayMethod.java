@@ -27,6 +27,7 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_active_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_bank_charges", type = Double.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_sm_pay_type", type = Integer.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_sort_order", type = Integer.class)
         }
     ),
     @NamedStoredProcedureQuery(
@@ -44,6 +45,7 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_active_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_bank_charges", type = Double.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_sm_pay_type", type = Integer.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_sort_order", type = Integer.class),
         }
     ),
     @NamedStoredProcedureQuery(
@@ -91,6 +93,9 @@ public class PayMethod {
 
     @Column(name = "sm_pay_type") // Map the snake_case column name
     private Integer smPayType;    
+
+    @Column(name = "sort_order") // Map the snake_case column name
+    private Integer sortOrder;    
 
     // Getters and setters
 }

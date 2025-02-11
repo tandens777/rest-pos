@@ -11,7 +11,8 @@ CREATE OR REPLACE PROCEDURE public.update_pay_method(
     IN p_short_nm character varying,
     IN p_active_flag character varying,
     IN p_bank_charges double precision,
-    IN p_sm_pay_type int
+    IN p_sm_pay_type int,
+    IN p_sort_order int
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
@@ -28,7 +29,8 @@ BEGIN
         short_nm = p_short_nm,
         active_flag = p_active_flag,
         bank_charges = p_bank_charges,
-        sm_pay_type = p_sm_pay_type
+        sm_pay_type = p_sm_pay_type,
+        sort_order = p_sort_order
     WHERE pay_mtd_id = p_pay_mtd_id;
 
     -- If no rows were updated, raise an exception
@@ -44,5 +46,5 @@ $BODY$;
 
 ALTER PROCEDURE public.update_pay_method(
     int, character varying, int, character varying, character varying, 
-    character varying, character varying, character varying, character varying, double precision, int
+    character varying, character varying, character varying, character varying, double precision, int, int
 ) OWNER TO postgres;

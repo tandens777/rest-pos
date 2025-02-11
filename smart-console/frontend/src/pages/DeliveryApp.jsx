@@ -85,6 +85,8 @@ const DeliveryApp = () => {
     const handleEdit = (deliveryApp) => {
         const activeFlagBoolean = deliveryApp.activeFlag === "Y";
      
+        form.resetFields();
+                
         setEditingDeliveryApp(deliveryApp);
         setIsModalVisible(true);
         form.setFieldsValue({

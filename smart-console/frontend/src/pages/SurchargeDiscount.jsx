@@ -143,6 +143,7 @@ const SurchargeDiscount = () => {
             pcnt_on_nv_flag: surchargeDiscount.pcntOnNvFlag === "Y",
             sm_discount_type: surchargeDiscount.smDiscountType,
             picture_src: surchargeDiscount.pictureSrc,
+            sort_order: surchargeDiscount.sortOrder,
         });
 
         setDiscType(surchargeDiscount.discType);
@@ -190,6 +191,7 @@ const SurchargeDiscount = () => {
                 pcnt_on_nv_flag: values.pcnt_on_nv_flag ? "Y" : "N",
                 sm_discount_type: values.sm_discount_type,
                 picture_src: values.picture_src,
+                sort_order: values.sort_order,
             };
 
             console.log("submit data:", surchargeDiscountData);
@@ -656,6 +658,14 @@ const SurchargeDiscount = () => {
                                 >
                                     <Input type="number" placeholder="Enter value" />
                                 </Form.Item>
+
+                                <Form.Item
+                                    name="sort_order"
+                                    label="Sort Order"
+                                >
+                                    <Input type="number" placeholder="Enter Sort Order" />
+                                </Form.Item>
+
                         </Col>
                         <Col span={12}>
                             <Form.Item

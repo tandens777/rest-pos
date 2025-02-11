@@ -138,6 +138,7 @@ const PaymentMethod = () => {
             bank_charges: paymentMethod.bankCharges,
             sm_pay_type: paymentMethod.smPayType,
             picture_src: paymentMethod.pictureSrc,
+            sort_order: paymentMethod.sortOrder,
         });
 
         // Set picture preview URL using the file server base URL
@@ -179,6 +180,7 @@ const PaymentMethod = () => {
                 bank_charges: values.bank_charges,
                 sm_pay_type: values.sm_pay_type,
                 picture_src: values.picture_src,
+                sort_order: values.sort_order,
             };
 
             console.log("sending paymethodData: ", paymentMethodData);
@@ -685,6 +687,19 @@ const PaymentMethod = () => {
                                     ))}
                                 </Select>
                             </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="sort_order"
+                                label="Sort Order"
+                            >
+                                <Input type="number" placeholder="Enter Sort Order" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
                         </Col>
                     </Row>
 

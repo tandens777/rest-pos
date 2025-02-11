@@ -27,9 +27,10 @@ public class SurDiscController {
                                      @RequestParam String is_category, @RequestParam Double percentage, @RequestParam Double amt, 
                                      @RequestParam(required = false) String picture_src, @RequestParam String need_ref, @RequestParam(required = false) String short_nm, 
                                      @RequestParam String auto_flag, @RequestParam String need_authorization, @RequestParam String check_senior, 
-                                     @RequestParam String active_flag, @RequestParam(required = false) Integer sm_discount_type, @RequestParam String pcnt_on_nv_flag) {
+                                     @RequestParam String active_flag, @RequestParam(required = false) Integer sm_discount_type, @RequestParam String pcnt_on_nv_flag,
+                                     @RequestParam(required = false) Integer sort_order) {
         surDiscService.addSurchargeDiscount(disc_desc, disc_type, parent_disc_id, is_category, percentage, amt, picture_src, 
-                                            need_ref, short_nm, auto_flag, need_authorization, check_senior, active_flag, sm_discount_type, pcnt_on_nv_flag);
+                                            need_ref, short_nm, auto_flag, need_authorization, check_senior, active_flag, sm_discount_type, pcnt_on_nv_flag, sort_order);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -39,9 +40,9 @@ public class SurDiscController {
                                         @RequestParam Double amt, @RequestParam(required = false) String picture_src, @RequestParam String need_ref, 
                                         @RequestParam(required = false) String short_nm, @RequestParam String auto_flag, @RequestParam String need_authorization, 
                                         @RequestParam String check_senior, @RequestParam String active_flag, @RequestParam(required = false) Integer sm_discount_type, 
-                                        @RequestParam String pcnt_on_nv_flag) {
+                                        @RequestParam String pcnt_on_nv_flag, @RequestParam(required = false) Integer sort_order) {
         surDiscService.updateSurchargeDiscount(id, disc_desc, disc_type, parent_disc_id, is_category, percentage, amt, picture_src, 
-                                               need_ref, short_nm, auto_flag, need_authorization, check_senior, active_flag, sm_discount_type, pcnt_on_nv_flag);
+                                               need_ref, short_nm, auto_flag, need_authorization, check_senior, active_flag, sm_discount_type, pcnt_on_nv_flag, sort_order);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

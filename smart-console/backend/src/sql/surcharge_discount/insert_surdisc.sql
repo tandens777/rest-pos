@@ -13,7 +13,8 @@ CREATE OR REPLACE PROCEDURE public.insert_surcharge_discount(
     IN p_check_senior character varying,
     IN p_active_flag character varying,
     IN p_sm_discount_type int,
-    IN p_pcnt_on_nv_flag character varying
+    IN p_pcnt_on_nv_flag character varying,
+    IN p_sort_order int
 )
 LANGUAGE 'plpgsql'
 AS $BODY$
@@ -30,12 +31,12 @@ BEGIN
   INSERT INTO surcharge_discount (
       disc_id, disc_desc, disc_type, parent_disc_id, is_category, percentage, 
       amt, picture_src, need_ref, short_nm, auto_flag, need_authorization, 
-      check_senior, active_flag, sm_discount_type, pcnt_on_nv_flag
+      check_senior, active_flag, sm_discount_type, pcnt_on_nv_flag, sort_order
   ) 
   VALUES (
       max_no, p_disc_desc, p_disc_type, p_parent_disc_id, p_is_category, p_percentage, 
       p_amt, p_picture_src, p_need_ref, p_short_nm, p_auto_flag, p_need_authorization, 
-      p_check_senior, p_active_flag, p_sm_discount_type, p_pcnt_on_nv_flag
+      p_check_senior, p_active_flag, p_sm_discount_type, p_pcnt_on_nv_flag, p_sort_order
   );
 END;
 $BODY$;
@@ -43,5 +44,5 @@ ALTER PROCEDURE public.insert_surcharge_discount(
     character varying, character varying, int, character varying, double precision, 
     double precision, character varying, character varying, character varying, 
     character varying, character varying, character varying, character varying, 
-    int, character varying
+    int, character varying, int
 ) OWNER TO postgres;
