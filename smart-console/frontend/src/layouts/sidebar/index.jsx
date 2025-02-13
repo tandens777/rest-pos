@@ -36,6 +36,9 @@ import { LiaPeopleCarrySolid } from "react-icons/lia"; // Food department
 import { MdOutlinePendingActions } from "react-icons/md"; //downpayment 
 import { LuPackageSearch } from "react-icons/lu";//stock inventory
 import { TbShoppingCartPlus } from "react-icons/tb";
+import { IoPricetagsOutline } from "react-icons/io5";
+import { LiaObjectGroup } from "react-icons/lia";
+import { ImLocation2 } from "react-icons/im";
 // ingredients intake
 
 
@@ -131,6 +134,16 @@ const Sidebar = () => {
       link: "/floors", // Link for Dine-in Floors
     },
     {
+      name: "Food Menu Tags",
+      icon: IoPricetagsOutline,
+      link: "/item-tags",
+    },
+    {
+      name: "Food Menu Group",
+      icon: LiaObjectGroup,
+      link: "/item-groups",
+    },
+    {
       name: "Food Menu",
       icon: BiRestaurant,
       link: "/food-menu",
@@ -144,6 +157,11 @@ const Sidebar = () => {
       name: "Unit of Measure",
       icon: MdOutlineScale,
       link: "/unit-of-measure",
+    },
+    {
+      name: "Storage Location",
+      icon: ImLocation2,
+      link: "/storage-locations",
     },
     {
       name: "Payment Method",
