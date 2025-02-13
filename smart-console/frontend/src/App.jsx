@@ -15,6 +15,7 @@ import Floor from './pages/Floor';
 import DeliveryApp from './pages/DeliveryApp';
 import Employee from './pages/Employee';
 import ChangePin from './pages/ChangePin';
+import FoodStation from './pages/FoodStation';
 import PaymentMethod from './pages/PaymentMethod';
 import SurchargeDiscount from './pages/SurchargeDiscount';
 
@@ -74,6 +75,7 @@ const App = () => {
                 <Route path="/surcharge-discounts" element={<SurchargeDiscount />} />
                 <Route path="/build/:bID" element={<Build />} />
                 <Route path="/analytics/:aID" element={<Analytics />} />
+                <Route path="/food-stations" element={<FoodStation />} />
               </Routes>
             </RootLayout>
           }
