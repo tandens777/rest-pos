@@ -14,8 +14,8 @@ import java.util.Optional;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/item")
-public class ItemController {
+@RequestMapping("/api/ingredients")
+public class IngredientController {
 
     @Autowired
     private ItemService itemService;
@@ -50,7 +50,7 @@ public class ItemController {
         @RequestParam String allow_delivery_flag,
         @RequestParam String lastupduserid) {
         
-            itemService.addItem(item_code, item_desc, short_nm, sort_order, chinese_item_desc, cat_type_id, parent_cat_id, is_category,
+            itemService.addItem(item_code, item_desc, short_nm, sort_order, chinese_item_desc, 2, parent_cat_id, is_category,
                     station_id, per100g_flag, default_price, addon_price, picture_src, default_unit_code, disc_exempt,
                     allow_sc_on_exempt, non_vat_flag, active_flag, show_on_pos_flag, reorder_limit, track_invty_flag,
                     send_to_printer_flag, allow_dinein_flag, allow_pickup_flag, allow_delivery_flag, lastupduserid);
@@ -87,7 +87,7 @@ public class ItemController {
             @RequestParam String allow_delivery_flag,
             @RequestParam String lastupduserid) {
             
-                itemService.updateItem(id, item_code, item_desc, short_nm, sort_order, chinese_item_desc, cat_type_id, parent_cat_id, is_category,
+                itemService.updateItem(id, item_code, item_desc, short_nm, sort_order, chinese_item_desc, 2, parent_cat_id, is_category,
                         station_id, per100g_flag, default_price, addon_price, picture_src, default_unit_code, disc_exempt,
                         allow_sc_on_exempt, non_vat_flag, active_flag, show_on_pos_flag, reorder_limit, track_invty_flag,
                         send_to_printer_flag, allow_dinein_flag, allow_pickup_flag, allow_delivery_flag, lastupduserid);
@@ -108,18 +108,18 @@ public class ItemController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<Item>> getItems(@RequestParam(required = false) String search) throws GenericNotFoundException {
-        return ResponseEntity.ok(itemService.getItems(search));
+        return ResponseEntity.ok(itemService.getItems(2, search));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all_subitems/{parentCatId}")
     public ResponseEntity<List<Item>> getChildItems(@PathVariable Integer parentCatId) throws GenericNotFoundException {
-        return ResponseEntity.ok(itemService.getChildItems(parentCatId));
+        return ResponseEntity.ok(itemService.getChildItems(2, parentCatId));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getcategories")
     public ResponseEntity<List<Item>> getItemCategories() {
-        return ResponseEntity.ok(itemService.getItemCategories());
+        return ResponseEntity.ok(itemService.getItemCategories(2));
     }
 }
