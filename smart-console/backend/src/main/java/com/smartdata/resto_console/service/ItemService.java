@@ -64,12 +64,12 @@ public class ItemService {
         }
     }
 
-    public List<Item> getItems(String searchTerm) throws GenericNotFoundException {
+    public List<Item> getItems(Integer catTypeId, String searchTerm) throws GenericNotFoundException {
         List<Item> items;
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            items = itemRepository.findByItemDescContainingIgnoreCaseOrderBySortOrder(searchTerm);
+            items = itemRepository.findByItemDescContainingIgnoreCaseOrderBySortOrder(catTypeId, searchTerm);
         } else {
-            items = itemRepository.findAllByOrderBySortOrder();
+            items = itemRepository.findAllByOrderBySortOrder(catTypeId);
         }
 
         if (!items.isEmpty()) {
@@ -79,9 +79,9 @@ public class ItemService {
         }
     }
 
-    public List<Item> getItemCategories() {
+    public List<Item> getItemCategories(Integer catTypeId) {
         List<Item> items;
-        items = itemRepository.findByIsCategoryContainingIgnoreCaseOrderBySortOrder("Y");
+        items = itemRepository.findByIsCategoryContainingIgnoreCaseOrderBySortOrder(catTypeId, "Y");
 
         if (!items.isEmpty()) {
             return items;
@@ -90,12 +90,12 @@ public class ItemService {
         }
     }
 
-    public List<Item> getChildItems(Integer parentCatId) {
+    public List<Item> getChildItems(Integer catTypeId, Integer parentCatId) {
         if (parentCatId == null) {
             parentCatId = 0; // Return empty list if parent_id is null
         }
 
-        List<Item> items = itemRepository.findChildItems(parentCatId);
+        List<Item> items = itemRepository.findChildItems(catTypeId, parentCatId);
 
         return items != null ? items : new ArrayList<>(); // Ensure non-null return
     }

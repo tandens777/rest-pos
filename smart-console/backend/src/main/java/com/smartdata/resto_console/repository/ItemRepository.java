@@ -79,21 +79,21 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
     void deleteItem(@Param("p_item_id") Integer id);
 
     // Query to find Items by description, sorted by sortOrder and itemDesc
-    @Query("SELECT i FROM Item i WHERE LOWER(i.itemDesc) LIKE LOWER(concat('%', :itemDesc, '%')) or LOWER(i.itemCode) LIKE LOWER(concat('%', :itemDesc, '%')) ORDER BY i.sortOrder ASC, i.itemDesc ASC")
-    List<Item> findByItemDescContainingIgnoreCaseOrderBySortOrder(@Param("itemDesc") String itemDesc);
+    @Query("SELECT i FROM Item i WHERE catTypeId = :catTypeId and (LOWER(i.itemDesc) LIKE LOWER(concat('%', :itemDesc, '%')) or LOWER(i.itemCode) LIKE LOWER(concat('%', :itemDesc, '%'))) ORDER BY i.sortOrder ASC, i.itemDesc ASC")
+    List<Item> findByItemDescContainingIgnoreCaseOrderBySortOrder(@Param("catTypeId") Integer catTypeId, @Param("itemDesc") String itemDesc);
 
     // Query to find Items by category type, sorted by sortOrder and itemDesc
-    @Query("SELECT i FROM Item i WHERE LOWER(i.isCategory) LIKE LOWER(concat('%', :isCategory, '%')) ORDER BY i.sortOrder ASC, i.itemDesc ASC")
-    List<Item> findByIsCategoryContainingIgnoreCaseOrderBySortOrder(String isCategory);
+    @Query("SELECT i FROM Item i WHERE catTypeId = :catTypeId and LOWER(i.isCategory) LIKE LOWER(concat('%', :isCategory, '%')) ORDER BY i.sortOrder ASC, i.itemDesc ASC")
+    List<Item> findByIsCategoryContainingIgnoreCaseOrderBySortOrder(@Param("catTypeId") Integer catTypeId, @Param("isCategory") String isCategory);
 
     // Query to find child Items by parent category ID
-    @Query("SELECT i FROM Item i WHERE " +
+    @Query("SELECT i FROM Item i WHERE catTypeId = :catTypeId and " +
        "(:parentCatId = 0 AND i.parentCatId IS NULL) " +
        "OR (:parentCatId > 0 AND i.parentCatId = :parentCatId) " +
        "ORDER BY i.sortOrder ASC, i.itemDesc ASC")
-    List<Item> findChildItems(@Param("parentCatId") Integer parentCatId);    
+    List<Item> findChildItems(@Param("catTypeId") Integer catTypeId, @Param("parentCatId") Integer parentCatId);    
 
     // Query to retrieve all Items sorted by sortOrder and itemDesc
-    @Query("SELECT i FROM Item i ORDER BY i.sortOrder ASC, i.itemDesc ASC")
-    List<Item> findAllByOrderBySortOrder();
+    @Query("SELECT i FROM Item i WHERE catTypeId = :catTypeId ORDER BY i.sortOrder ASC, i.itemDesc ASC")
+    List<Item> findAllByOrderBySortOrder(@Param("catTypeId") Integer catTypeId);
 }

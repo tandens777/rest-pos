@@ -19,6 +19,7 @@ import FoodStation from './pages/FoodStation';
 import ItemGroup from './pages/ItemGroup';
 import ItemTag from './pages/ItemTag';
 import FoodMenu from './pages/FoodMenu';
+import Ingredients from './pages/Ingredients';
 import PaymentMethod from './pages/PaymentMethod';
 import SurchargeDiscount from './pages/SurchargeDiscount';
 
@@ -82,6 +83,7 @@ const App = () => {
                 <Route path="/item-groups" element={<ItemGroup />} />
                 <Route path="/item-tags" element={<ItemTag />} />
                 <Route path="/food-menus" element={<FoodMenu />} />
+                <Route path="/ingredients" element={<Ingredients />} />
               </Routes>
             </RootLayout>
           }

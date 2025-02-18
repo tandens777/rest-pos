@@ -6,7 +6,7 @@ import { CgCornerLeftUp } from "react-icons/cg";
 
 const { Option } = Select;
 
-const FoodMenu = () => {
+const Ingredients = () => {
     const [picturePreview, setPicturePreview] = useState(null);
     const [foodMenus, setFoodMenus] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -26,7 +26,7 @@ const FoodMenu = () => {
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL; // e.g., http://192.168.68.118:8081
     const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL; // e.g., http://192.168.68.118:8080
 
-    const no_pic_default = `${fileBaseUrl}/uploads/food_menus/default.png`;
+    const no_pic_default = `${fileBaseUrl}/uploads/ingredients/default.png`;
 
     const username = localStorage.getItem("username") || "User";
 
@@ -58,7 +58,7 @@ const FoodMenu = () => {
     const handleCategoryClick = async (id, parentCatId) => {
         try {
             console.log("parent id: ", id);
-            const response = await axiosInstance.get(`/food_menu/all_subitems/${id || 0}`);
+            const response = await axiosInstance.get(`/ingredients/all_subitems/${id || 0}`);
     
             console.log('response.data: ', response.data);
 
@@ -72,7 +72,7 @@ const FoodMenu = () => {
             setCurrentPage(1);
 
         } catch (error) {
-            message.error("Failed to fetch child food menus.");
+            message.error("Failed to fetch child ingredients.");
         }
     };
 
@@ -81,7 +81,7 @@ const FoodMenu = () => {
             const [unitsResponse, stationResponse, categoriesResponse] = await Promise.all([
                 axiosInstance.get("/units/all"),
                 axiosInstance.get("/food_station/all"),
-                axiosInstance.get("/food_menu/getcategories"),
+                axiosInstance.get("/ingredients/getcategories"),
             ]);
             setUnits(unitsResponse.data);
             setFoodStations(stationResponse.data);
@@ -94,10 +94,10 @@ const FoodMenu = () => {
     // Search for Food Menus
     const handleSearch = async () => {
         try {
-            const response = await axiosInstance.get(`/food_menu/all?search=${searchTerm}`);
+            const response = await axiosInstance.get(`/ingredients/all?search=${searchTerm}`);
             setFoodMenus(response.data);
         } catch (error) {
-            message.error("Failed to search food menus.");
+            message.error("Failed to search ingredients.");
         }
     };
 
@@ -159,8 +159,8 @@ const FoodMenu = () => {
     // Delete a Food Menu
     const handleDelete = async (id) => {
         try {
-            await axiosInstance.delete(`/food_menu/delete/${id}`);
-            message.success("Food menu deleted successfully.");
+            await axiosInstance.delete(`/ingredients/delete/${id}`);
+            message.success("Ingredient deleted successfully.");
 
             const updatedFoodMenus = foodMenus.filter((menu) => menu.id !== id);
             setFoodMenus(updatedFoodMenus);
@@ -169,7 +169,7 @@ const FoodMenu = () => {
                 setCurrentPage(1);
             }
         } catch (error) {
-            message.error("Failed to delete food menu.");
+            message.error("Failed to delete ingredient.");
         }
     };
 
@@ -182,7 +182,7 @@ const FoodMenu = () => {
                 short_nm: values.short_nm,
                 sort_order: values.sort_order,
                 chinese_item_desc: values.chinese_item_desc,
-                cat_type_id: 1,  // food menu
+                cat_type_id: 2,  // food menu
                 parent_cat_id: values.parent_cat_id,
                 is_category: values.is_category ? "Y" : "N",
                 station_id: values.station_id,
@@ -206,20 +206,20 @@ const FoodMenu = () => {
                 lastupduserid: username,
             };
 
-            console.log("sending foodMenuData: ", foodMenuData);
+            console.log("sending ingredientData: ", foodMenuData);
 
-            const url = editingFoodMenu ? `/food_menu/update/${editingFoodMenu.id}` : `/food_menu/add`;
+            const url = editingFoodMenu ? `/ingredients/update/${editingFoodMenu.id}` : `/ingredients/add`;
             const method = editingFoodMenu ? 'put' : 'post';
 
             await axiosInstance[method](url, null, { params: foodMenuData });
 
-            message.success(`Food menu ${editingFoodMenu ? 'updated' : 'added'} successfully.`);
+            message.success(`Ingredient ${editingFoodMenu ? 'updated' : 'added'} successfully.`);
             setIsModalVisible(false);
             handleCategoryClick(0, null);
             fetchDropdownData();
         } catch (error) {
-            console.error("Error saving food menu:", error);
-            message.error(error.response?.data?.message || "Failed to save food menu. Please try again.");
+            console.error("Error saving ingredient:", error);
+            message.error(error.response?.data?.message || "Failed to save ingredient. Please try again.");
         }
     };
 
@@ -232,7 +232,7 @@ const FoodMenu = () => {
     // Handle File Upload
     const handleUpload = async (file) => {
         const formData = new FormData();
-        formData.append("folder", "food_menus");
+        formData.append("folder", "ingredients");
         formData.append("file", file);
 
         try {
@@ -286,7 +286,7 @@ const FoodMenu = () => {
                     color: "#333",
                 }}
             >
-                Food Menu
+                Ingredients
             </h1>
             <Space
                 style={{
@@ -302,7 +302,7 @@ const FoodMenu = () => {
                     >
                         <Form.Item name="search">  
                             <Input
-                                placeholder="Search food menus..."
+                                placeholder="Search ingredients..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 style={{ width: "200px" }}
@@ -466,7 +466,7 @@ const FoodMenu = () => {
                          handleEdit(menu);
                     }} />
                     <Popconfirm
-                        title="Are you sure to delete this food menu?"
+                        title="Are you sure to delete this ingredient?"
                         onConfirm={() => {
                             //e?.stopPropagation(); // Prevents category click from triggering
                             handleDelete(menu.id);
@@ -498,7 +498,7 @@ const FoodMenu = () => {
             />
 
             <Modal
-                title={editingFoodMenu ? "Edit Food Menu" : "Add New Food Menu"}
+                title={editingFoodMenu ? "Edit Ingredient" : "Add New Ingredient"}
                 visible={isModalVisible}
                 onCancel={() => setIsModalVisible(false)}
                 footer={null}
@@ -662,33 +662,6 @@ const FoodMenu = () => {
                 </Select>
             </Form.Item>
         </Col>
-        <Col span={12}>
-            <Form.Item
-                name="station_id"
-                label="Food Station"
-            >
-                <Select 
-                        placeholder="Select Food Station"
-                        allowClear  
-                        onChange={(value) => {
-                            form.setFieldsValue({ station_id: value || null });
-                        }}
-                >
-                        {/* Add an empty option at the top */}
-                    <Option value={null}>None</Option>  
-
-                    {Array.isArray(foodStations) && foodStations.length > 0 ? (
-                        foodStations.map((station) => (
-                            <Option key={station.stationId} value={station.stationId}>
-                                {station.stationNm}
-                            </Option>
-                        ))
-                    ) : (
-                        <Option disabled>No food stations available</Option>
-                    )}
-                </Select>
-            </Form.Item>
-        </Col>
     </Row>
 
     {/* Row 6: Default Unit Code and Per 100g Flag Checkbox */}
@@ -723,30 +696,10 @@ const FoodMenu = () => {
         <Col span={12}>
             <Form.Item
                 name="per100g_flag"
-                label="Per 100g"
                 valuePropName="checked"
+                hidden
             >
                 <Checkbox />
-            </Form.Item>
-        </Col>
-    </Row>
-
-    {/* Row 7: Default Price and Addon Price */}
-    <Row gutter={16}>
-        <Col span={12}>
-            <Form.Item
-                name="default_price"
-                label="Default Price"
-            >
-                <Input type="number" placeholder="Enter default price" />
-            </Form.Item>
-        </Col>
-        <Col span={12}>
-            <Form.Item
-                name="addon_price"
-                label="Addon Price"
-            >
-                <Input type="number" placeholder="Enter addon price" />
             </Form.Item>
         </Col>
     </Row>
@@ -780,82 +733,17 @@ const FoodMenu = () => {
         </Col>
     </Row>
 
-    <Row gutter={16}>
-        <Col span={12}>
-            <Form.Item
-                name="track_invty_flag"
-                label="Track Inventory"
-                valuePropName="checked"
-            >
-                <Switch
-                    onChange={(checked) => {
-                    form.setFieldsValue({ track_invty_flag: checked });
-                    }}
-                />
-            </Form.Item>
-        </Col>
-        <Col span={12}>
-            <Form.Item
-                name="send_to_printer_flag"
-                label="Send to Printer"
-                valuePropName="checked"
-            >
-                <Switch
-                    onChange={(checked) => {
-                    form.setFieldsValue({ send_to_printer_flag: checked });
-                    }}
-                />
-            </Form.Item>
-        </Col>
-    </Row>
-
-
-    {/* Row 9: Checkboxes for Non-Vatable, Allow Senior Citizen Disc, Discount Exemption, and Allow for Dine-in, Pick-up, Delivery */}
-    <Row gutter={16}>
-        <Col span={12}>
-            <Form.Item
-                name="non_vat_flag"
-                valuePropName="checked"
-            >
-                <Checkbox>Non-Vatable</Checkbox>
-            </Form.Item>
-            <Form.Item
-                name="allow_sc_on_exempt"
-                valuePropName="checked"
-            >
-                <Checkbox>Allow Senior Citizen Discount</Checkbox>
-            </Form.Item>
-            <Form.Item
-                name="disc_exempt"
-                valuePropName="checked"
-            >
-                <Checkbox>Discount Exemption</Checkbox>
-            </Form.Item>
-        </Col>
-        <Col span={12}>
-            <Form.Item
-                name="allow_dinein_flag"
-                valuePropName="checked"
-            >
-                <Checkbox>Allow for Dine-in</Checkbox>
-            </Form.Item>
-            <Form.Item
-                name="allow_pickup_flag"
-                valuePropName="checked"
-            >
-                <Checkbox>Allow for Pick-up</Checkbox>
-            </Form.Item>
-            <Form.Item
-                name="allow_delivery_flag"
-                valuePropName="checked"
-            >
-                <Checkbox>Allow for Delivery</Checkbox>
-            </Form.Item>
-        </Col>
-    </Row>
 
     {/* Row 10: Reorder Limit and Sort Order */}
     <Row gutter={16}>
+        <Col span={12}>
+            <Form.Item
+                name="reorder_limit"
+                label="Reorder Limit"
+            >
+                <Input type="number" placeholder="Enter reorder limit" />
+            </Form.Item>
+        </Col>
         <Col span={12}>
             <Form.Item
                 name="sort_order"
@@ -864,14 +752,41 @@ const FoodMenu = () => {
                 <Input type="number" placeholder="Enter sort order" />
             </Form.Item>
         </Col>
-        <Col span={12}>
-            <Form.Item
-                name="reorder_limit"
-            >
-                <Input type="hidden" placeholder="Enter reorder limit" />
-            </Form.Item>
-        </Col>
     </Row>
+
+    <Form.Item name="track_invty_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="send_to_printer_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="non_vat_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="allow_sc_on_exempt" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="disc_exempt" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="default_price" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="addon_price" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="station_id" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="allow_dinein_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="allow_pickup_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="allow_delivery_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
 
                     {/* Save and Cancel Buttons */}
                     <div style={{ textAlign: "right", marginTop: "20px" }}>
@@ -910,4 +825,4 @@ const FoodMenu = () => {
     );
 };
 
-export default FoodMenu;
+export default Ingredients;
