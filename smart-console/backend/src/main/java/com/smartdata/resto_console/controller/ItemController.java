@@ -23,74 +23,76 @@ public class ItemController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public void addItem(
-            @RequestParam String itemCode,
-            @RequestParam String itemDesc,
-            @RequestParam(required = false) String shortNm,
-            @RequestParam(required = false) Integer sortOrder,
-            @RequestParam(required = false) String chineseItemDesc,
-            @RequestParam Integer catTypeId,
-            @RequestParam(required = false) Integer parentCatId,
-            @RequestParam(required = false) Integer stationId,
-            @RequestParam(required = false) String per100gFlag,
-            @RequestParam(required = false) Double defaultPrice,
-            @RequestParam(required = false) Double addonPrice,
-            @RequestParam(required = false) String pictureSrc,
-            @RequestParam String defaultUnitCode,
-            @RequestParam String discExempt,
-            @RequestParam String allowScOnExempt,
-            @RequestParam String nonVatFlag,
-            @RequestParam String activeFlag,
-            @RequestParam String showOnPosFlag,
-            @RequestParam Integer reorderLimit,
-            @RequestParam String trackInvtyFlag,
-            @RequestParam String sendToPrinterFlag,
-            @RequestParam String allowDineinFlag,
-            @RequestParam String allowPickupFlag,
-            @RequestParam String allowDeliveryFlag,
-            @RequestParam String lastupduserid) {
-
-        itemService.addItem(itemCode, itemDesc, shortNm, sortOrder, chineseItemDesc, catTypeId, parentCatId,
-                stationId, per100gFlag, defaultPrice, addonPrice, pictureSrc, defaultUnitCode, discExempt,
-                allowScOnExempt, nonVatFlag, activeFlag, showOnPosFlag, reorderLimit, trackInvtyFlag,
-                sendToPrinterFlag, allowDineinFlag, allowPickupFlag, allowDeliveryFlag, lastupduserid);
+        @RequestParam(required = false) String item_code,
+        @RequestParam String item_desc,
+        @RequestParam(required = false) String short_nm,
+        @RequestParam(required = false) Integer sort_order,
+        @RequestParam(required = false) String chinese_item_desc,
+        @RequestParam Integer cat_type_id,
+        @RequestParam(required = false) Integer parent_cat_id,
+        @RequestParam String is_category,
+        @RequestParam(required = false) Integer station_id,
+        @RequestParam(required = false) String per100g_flag,
+        @RequestParam(required = false) Double default_price,
+        @RequestParam(required = false) Double addon_price,
+        @RequestParam(required = false) String picture_src,
+        @RequestParam String default_unit_code,
+        @RequestParam String disc_exempt,
+        @RequestParam String allow_sc_on_exempt,
+        @RequestParam String non_vat_flag,
+        @RequestParam String active_flag,
+        @RequestParam String show_on_pos_flag,
+        @RequestParam Integer reorder_limit,
+        @RequestParam String track_invty_flag,
+        @RequestParam String send_to_printer_flag,
+        @RequestParam String allow_dinein_flag,
+        @RequestParam String allow_pickup_flag,
+        @RequestParam String allow_delivery_flag,
+        @RequestParam String lastupduserid) {
+        
+            itemService.addItem(item_code, item_desc, short_nm, sort_order, chinese_item_desc, cat_type_id, parent_cat_id, is_category,
+                    station_id, per100g_flag, default_price, addon_price, picture_src, default_unit_code, disc_exempt,
+                    allow_sc_on_exempt, non_vat_flag, active_flag, show_on_pos_flag, reorder_limit, track_invty_flag,
+                    send_to_printer_flag, allow_dinein_flag, allow_pickup_flag, allow_delivery_flag, lastupduserid);
     }
-
+        
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{id}")
     public void updateItem(
             @PathVariable Integer id,
-            @RequestParam String itemCode,
-            @RequestParam String itemDesc,
-            @RequestParam(required = false) String shortNm,
-            @RequestParam(required = false) Integer sortOrder,
-            @RequestParam(required = false) String chineseItemDesc,
-            @RequestParam Integer catTypeId,
-            @RequestParam(required = false) Integer parentCatId,
-            @RequestParam(required = false) Integer stationId,
-            @RequestParam(required = false) String per100gFlag,
-            @RequestParam(required = false) Double defaultPrice,
-            @RequestParam(required = false) Double addonPrice,
-            @RequestParam(required = false) String pictureSrc,
-            @RequestParam String defaultUnitCode,
-            @RequestParam String discExempt,
-            @RequestParam String allowScOnExempt,
-            @RequestParam String nonVatFlag,
-            @RequestParam String activeFlag,
-            @RequestParam String showOnPosFlag,
-            @RequestParam Integer reorderLimit,
-            @RequestParam String trackInvtyFlag,
-            @RequestParam String sendToPrinterFlag,
-            @RequestParam String allowDineinFlag,
-            @RequestParam String allowPickupFlag,
-            @RequestParam String allowDeliveryFlag,
+            @RequestParam(required = false) String item_code,
+            @RequestParam String item_desc,
+            @RequestParam(required = false) String short_nm,
+            @RequestParam(required = false) Integer sort_order,
+            @RequestParam(required = false) String chinese_item_desc,
+            @RequestParam Integer cat_type_id,
+            @RequestParam(required = false) Integer parent_cat_id,
+            @RequestParam String is_category,
+            @RequestParam(required = false) Integer station_id,
+            @RequestParam(required = false) String per100g_flag,
+            @RequestParam(required = false) Double default_price,
+            @RequestParam(required = false) Double addon_price,
+            @RequestParam(required = false) String picture_src,
+            @RequestParam String default_unit_code,
+            @RequestParam String disc_exempt,
+            @RequestParam String allow_sc_on_exempt,
+            @RequestParam String non_vat_flag,
+            @RequestParam String active_flag,
+            @RequestParam String show_on_pos_flag,
+            @RequestParam Integer reorder_limit,
+            @RequestParam String track_invty_flag,
+            @RequestParam String send_to_printer_flag,
+            @RequestParam String allow_dinein_flag,
+            @RequestParam String allow_pickup_flag,
+            @RequestParam String allow_delivery_flag,
             @RequestParam String lastupduserid) {
-
-        itemService.updateItem(id, itemCode, itemDesc, shortNm, sortOrder, chineseItemDesc, catTypeId, parentCatId,
-                stationId, per100gFlag, defaultPrice, addonPrice, pictureSrc, defaultUnitCode, discExempt,
-                allowScOnExempt, nonVatFlag, activeFlag, showOnPosFlag, reorderLimit, trackInvtyFlag,
-                sendToPrinterFlag, allowDineinFlag, allowPickupFlag, allowDeliveryFlag, lastupduserid);
+            
+                itemService.updateItem(id, item_code, item_desc, short_nm, sort_order, chinese_item_desc, cat_type_id, parent_cat_id, is_category,
+                        station_id, per100g_flag, default_price, addon_price, picture_src, default_unit_code, disc_exempt,
+                        allow_sc_on_exempt, non_vat_flag, active_flag, show_on_pos_flag, reorder_limit, track_invty_flag,
+                        send_to_printer_flag, allow_dinein_flag, allow_pickup_flag, allow_delivery_flag, lastupduserid);
     }
-
+    
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public void deleteItem(@PathVariable Integer id) {

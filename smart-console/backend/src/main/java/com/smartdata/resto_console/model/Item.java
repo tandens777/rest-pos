@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_chinese_item_desc", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_cat_type_id", type = Integer.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_parent_cat_id", type = Integer.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_is_category", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_station_id", type = Integer.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_per100g_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_default_price", type = Double.class),
@@ -57,6 +58,7 @@ import java.time.LocalDateTime;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_chinese_item_desc", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_cat_type_id", type = Integer.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_parent_cat_id", type = Integer.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_is_category", type = String.class),            
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_station_id", type = Integer.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_per100g_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_default_price", type = Double.class),
@@ -112,6 +114,9 @@ public class Item {
 
     @Column(name = "parent_cat_id")
     private Integer parentCatId;
+
+    @Column(name = "is_category") 
+    private String isCategory;  
 
     @Column(name = "station_id")
     private Integer stationId;
