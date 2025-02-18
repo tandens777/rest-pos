@@ -19,34 +19,34 @@ public class ItemService {
 
     @Transactional
     public void addItem(
-            String itemCode, String itemDesc, String shortNm, Integer sortOrder, String chineseItemDesc,
-            Integer catTypeId, Integer parentCatId, Integer stationId, String per100gFlag,
-            Double defaultPrice, Double addonPrice, String pictureSrc, String defaultUnitCode,
-            String discExempt, String allowScOnExempt, String nonVatFlag, String activeFlag,
-            String showOnPosFlag, Integer reorderLimit, String trackInvtyFlag, String sendToPrinterFlag,
-            String allowDineinFlag, String allowPickupFlag, String allowDeliveryFlag, String lastUpdatedUserId) {
+        String item_code, String item_desc, String short_nm, Integer sort_order, String chinese_item_desc,
+        Integer cat_type_id, Integer parent_cat_id, String is_category, Integer station_id, String per100g_flag,
+        Double default_price, Double addon_price, String picture_src, String default_unit_code,
+        String disc_exempt, String allow_sc_on_exempt, String non_vat_flag, String active_flag,
+        String show_on_pos_flag, Integer reorder_limit, String track_invty_flag, String send_to_printer_flag,
+        String allow_dinein_flag, String allow_pickup_flag, String allow_delivery_flag, String lastupduserid) {
 
-        itemRepository.insertItem(itemCode, itemDesc, shortNm, sortOrder, chineseItemDesc,
-                catTypeId, parentCatId, stationId, per100gFlag, defaultPrice, addonPrice, pictureSrc,
-                defaultUnitCode, discExempt, allowScOnExempt, nonVatFlag, activeFlag, showOnPosFlag,
-                reorderLimit, trackInvtyFlag, sendToPrinterFlag, allowDineinFlag, allowPickupFlag,
-                allowDeliveryFlag, lastUpdatedUserId);
+        itemRepository.insertItem(item_code, item_desc, short_nm, sort_order, chinese_item_desc,
+                cat_type_id, parent_cat_id, is_category, station_id, per100g_flag, default_price, addon_price, picture_src,
+                default_unit_code, disc_exempt, allow_sc_on_exempt, non_vat_flag, active_flag, show_on_pos_flag,
+                reorder_limit, track_invty_flag, send_to_printer_flag, allow_dinein_flag, allow_pickup_flag,
+                allow_delivery_flag, lastupduserid);
     }
 
     @Transactional
     public void updateItem(
-            Integer id, String itemCode, String itemDesc, String shortNm, Integer sortOrder, String chineseItemDesc,
-            Integer catTypeId, Integer parentCatId, Integer stationId, String per100gFlag,
-            Double defaultPrice, Double addonPrice, String pictureSrc, String defaultUnitCode,
-            String discExempt, String allowScOnExempt, String nonVatFlag, String activeFlag,
-            String showOnPosFlag, Integer reorderLimit, String trackInvtyFlag, String sendToPrinterFlag,
-            String allowDineinFlag, String allowPickupFlag, String allowDeliveryFlag, String lastUpdatedUserId) {
+            Integer id, String item_code, String item_desc, String short_nm, Integer sort_order, String chinese_item_desc,
+            Integer cat_type_id, Integer parent_cat_id, String is_category, Integer station_id, String per100g_flag,
+            Double default_price, Double addon_price, String picture_src, String default_unit_code,
+            String disc_exempt, String allow_sc_on_exempt, String non_vat_flag, String active_flag,
+            String show_on_pos_flag, Integer reorder_limit, String track_invty_flag, String send_to_printer_flag,
+            String allow_dinein_flag, String allow_pickup_flag, String allow_delivery_flag, String lastupduserid) {
 
-        itemRepository.updateItem(id, itemCode, itemDesc, shortNm, sortOrder, chineseItemDesc,
-                catTypeId, parentCatId, stationId, per100gFlag, defaultPrice, addonPrice, pictureSrc,
-                defaultUnitCode, discExempt, allowScOnExempt, nonVatFlag, activeFlag, showOnPosFlag,
-                reorderLimit, trackInvtyFlag, sendToPrinterFlag, allowDineinFlag, allowPickupFlag,
-                allowDeliveryFlag, lastUpdatedUserId);
+        itemRepository.updateItem(id, item_code, item_desc, short_nm, sort_order, chinese_item_desc,
+                cat_type_id, parent_cat_id, is_category, station_id, per100g_flag, default_price, addon_price, picture_src,
+                default_unit_code, disc_exempt, allow_sc_on_exempt, non_vat_flag, active_flag, show_on_pos_flag,
+                reorder_limit, track_invty_flag, send_to_printer_flag, allow_dinein_flag, allow_pickup_flag,
+                allow_delivery_flag, lastupduserid);
     }
 
     @Transactional
@@ -81,7 +81,7 @@ public class ItemService {
 
     public List<Item> getItemCategories() {
         List<Item> items;
-        items = itemRepository.findByCatTypeIdOrderBySortOrder(1); // Assuming category type ID 1 means "category"
+        items = itemRepository.findByIsCategoryContainingIgnoreCaseOrderBySortOrder("Y");
 
         if (!items.isEmpty()) {
             return items;

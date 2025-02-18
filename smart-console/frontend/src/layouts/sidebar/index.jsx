@@ -146,7 +146,7 @@ const Sidebar = () => {
     {
       name: "Food Menu",
       icon: BiRestaurant,
-      link: "/food-menu",
+      link: "/food-menus",
     },
     {
       name: "Ingredients",
