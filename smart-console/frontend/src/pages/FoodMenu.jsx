@@ -817,19 +817,19 @@ const FoodMenu = () => {
                 name="non_vat_flag"
                 valuePropName="checked"
             >
-                <Checkbox>Non-Vatable</Checkbox>
+                <Checkbox>Non-Vat Item</Checkbox>
             </Form.Item>
             <Form.Item
                 name="allow_sc_on_exempt"
                 valuePropName="checked"
             >
-                <Checkbox>Allow Senior Citizen Discount</Checkbox>
+                <Checkbox>Allow Senior with Discount Exempt</Checkbox>
             </Form.Item>
             <Form.Item
                 name="disc_exempt"
                 valuePropName="checked"
             >
-                <Checkbox>Discount Exemption</Checkbox>
+                <Checkbox>Discount Exempted </Checkbox>
             </Form.Item>
         </Col>
         <Col span={12}>
@@ -843,7 +843,7 @@ const FoodMenu = () => {
                 name="allow_pickup_flag"
                 valuePropName="checked"
             >
-                <Checkbox>Allow for Pick-up</Checkbox>
+                <Checkbox>Allow for Take-out</Checkbox>
             </Form.Item>
             <Form.Item
                 name="allow_delivery_flag"
