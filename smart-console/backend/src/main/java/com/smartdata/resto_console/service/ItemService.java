@@ -99,4 +99,21 @@ public class ItemService {
 
         return items != null ? items : new ArrayList<>(); // Ensure non-null return
     }
+
+
+    public List<Item> getItemsForTag(Integer itemTagId, Integer catTypeId, String searchTerm) throws GenericNotFoundException {
+        List<Item> items;
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            items = itemRepository.findByTagItemDescContainingIgnoreCaseOrderBySortOrder(itemTagId, catTypeId, searchTerm);
+        } else {
+            items = itemRepository.findAllTagByOrderBySortOrder(itemTagId, catTypeId);
+        }
+
+        if (!items.isEmpty()) {
+            return items;
+        } else {
+            throw new GenericNotFoundException("No items found.");
+        }
+    }
+
 }
