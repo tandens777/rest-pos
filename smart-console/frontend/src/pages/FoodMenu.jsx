@@ -17,6 +17,8 @@ const FoodMenu = () => {
     const [categories, setCategories] = useState([]);
     const [parentCategoryId, setParentCategoryId] = useState(null);     
 
+    const [itemTags, setItemTags] = useState([]);
+
     const [form] = Form.useForm();
     const [searchForm] = Form.useForm();  // Separate form for search
     const [currentPage, setCurrentPage] = useState(1);
@@ -78,13 +80,15 @@ const FoodMenu = () => {
 
     const fetchDropdownData = async () => {
         try {
-            const [unitsResponse, stationResponse, categoriesResponse] = await Promise.all([
+            const [unitsResponse, stationResponse, itemTagResponse, categoriesResponse] = await Promise.all([
                 axiosInstance.get("/units/all"),
                 axiosInstance.get("/food_station/all"),
+                axiosInstance.get("/item_tag/all"),
                 axiosInstance.get("/food_menu/getcategories"),
             ]);
             setUnits(unitsResponse.data);
             setFoodStations(stationResponse.data);
+            setItemTags(itemTagResponse.data);
             setCategories(categoriesResponse.data);
         } catch (error) {
             message.error("Failed to fetch dropdown data.");
@@ -359,6 +363,28 @@ const FoodMenu = () => {
                     Add New
                 </Button>
             </Space>
+
+            <div>
+            {/* Item Tags Section */}
+            <div style={{ textAlign: "center", marginBottom: "20px" }}>
+                <Space size="middle" wrap>
+                    {itemTags.map((tag) => (
+                        <a
+                            key={tag.itemTagId}
+                            href={`#`} // You can modify this to trigger a function
+                            style={{
+                                textDecoration: "underline",
+                                color: "#1890ff",
+                                fontWeight: "bold",
+                                cursor: "pointer",
+                            }}
+                        >
+                            {tag.itemTagDesc}
+                        </a>
+                    ))}
+                </Space>
+            </div>
+        </div>
 
 {/* Food Menu List Container */}
 <div
