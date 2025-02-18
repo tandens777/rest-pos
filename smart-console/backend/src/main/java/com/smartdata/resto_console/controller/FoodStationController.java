@@ -21,21 +21,21 @@ import java.util.Optional;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/foodStations")
+@RequestMapping("/api/food_station")
 public class FoodStationController {
     @Autowired
     private FoodStationService foodStationService;
 
     @PreAuthorize("hasRole('ADMIN')")  // allows only ADMIN role to access this api /add, if more than one role use hasAnyRole('','')
     @PostMapping("/add")
-    public void addFoodStation(@RequestParam String name) {
-        foodStationService.addFoodStation(name);
+    public void addFoodStation(@RequestParam String station_nm) {
+        foodStationService.addFoodStation(station_nm);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{id}")
-    public void updateFoodStation(@PathVariable Integer id, @RequestParam String name) {
-        foodStationService.updateFoodStation(id, name);
+    public void updateFoodStation(@PathVariable Integer id, @RequestParam String station_nm) {
+        foodStationService.updateFoodStation(id, station_nm);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

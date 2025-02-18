@@ -44,9 +44,9 @@ public class ItemGroupService {
     public List<ItemGroup> getItemGroups(String searchTerm) throws GenericNotFoundException {
         List<ItemGroup> itemGroups;
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            itemGroups = itemGroupRepository.findByNameContainingIgnoreCaseOrderById(searchTerm);
+            itemGroups = itemGroupRepository.findByItemGrpDescContainingIgnoreCaseOrderByItemGrpDesc(searchTerm);
         } else {
-            itemGroups = itemGroupRepository.findAllByOrderByItemGrpId();
+            itemGroups = itemGroupRepository.findAllByOrderByItemGrpDesc();
         }
 
         if (!itemGroups.isEmpty()) {

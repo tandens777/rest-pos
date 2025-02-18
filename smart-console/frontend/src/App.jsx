@@ -17,6 +17,8 @@ import Employee from './pages/Employee';
 import ChangePin from './pages/ChangePin';
 import FoodStation from './pages/FoodStation';
 import ItemGroup from './pages/ItemGroup';
+import ItemTag from './pages/ItemTag';
+//import FoodMenu from './pages/FoodMenu';
 import PaymentMethod from './pages/PaymentMethod';
 import SurchargeDiscount from './pages/SurchargeDiscount';
 
@@ -78,6 +80,8 @@ const App = () => {
                 <Route path="/analytics/:aID" element={<Analytics />} />
                 <Route path="/food-stations" element={<FoodStation />} />
                 <Route path="/item-groups" element={<ItemGroup />} />
+                <Route path="/item-tags" element={<ItemTag />} />
+                {/*<Route path="/food_menus" element={<FoodMenu />} />*/}
               </Routes>
             </RootLayout>
           }

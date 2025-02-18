@@ -41,8 +41,8 @@ public class ItemGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "item_grp_id") // Map the station_id to id   
-    private Integer itemGrpId;   // correct 
+    @Column(name = "item_grp_id")    
+    private Integer itemGrpId;    
 
 
     // ****** change ******
