@@ -9,6 +9,7 @@ const FoodStation = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingFoodStation, setEditingFoodStation] = useState(null);
     const [form] = Form.useForm();
+    const [searchForm] = Form.useForm();  // Separate form for search
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
 
@@ -37,7 +38,7 @@ const FoodStation = () => {
     // Fetch Food Stations from API
     const fetchFoodStations = async () => {
         try {
-            const response = await axiosInstance.get("/foodStations/all");
+            const response = await axiosInstance.get("/food_station/all");
             setFoodStations(response.data);
         } catch (error) {
             message.error("Failed to fetch food stations.");
@@ -47,10 +48,10 @@ const FoodStation = () => {
     // Search for Food Stations
     const handleSearch = async () => {
         try {
-            const response = await axiosInstance.get(`/foodStations/all?search=${searchTerm}`);
+            const response = await axiosInstance.get(`/food_station/all?search=${searchTerm}`);
             setFoodStations(response.data);
         } catch (error) {
-            message.error("Failed to search food stations.");
+            //message.error("Failed to search food stations.");
         }
     };
 
@@ -72,7 +73,7 @@ const FoodStation = () => {
         setEditingFoodStation(foodStation);
         setIsModalVisible(true);
         form.setFieldsValue({
-            name: foodStation.stationNm,
+            station_nm: foodStation.stationNm,
         });
     };
 
@@ -80,7 +81,7 @@ const FoodStation = () => {
     const handleDelete = async (id) => {
         try {
             // Delete the food station
-            await axiosInstance.delete(`/foodStations/delete/${id}`);
+            await axiosInstance.delete(`/food_station/delete/${id}`);
             message.success("Food station deleted successfully.");
 
             // Update the food stations state without fetching from the server
@@ -102,11 +103,11 @@ const FoodStation = () => {
             if (editingFoodStation) {
                 // Update Food Station
                 await axiosInstance.put(
-                    `/foodStations/update/${editingFoodStation.stationId}`,
+                    `/food_station/update/${editingFoodStation.stationId}`,
                     null,
                     {
                         params: {
-                            name: values.name,
+                            station_nm: values.station_nm,
                         },
                     }
                 );
@@ -114,11 +115,11 @@ const FoodStation = () => {
             } else {
                 // Add New Food Station
                 await axiosInstance.post(
-                    `/foodStations/add`,
+                    `/food_station/add`,
                     null,
                     {
                         params: {
-                            name: values.name,
+                            station_nm: values.station_nm,
                         },
                     }
                 );
@@ -195,7 +196,7 @@ const FoodStation = () => {
                     color: "#333",
                 }}
             >
-                Food Station Management
+                Food Stations
             </h1>
             <Space
                 style={{
@@ -206,26 +207,38 @@ const FoodStation = () => {
                 }}
             >
                 <Space style={{ marginBottom: "10px" }}>
-                    <Input
-                        placeholder="Search food stations..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ width: "200px" }}
-                    />
-                    <Button
-                        type="primary"
-                        icon={<SearchOutlined />}
-                        onClick={handleSearch}
+                    <Form form={searchForm}
+                        layout="inline"
                     >
-                        Search
-                    </Button>
-                    <Button
-                        type="default"
-                        onClick={handleReset}
-                        style={{ backgroundColor: "#1890ff", color: "#fff" }}
-                    >
-                        Reset
-                    </Button>
+                        <Form.Item name="search">  
+                            <Input
+                                placeholder="Search food stations..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{ width: "200px" }}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                icon={<SearchOutlined />}
+                                htmlType="submit" 
+                                onClick={handleSearch}
+                            >
+                                Search
+                            </Button>
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button
+                            type="default"
+                            onClick={handleReset}
+                            style={{ backgroundColor: "#1890ff", color: "#fff" }}
+                            >
+                                Reset
+                            </Button>
+                        </Form.Item>
+                    </Form>
                 </Space>
                 <Button
                     type="primary"
@@ -297,9 +310,12 @@ const FoodStation = () => {
                     onFinish={handleModalSubmit}
                 >
                     <Form.Item
-                        name="name"
+                        name="station_nm"
                         label="Food Station Name"
                         rules={[{ required: true, message: "Food station name is required." }]}
+                        onChange={(e) => {
+                            form.setFieldsValue({ station_nm: e.target.value.toUpperCase() });
+                        }}
                     >
                         <Input placeholder="Enter food station name" />
                     </Form.Item>

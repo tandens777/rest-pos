@@ -44,9 +44,9 @@ public class FoodStationService {
     public List<FoodStation> getFoodStations(String searchTerm) throws GenericNotFoundException {
         List<FoodStation> foodStations;
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            foodStations = foodStationRepository.findByNameContainingIgnoreCaseOrderById(searchTerm);
+            foodStations = foodStationRepository.findByNameContainingIgnoreCaseOrderByName(searchTerm);
         } else {
-            foodStations = foodStationRepository.findAllByOrderByStationId();
+            foodStations = foodStationRepository.findAllByOrderByStationNm();
         }
 
         if (!foodStations.isEmpty()) {

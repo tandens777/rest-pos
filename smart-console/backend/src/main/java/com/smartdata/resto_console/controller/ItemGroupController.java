@@ -28,14 +28,14 @@ public class ItemGroupController {
 
     @PreAuthorize("hasRole('ADMIN')")  // allows only ADMIN role to access this api /add, if more than one role use hasAnyRole('','')
     @PostMapping("/add")
-    public void addItemGroup(@RequestParam String name) {
-        itemGroupService.addItemGroup(name);
+    public void addItemGroup(@RequestParam String item_grp_desc) {
+        itemGroupService.addItemGroup(item_grp_desc);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{id}")
-    public void updateItemGroup(@PathVariable Integer id, @RequestParam String name) {
-        itemGroupService.updateItemGroup(id, name);
+    public void updateItemGroup(@PathVariable Integer id, @RequestParam String item_grp_desc) {
+        itemGroupService.updateItemGroup(id, item_grp_desc);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

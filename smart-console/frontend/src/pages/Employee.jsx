@@ -16,6 +16,7 @@ const Employee = () => {
     const [editingEmployee, setEditingEmployee] = useState(null);
     const [employeeTypes, setEmployeeTypes] = useState([]);
     const [employeeStatuses, setEmployeeStatuses] = useState([]);
+    const [foodStations, setFoodStations] = useState([]);    
     const [roles, setRoles] = useState([]);
 
     const [isFaceRegisterVisible, setIsFaceRegisterVisible] = useState(false);
@@ -71,14 +72,16 @@ const Employee = () => {
 
     const fetchDropdownData = async () => {
         try {
-            const [typesResponse, statusesResponse, rolesResponse] = await Promise.all([
+            const [typesResponse, statusesResponse, rolesResponse, foodStationsResponse] = await Promise.all([
                 axiosInstance.get("/employee_types/all"),
                 axiosInstance.get("/employee_statuses/all"),
                 axiosInstance.get("/roles/all"),
+                axiosInstance.get("/food_station/all"),
             ]);
             setEmployeeTypes(typesResponse.data);
             setEmployeeStatuses(statusesResponse.data);
             setRoles(rolesResponse.data);
+            setFoodStations(foodStationsResponse.data);
         } catch (error) {
             message.error("Failed to fetch dropdown data.");
         }
@@ -653,11 +656,12 @@ const Employee = () => {
                                     label="Station"
                                     rules={[{ required: true, message: "Station is required." }]}
                                 >
-                                    <Select placeholder="Enter Station">
-                                        <Option value="1">Floor</Option>
-                                        <Option value="2">Kitchen</Option>
-                                        <Option value="3">Bar</Option>
-                                        <Option value="4">Office</Option>
+                                    <Select placeholder="Select Station">
+                                        {foodStations.map((station) => (
+                                            <Option key={station.stationId} value={station.stationId}>
+                                                {station.stationNm} {/* Assuming the station object has a 'name' field */}
+                                            </Option>
+                                        ))}
                                     </Select>
                                 </Form.Item>
                             </Col>

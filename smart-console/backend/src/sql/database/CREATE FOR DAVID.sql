@@ -44,3 +44,13 @@ REVOKE ALL ON TABLE public.item_group FROM PUBLIC;
 GRANT DELETE, UPDATE, INSERT, SELECT ON TABLE public.item_group TO PUBLIC;
 
 GRANT ALL ON TABLE public.item_group TO postgres;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_item_group_item_grp_desc
+    ON public.item_group USING btree
+    (item_grp_desc COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_item_tag_item_tag_desc
+    ON public.item_tag USING btree
+    (item_tag_desc COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;

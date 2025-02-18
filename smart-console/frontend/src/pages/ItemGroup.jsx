@@ -9,6 +9,7 @@ const ItemGroup = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingItemGroup, setEditingItemGroup] = useState(null);
     const [form] = Form.useForm();
+    const [searchForm] = Form.useForm();  // Separate form for search    
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
 
@@ -50,7 +51,7 @@ const ItemGroup = () => {
             const response = await axiosInstance.get(`/item_group/all?search=${searchTerm}`);
             setItemGroups(response.data);
         } catch (error) {
-            message.error("Failed to search food menu groups");
+            //message.error("Failed to search food menu groups");
         }
     };
 
@@ -72,7 +73,7 @@ const ItemGroup = () => {
         setEditingItemGroup(itemGroup);
         setIsModalVisible(true);
         form.setFieldsValue({
-            name: itemGroup.itemGrpDesc,
+            item_grp_desc: itemGroup.itemGrpDesc,
         });
     };
 
@@ -85,7 +86,7 @@ const ItemGroup = () => {
 
             // Update the Item Groups state without fetching from the server
             const updatedItemGroups = itemGroups.filter((itemGroup) => itemGroup.itemGrpId !== id);
-            setFoodStations(updatedItemGroups);
+            setItemGroups(updatedItemGroups);
 
             // Check if the updated Item Groups list is empty
             if (updatedItemGroups.length === 0) {
@@ -106,7 +107,7 @@ const ItemGroup = () => {
                     null,
                     {
                         params: {
-                            name: values.name,
+                            item_grp_desc: values.item_grp_desc,
                         },
                     }
                 );
@@ -118,7 +119,7 @@ const ItemGroup = () => {
                     null,
                     {
                         params: {
-                            name: values.name,
+                            item_grp_desc: values.item_grp_desc,
                         },
                     }
                 );
@@ -206,26 +207,38 @@ const ItemGroup = () => {
                 }}
             >
                 <Space style={{ marginBottom: "10px" }}>
-                    <Input
-                        placeholder="Search food menu groups..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ width: "200px" }}
-                    />
-                    <Button
-                        type="primary"
-                        icon={<SearchOutlined />}
-                        onClick={handleSearch}
+                    <Form form={searchForm}
+                        layout="inline"
                     >
-                        Search
-                    </Button>
-                    <Button
-                        type="default"
-                        onClick={handleReset}
-                        style={{ backgroundColor: "#1890ff", color: "#fff" }}
-                    >
-                        Reset
-                    </Button>
+                        <Form.Item name="search">  
+                            <Input
+                                placeholder="Search food menu groups..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{ width: "200px" }}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                icon={<SearchOutlined />}
+                                htmlType="submit" 
+                                onClick={handleSearch}
+                            >
+                                Search
+                            </Button>
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button
+                            type="default"
+                            onClick={handleReset}
+                            style={{ backgroundColor: "#1890ff", color: "#fff" }}
+                            >
+                                Reset
+                            </Button>
+                        </Form.Item>
+                    </Form>
                 </Space>
                 <Button
                     type="primary"
@@ -239,7 +252,7 @@ const ItemGroup = () => {
             <Table
                 columns={columns}
                 dataSource={paginatedItemGroups}
-                rowKey="stationId"
+                rowKey="itemGrpId"
                 pagination={false}
                 locale={{
                     emptyText: "No data available.",
@@ -297,9 +310,12 @@ const ItemGroup = () => {
                     onFinish={handleModalSubmit}
                 >
                     <Form.Item
-                        name="name"
+                        name="item_grp_desc"
                         label="Food Menu Group Name"
                         rules={[{ required: true, message: "Food Menu Group name is required." }]}
+                        onChange={(e) => {
+                            form.setFieldsValue({ item_grp_desc: e.target.value.toUpperCase() });
+                        }}
                     >
                         <Input placeholder="Enter food menu group name" />
                     </Form.Item>
