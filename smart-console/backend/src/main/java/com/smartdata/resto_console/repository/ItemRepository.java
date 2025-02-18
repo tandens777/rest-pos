@@ -96,4 +96,14 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
     // Query to retrieve all Items sorted by sortOrder and itemDesc
     @Query("SELECT i FROM Item i WHERE catTypeId = :catTypeId ORDER BY i.sortOrder ASC, i.itemDesc ASC")
     List<Item> findAllByOrderBySortOrder(@Param("catTypeId") Integer catTypeId);
+
+
+    // Query to find Items by description, sorted by sortOrder and itemDesc
+    @Query(value = "SELECT i.* FROM item i INNER JOIN item_tag_items t ON i.item_id = t.item_id WHERE t.item_tag_id = :itemTagId AND i.cat_type_id = :catTypeId AND (LOWER(i.item_desc) LIKE LOWER(CONCAT('%', :itemDesc, '%')) OR LOWER(i.item_code) LIKE LOWER(CONCAT('%', :itemDesc, '%'))) ORDER BY i.sort_order ASC, i.item_desc ASC", nativeQuery = true)
+    List<Item> findByTagItemDescContainingIgnoreCaseOrderBySortOrder(@Param("itemTagId") Integer itemTagId, @Param("catTypeId") Integer catTypeId, @Param("itemDesc") String itemDesc);
+
+    // Query to retrieve all Items sorted by sortOrder and itemDesc
+    @Query(value = "SELECT i.* FROM item i INNER JOIN item_tag_items t ON i.item_id = t.item_id WHERE t.item_tag_id = :itemTagId AND i.cat_type_id = :catTypeId  ORDER BY i.sort_order ASC, i.item_desc ASC", nativeQuery = true)
+    List<Item> findAllTagByOrderBySortOrder(@Param("itemTagId") Integer itemTagId, @Param("catTypeId") Integer catTypeId);
+
 }

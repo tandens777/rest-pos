@@ -78,6 +78,33 @@ const FoodMenu = () => {
         }
     };
 
+
+    const handleTagClick = async (itemTagId) => {
+        try {
+            console.log("Fetching items for tag ID:", itemTagId);
+            const response = await axiosInstance.get(`/food_menu/all_tag/${itemTagId}`, {
+                params: { search: searchTerm || "" } // Send search param if available
+            });
+    
+            const fetchedData = response.data || []; // Ensure we have an array
+
+            if (fetchedData.length === 0) {
+                setFoodMenus([]); // Clear the list if no items found
+                message.info("No food menus found for the selected tag.");
+            } else {
+                setFoodMenus(fetchedData); // Update with retrieved data
+            }
+
+            setCurrentPage(1); // Reset pagination
+    
+            //message.success("Food menu updated with selected tag.");
+        } catch (error) {
+            console.error("Failed to fetch food menus for tag:", error);
+            //message.error("Failed to fetch food menus for the selected tag.");
+            setFoodMenus([]); // Clear the list if no items found
+        }
+    };
+    
     const fetchDropdownData = async () => {
         try {
             const [unitsResponse, stationResponse, itemTagResponse, categoriesResponse] = await Promise.all([
@@ -101,7 +128,9 @@ const FoodMenu = () => {
             const response = await axiosInstance.get(`/food_menu/all?search=${searchTerm}`);
             setFoodMenus(response.data);
         } catch (error) {
-            message.error("Failed to search food menus.");
+            console.error("Failed to search food menus.", error);
+            //message.error("Failed to search food menus.");
+            setFoodMenus([]);
         }
     };
 
@@ -367,20 +396,34 @@ const FoodMenu = () => {
             <div>
             {/* Item Tags Section */}
             <div style={{ textAlign: "center", marginBottom: "20px" }}>
-                <Space size="middle" wrap>
+                <Space size="small" wrap>
                     {itemTags.map((tag) => (
-                        <a
+                        <span
                             key={tag.itemTagId}
-                            href={`#`} // You can modify this to trigger a function
+                            onClick={() => handleTagClick(tag.itemTagId)} // ⬅ Handle click event
                             style={{
-                                textDecoration: "underline",
-                                color: "#1890ff",
+                                display: "inline-block",
+                                padding: "8px 16px",
+                                borderRadius: "20px",
+                                border: "2px solid #ff8c00", // Dark Orange border
+                                backgroundColor: "white",
+                                color: "#ff8c00", // Dark Orange text
                                 fontWeight: "bold",
+                                fontSize: "14px",
                                 cursor: "pointer",
+                                transition: "all 0.3s ease-in-out",
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = "#ff8c00"; // Solid Dark Orange background
+                                e.target.style.color = "white"; // White font color
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = "white"; // Revert background
+                                e.target.style.color = "#ff8c00"; // Revert text color
                             }}
                         >
                             {tag.itemTagDesc}
-                        </a>
+                        </span>
                     ))}
                 </Space>
             </div>
