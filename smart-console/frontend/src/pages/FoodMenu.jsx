@@ -20,6 +20,8 @@ const FoodMenu = () => {
     const [categories, setCategories] = useState([]);
     const [parentCategoryId, setParentCategoryId] = useState(null);     
 
+    const [isCat, setIsCat] = useState(false);
+
     const [itemTags, setItemTags] = useState([]);
     const [selectedTagId, setSelectedTagId] = useState(null);
 
@@ -169,6 +171,7 @@ const FoodMenu = () => {
         setIsModalVisible(true);
         form.resetFields();
         setPicturePreview("");
+        setIsCat(false);
     };
 
     // Edit an Existing Food Menu
@@ -203,6 +206,8 @@ const FoodMenu = () => {
             soldout_flag: foodMenu.soldoutFlag === "Y",
             reorder_limit: foodMenu.reorderLimit,
         });
+
+        setIsCat(foodMenu.isCategory === "Y");
 
         // Set picture preview URL using the file server base URL
         if (foodMenu.pictureSrc) {
@@ -762,6 +767,35 @@ const FoodMenu = () => {
         </Col>
     </Row>
 
+    <Row gutter={16}>
+        <Col span={12}>
+            <Form.Item
+                name="is_category"
+                label="Is Category"
+                valuePropName="checked"
+            >
+                <Switch
+                    onChange={(checked) => {
+                    setIsCat(checked);
+                    form.setFieldsValue({ is_category: checked });
+                    }}
+                />
+            </Form.Item>
+        </Col>
+        <Col span={12}>
+            <Form.Item
+                name="active_flag"
+                label="Active"
+                valuePropName="checked"
+            >
+                <Switch
+                    onChange={(checked) => {
+                    form.setFieldsValue({ active_flag: checked });
+                    }}
+                />
+            </Form.Item>
+        </Col>
+    </Row>
 
     {/* Row 5: Parent Category Dropdown and Food Station Dropdown */}
     <Row gutter={16}>
@@ -794,32 +828,30 @@ const FoodMenu = () => {
         </Col>
         <Col span={12}>
             <Form.Item
-                name="station_id"
-                label="Food Station"
+                name="sort_order"
+                label="Sort Order"
             >
-                <Select 
-                        placeholder="Select Food Station"
-                        allowClear  
-                        onChange={(value) => {
-                            form.setFieldsValue({ station_id: value || null });
-                        }}
-                >
-                        {/* Add an empty option at the top */}
-                    <Option value={null}>None</Option>  
-
-                    {Array.isArray(foodStations) && foodStations.length > 0 ? (
-                        foodStations.map((station) => (
-                            <Option key={station.stationId} value={station.stationId}>
-                                {station.stationNm}
-                            </Option>
-                        ))
-                    ) : (
-                        <Option disabled>No food stations available</Option>
-                    )}
-                </Select>
+                <Input type="number" placeholder="Enter sort order" />
             </Form.Item>
         </Col>
+
     </Row>
+
+{/* Render these tabs only if isCat is false */}
+{!isCat ? (
+    <>
+<Tabs
+    defaultActiveKey="1"
+    tabBarStyle={{
+    backgroundColor: "#fff",
+    borderBottom: "1px solid #d9d9d9",
+    padding: "0 16px",
+    marginBottom: 0,
+    }}
+    tabBarGutter={0}
+>
+    <TabPane tab="Standard Price" key="1">
+    
 
     {/* Row 6: Default Unit Code and Per 100g Flag Checkbox */}
     <Row gutter={16}>
@@ -881,33 +913,53 @@ const FoodMenu = () => {
         </Col>
     </Row>
 
+    {/* Row 10: Reorder Limit and Sort Order */}
     <Row gutter={16}>
         <Col span={12}>
             <Form.Item
-                name="is_category"
-                label="Is Category"
-                valuePropName="checked"
+                name="station_id"
+                label="Food Station"
             >
-                <Switch
-                    onChange={(checked) => {
-                    form.setFieldsValue({ is_category: checked });
-                    }}
-                />
+                <Select 
+                        placeholder="Select Food Station"
+                        allowClear  
+                        onChange={(value) => {
+                            form.setFieldsValue({ station_id: value || null });
+                        }}
+                >
+                        {/* Add an empty option at the top */}
+                    <Option value={null}>None</Option>  
+
+                    {Array.isArray(foodStations) && foodStations.length > 0 ? (
+                        foodStations.map((station) => (
+                            <Option key={station.stationId} value={station.stationId}>
+                                {station.stationNm}
+                            </Option>
+                        ))
+                    ) : (
+                        <Option disabled>No food stations available</Option>
+                    )}
+                </Select>
             </Form.Item>
         </Col>
+
         <Col span={12}>
             <Form.Item
-                name="active_flag"
-                label="Active"
+                name="soldout_flag"
+                label="Sold out"
                 valuePropName="checked"
             >
                 <Switch
                     onChange={(checked) => {
-                    form.setFieldsValue({ active_flag: checked });
+                    form.setFieldsValue({ soldout_flag: checked });
                     }}
                 />
             </Form.Item>
         </Col>
+
+        <Form.Item name="reorder_limit" style={{ display: 'none' }}>
+            <input type="hidden" />
+        </Form.Item>
     </Row>
 
     <Row gutter={16}>
@@ -984,34 +1036,81 @@ const FoodMenu = () => {
         </Col>
     </Row>
 
-    {/* Row 10: Reorder Limit and Sort Order */}
-    <Row gutter={16}>
-        <Col span={12}>
-            <Form.Item
-                name="sort_order"
-                label="Sort Order"
-            >
-                <Input type="number" placeholder="Enter sort order" />
-            </Form.Item>
-        </Col>
-        <Col span={12}>
-            <Form.Item
-                name="soldout_flag"
-                label="Sold out"
-                valuePropName="checked"
-            >
-                <Switch
-                    onChange={(checked) => {
-                    form.setFieldsValue({ soldout_flag: checked });
-                    }}
-                />
-            </Form.Item>
-        </Col>
+</TabPane>
 
-        <Form.Item name="reorder_limit" style={{ display: 'none' }}>
-            <input type="hidden" />
-        </Form.Item>
-    </Row>
+{/*================= Tab for Food Delivery Apps =============================*/}
+<TabPane tab="Delivery App Price" key="2">
+
+</TabPane>
+
+{/*================= Tab for Item Tag =============================*/}
+<TabPane tab="Food Menu Tags" key="3">
+ 
+</TabPane>
+
+{/*================= Tab for Set Menu =============================*/}
+<TabPane tab="Set Menu Items" key="4">
+
+</TabPane>
+
+{/*================= Tab for Stock Usage =============================*/}
+<TabPane tab="Ingredients" key="5">
+
+</TabPane>
+
+</Tabs>
+
+</>
+) : (
+<>
+    <Form.Item name="default_unit_code" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="per100_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="track_invty_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="send_to_printer_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="non_vat_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="allow_sc_on_exempt" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="disc_exempt" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="default_price" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="addon_price" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="station_id" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="allow_dinein_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="allow_pickup_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="allow_delivery_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="soldout_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="reorder_limit" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+</>
+)
+}
 
                     {/* Save and Cancel Buttons */}
                     <div style={{ textAlign: "right", marginTop: "20px" }}>
