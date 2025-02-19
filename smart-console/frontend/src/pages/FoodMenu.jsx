@@ -654,6 +654,13 @@ const FoodMenu = () => {
         addon_price: 0.00, // Default value 0.00
         reorder_limit: 0,
         default_unit_code: "ORDER",
+        active_flag: true,
+        track_invty_flag:true,
+        send_to_printer_flag: true,
+        station_id: 1,
+        allow_dinein_flag: true,
+        allow_pickup_flag: true,
+        allow_delivery_flag: true,
     }}
 >
     <Row gutter={16}>

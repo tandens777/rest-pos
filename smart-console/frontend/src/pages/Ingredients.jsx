@@ -544,7 +544,10 @@ const Ingredients = () => {
         default_price: 0.00, // Default value 0.00
         addon_price: 0.00, // Default value 0.00
         reorder_limit: 0,
-        default_unit_code: "ORDER",
+        default_unit_code: "PC",
+        active_flag: true,
+        track_invty_flag:true,
+        send_to_printer_flag: false,
     }}
 >
     <Row gutter={16}>
