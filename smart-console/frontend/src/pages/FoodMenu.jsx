@@ -412,7 +412,7 @@ const FoodMenu = () => {
                                 display: "inline-block",
                                 padding: "8px 16px",
                                 borderRadius: "20px",
-                                border: `2px solid ${isSelected ? "#ff8c00" : "#ccc"}`,
+                                border: "2px solid #ff8c00",
                                 backgroundColor: isSelected ? "#ff8c00" : "white",
                                 color: isSelected ? "white" : "#ff8c00",
                                 fontWeight: "bold",
