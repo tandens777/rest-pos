@@ -18,6 +18,7 @@ const FoodMenu = () => {
     const [parentCategoryId, setParentCategoryId] = useState(null);     
 
     const [itemTags, setItemTags] = useState([]);
+    const [selectedTagId, setSelectedTagId] = useState(null);
 
     const [form] = Form.useForm();
     const [searchForm] = Form.useForm();  // Separate form for search
@@ -82,6 +83,10 @@ const FoodMenu = () => {
     const handleTagClick = async (itemTagId) => {
         try {
             console.log("Fetching items for tag ID:", itemTagId);
+
+            // Update selected tag
+            setSelectedTagId(itemTagId);
+            
             const response = await axiosInstance.get(`/food_menu/all_tag/${itemTagId}`, {
                 params: { search: searchTerm || "" } // Send search param if available
             });
@@ -397,7 +402,9 @@ const FoodMenu = () => {
             {/* Item Tags Section */}
             <div style={{ textAlign: "center", marginBottom: "20px" }}>
                 <Space size="small" wrap>
-                    {itemTags.map((tag) => (
+                    {itemTags.map((tag) => {
+                        const isSelected = selectedTagId === tag.itemTagId;
+                        return (
                         <span
                             key={tag.itemTagId}
                             onClick={() => handleTagClick(tag.itemTagId)} // ⬅ Handle click event
@@ -405,26 +412,31 @@ const FoodMenu = () => {
                                 display: "inline-block",
                                 padding: "8px 16px",
                                 borderRadius: "20px",
-                                border: "2px solid #ff8c00", // Dark Orange border
-                                backgroundColor: "white",
-                                color: "#ff8c00", // Dark Orange text
+                                border: `2px solid ${isSelected ? "#ff8c00" : "#ccc"}`,
+                                backgroundColor: isSelected ? "#ff8c00" : "white",
+                                color: isSelected ? "white" : "#ff8c00",
                                 fontWeight: "bold",
                                 fontSize: "14px",
                                 cursor: "pointer",
                                 transition: "all 0.3s ease-in-out",
                             }}
                             onMouseEnter={(e) => {
-                                e.target.style.backgroundColor = "#ff8c00"; // Solid Dark Orange background
-                                e.target.style.color = "white"; // White font color
+                                if (!isSelected) {
+                                    e.target.style.backgroundColor = "#ff8c00"; // Solid Dark Orange background
+                                    e.target.style.color = "white"; // White font color
+                                }
                             }}
                             onMouseLeave={(e) => {
-                                e.target.style.backgroundColor = "white"; // Revert background
-                                e.target.style.color = "#ff8c00"; // Revert text color
+                                if (!isSelected) {
+                                    e.target.style.backgroundColor = "white"; // Revert background
+                                    e.target.style.color = "#ff8c00"; // Revert text color
+                                }
                             }}
                         >
                             {tag.itemTagDesc}
                         </span>
-                    ))}
+                        );
+                })}
                 </Space>
             </div>
         </div>
