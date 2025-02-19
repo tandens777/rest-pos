@@ -4,6 +4,8 @@ import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfi
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 const ItemTag = () => {
+    const [loading, setLoading] = useState(false);
+    
     const [itemTags, setItemTags] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -38,20 +40,26 @@ const ItemTag = () => {
     // Fetch Item Tags from API
     const fetchItemTags = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get("/item_tag/all");
             setItemTags(response.data);
         } catch (error) {
             message.error("Failed to fetch food menu tags");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     // Search for Item Tags
     const handleSearch = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get(`/item_tag/all?search=${searchTerm}`);
             setItemTags(response.data);
         } catch (error) {
             //message.error("Failed to search food menu tags");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
@@ -176,6 +184,13 @@ const ItemTag = () => {
     );
 
     return (
+        <>
+{/* Show loading spinner if data is being fetched */}
+{loading ? (    
+    <div className="flex justify-center items-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+) : (           
         <div
             style={{
                 padding: "20px",
@@ -350,6 +365,9 @@ const ItemTag = () => {
                 </Form>
             </Modal>
         </div>
+    )}
+    </>
+            
     );
 };
 

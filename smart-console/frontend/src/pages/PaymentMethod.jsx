@@ -7,6 +7,8 @@ import { CgCornerLeftUp } from "react-icons/cg";
 const { Option } = Select;
 
 const PaymentMethod = () => {
+    const [loading, setLoading] = useState(false);
+
     const [picturePreview, setPicturePreview] = useState(null);
     const [paymentMethods, setPaymentMethods] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -55,16 +57,20 @@ const PaymentMethod = () => {
     // Fetch Payment Methods from API
     const fetchPaymentMethods = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get("/pay_method/all");
             setPaymentMethods(response.data);
         } catch (error) {
             message.error("Failed to fetch payment methods.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     // Fetch Payment Methods from API
     const handleCategoryClick = async (id, parentPayMtdId) => {
         try {
+            setLoading(true); // Show spinner
             console.log("parent id: ", id);
             const response = await axiosInstance.get(`/pay_method/all_subitems/${id || 0}`);
     
@@ -81,11 +87,14 @@ const PaymentMethod = () => {
 
         } catch (error) {
             message.error("Failed to fetch child payment methods.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     const fetchDropdownData = async () => {
         try {
+            setLoading(true); // Show spinner
             const [payTypesResponse, categoriesResponse] = await Promise.all([
                 axiosInstance.get("/sm_pay_types"),
                 axiosInstance.get("/pay_method/getcategories"),
@@ -94,16 +103,21 @@ const PaymentMethod = () => {
             setPayMethodCategories(categoriesResponse.data);
         } catch (error) {
             message.error("Failed to fetch dropdown data.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     // Search for Payment Methods
     const handleSearch = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get(`/pay_method/all?search=${searchTerm}`);
             setPaymentMethods(response.data);
         } catch (error) {
             message.error("Failed to search payment methods.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
@@ -244,6 +258,13 @@ const PaymentMethod = () => {
     );
 
     return (
+        <>
+{/* Show loading spinner if data is being fetched */}
+{loading ? (    
+    <div className="flex justify-center items-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+) : (                  
         <div
             style={{
                 padding: "20px",
@@ -737,6 +758,9 @@ const PaymentMethod = () => {
                 </Form>
             </Modal>
         </div>
+    )}
+    </>
+            
     );
 };
 

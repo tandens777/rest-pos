@@ -8,6 +8,7 @@ import "./FaceLogin.css";
 import { useNavigate } from "react-router-dom";
 
 const FaceLogin = () => {
+    const [loading, setLoading] = useState(false);
     const [facialFeatures, setFacialFeatures] = useState(null);
     const [initializing, setInitializing] = useState(false);
     const [scanning, setScanning] = useState(false);
@@ -37,7 +38,6 @@ const FaceLogin = () => {
     useEffect(() => {
         const loadModels = async () => {
             const MODEL_URL = '/models';
-    
             setInitializing(true);
             await Promise.all([
                 faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
@@ -233,6 +233,7 @@ const FaceLogin = () => {
                 //console.log("Facial features:", facialFeatures);
 
                 try {
+                    setLoading(true); // Show spinner
                     //console.log("Sending request body:", facialFeaturesJSON);
 
                     const response = await axios.post('/api/auth/face_login',  
@@ -264,7 +265,10 @@ const FaceLogin = () => {
                     console.error("Login failed:", error);
                     setError("Invalid credentials. Please try again.");
                     await new Promise(resolve => setTimeout(resolve, 2000));
-                    }
+                } finally {
+                    setLoading(false); // Hide spinner
+                  }
+
             } else {
                 console.error("No face detected");
                 setError("No face detected, please try again.");
@@ -285,6 +289,13 @@ const FaceLogin = () => {
     }
 
     return (
+<>
+{/* Show loading spinner if data is being fetched */}
+{loading ? (    
+    <div className="flex justify-center items-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+) : (            
         <div style={containerStyle}>
         <div
           style={{
@@ -364,6 +375,8 @@ const FaceLogin = () => {
             </div>
             </div>
             </div>
+    )}
+    </>            
     );
 };
 

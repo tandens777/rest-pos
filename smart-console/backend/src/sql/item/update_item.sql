@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.update_item(
     IN p_allow_dinein_flag character varying,
     IN p_allow_pickup_flag character varying,
     IN p_allow_delivery_flag character varying,
+    IN p_soldout_flag character varying,
     IN p_lastupduserid character varying
 )
 LANGUAGE 'plpgsql'
@@ -57,6 +58,7 @@ BEGIN
         allow_dinein_flag = p_allow_dinein_flag,
         allow_pickup_flag = p_allow_pickup_flag,
         allow_delivery_flag = p_allow_delivery_flag,
+        soldout_flag = p_soldout_flag,
         lastupduserid = p_lastupduserid,
         lastupddt = NOW()
     WHERE item_id = p_item_id;
@@ -68,6 +70,6 @@ ALTER PROCEDURE public.update_item(
     integer, integer, character varying, integer, character varying, double precision, double precision, 
     character varying, character varying, character varying, character varying, character varying, 
     character varying, character varying, integer, character varying, character varying, 
-    character varying, character varying, character varying, character varying
+    character varying, character varying, character varying, character varying, character varying
 )
 OWNER TO postgres;

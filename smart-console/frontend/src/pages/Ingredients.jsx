@@ -7,6 +7,8 @@ import { CgCornerLeftUp } from "react-icons/cg";
 const { Option } = Select;
 
 const Ingredients = () => {
+    const [loading, setLoading] = useState(false);
+
     const [picturePreview, setPicturePreview] = useState(null);
     const [foodMenus, setFoodMenus] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -57,6 +59,7 @@ const Ingredients = () => {
     // Fetch Food Menus from API
     const handleCategoryClick = async (id, parentCatId) => {
         try {
+            setLoading(true); // Show spinner
             console.log("parent id: ", id);
             const response = await axiosInstance.get(`/ingredients/all_subitems/${id || 0}`);
     
@@ -73,11 +76,14 @@ const Ingredients = () => {
 
         } catch (error) {
             message.error("Failed to fetch child ingredients.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     const fetchDropdownData = async () => {
         try {
+            setLoading(true); // Show spinner
             const [unitsResponse, stationResponse, categoriesResponse] = await Promise.all([
                 axiosInstance.get("/units/all"),
                 axiosInstance.get("/food_station/all"),
@@ -88,16 +94,21 @@ const Ingredients = () => {
             setCategories(categoriesResponse.data);
         } catch (error) {
             message.error("Failed to fetch dropdown data.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     // Search for Food Menus
     const handleSearch = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get(`/ingredients/all?search=${searchTerm}`);
             setFoodMenus(response.data);
         } catch (error) {
             message.error("Failed to search ingredients.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
@@ -145,6 +156,7 @@ const Ingredients = () => {
             allow_dinein_flag: foodMenu.allowDineinFlag === "Y",
             allow_pickup_flag: foodMenu.allowPickupFlag === "Y",
             allow_delivery_flag: foodMenu.allowDeliveryFlag === "Y",
+            soldout_flag: foodMenu.soldoutFlag === "Y",
             reorder_limit: foodMenu.reorderLimit,
         });
 
@@ -203,6 +215,7 @@ const Ingredients = () => {
                 allow_dinein_flag: values.allow_dinein_flag ? "Y" : "N",
                 allow_pickup_flag: values.allow_pickup_flag ? "Y" : "N",
                 allow_delivery_flag: values.allow_delivery_flag ? "Y" : "N",
+                soldout_flag: values.soldout_flag ? "Y" : "N",
                 lastupduserid: username,
             };
 
@@ -266,6 +279,13 @@ const Ingredients = () => {
     );
 
     return (
+        <>
+{/* Show loading spinner if data is being fetched */}
+{loading ? (    
+    <div className="flex justify-center items-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+) : (          
         <div
             style={{
                 padding: "20px",
@@ -787,6 +807,9 @@ const Ingredients = () => {
     <Form.Item name="allow_delivery_flag" style={{ display: 'none' }}>
         <input type="hidden" />
     </Form.Item>
+    <Form.Item name="soldout_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
 
                     {/* Save and Cancel Buttons */}
                     <div style={{ textAlign: "right", marginTop: "20px" }}>
@@ -822,6 +845,9 @@ const Ingredients = () => {
                 </Form>
             </Modal>
         </div>
+    )}
+    </>
+
     );
 };
 

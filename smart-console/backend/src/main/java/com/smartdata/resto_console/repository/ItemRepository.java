@@ -39,6 +39,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
         @Param("p_allow_dinein_flag") String allow_dinein_flag,
         @Param("p_allow_pickup_flag") String allow_pickup_flag,
         @Param("p_allow_delivery_flag") String allow_delivery_flag,
+        @Param("p_soldout_flag") String soldout_flag,
         @Param("p_lastupduserid") String lastupduserid
     );
     
@@ -71,6 +72,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
         @Param("p_allow_dinein_flag") String allow_dinein_flag,
         @Param("p_allow_pickup_flag") String allow_pickup_flag,
         @Param("p_allow_delivery_flag") String allow_delivery_flag,
+        @Param("p_soldout_flag") String soldout_flag,
         @Param("p_lastupduserid") String lastupduserid
     );
     

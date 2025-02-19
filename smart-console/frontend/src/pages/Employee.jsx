@@ -9,6 +9,8 @@ const { TabPane } = Tabs;
 const { Option } = Select;
 
 const Employee = () => {
+    const [loading, setLoading] = useState(false);
+
     const [picturePreview, setPicturePreview] = useState(null);
     const [employees, setEmployees] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -63,15 +65,19 @@ const Employee = () => {
     // Fetch Employees from API
     const fetchEmployees = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get("/employees/all");
             setEmployees(response.data);
         } catch (error) {
             message.error("Failed to fetch employees.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     const fetchDropdownData = async () => {
         try {
+            setLoading(true); // Show spinner
             const [typesResponse, statusesResponse, rolesResponse, foodStationsResponse] = await Promise.all([
                 axiosInstance.get("/employee_types/all"),
                 axiosInstance.get("/employee_statuses/all"),
@@ -84,16 +90,21 @@ const Employee = () => {
             setFoodStations(foodStationsResponse.data);
         } catch (error) {
             message.error("Failed to fetch dropdown data.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     // Search for Employees
     const handleSearch = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get(`/employees/all?search=${searchTerm}`);
             setEmployees(response.data);
         } catch (error) {
             message.error("Failed to search employees.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
@@ -388,6 +399,13 @@ const Employee = () => {
     );
 
     return (
+<>
+{/* Show loading spinner if data is being fetched */}
+{loading ? (    
+    <div className="flex justify-center items-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+) : (          
         <div
             style={{
                 padding: "20px",
@@ -1112,6 +1130,8 @@ const Employee = () => {
             </Form>
         </Modal>
     </div>
+    )}
+    </>    
     );
 };
 

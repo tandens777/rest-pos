@@ -395,7 +395,9 @@ const Settings = () => {
       <h1 style={{ fontSize: "24px", fontWeight: "bold", textAlign: "center", marginBottom: "20px", color: "#333" }}>Settings</h1>
 
       {loading ? (
-        <div>Loading...</div>
+        <div className="flex justify-center items-center min-h-[400px]">
+          <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+        </div>
       ) : (
         company && (
           <Form form={form} layout="vertical" key={company?.id || 'default'} onFinish={handleUpdate} 

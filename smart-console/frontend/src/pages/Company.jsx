@@ -5,6 +5,7 @@ import { Button, Form, Input, Row, Col, message, Upload } from "antd";
 import { UploadOutlined, CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 const Company = () => {
+    const [loading, setLoading] = useState(false);    
     const [company, setCompany] = useState(null);
     const [logoPreview, setLogoPreview] = useState(""); // State for logo preview
     const [form] = Form.useForm();
@@ -25,6 +26,7 @@ const Company = () => {
     // Fetch Company Details
     const fetchCompanyDetails = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get(`/company/get/1`); // Assuming the company ID is 1
             setCompany(response.data);
 
@@ -56,6 +58,8 @@ const Company = () => {
         } catch (error) {
             console.error("Failed to fetch company details:", error); // Debugging
             message.error("Failed to fetch company details.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
@@ -133,6 +137,13 @@ const Company = () => {
     };
 
     return (
+        <>
+{/* Show loading spinner if data is being fetched */}
+{loading ? (    
+    <div className="flex justify-center items-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+) : (          
         <div
             style={{
                 padding: "20px",
@@ -376,6 +387,9 @@ const Company = () => {
                 </Form>
             )}
         </div>
+    )}
+    </>
+            
     );
 };
 
