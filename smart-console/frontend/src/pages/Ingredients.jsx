@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
-import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, Upload, Avatar, Switch, Row, Col, Checkbox } from "antd";
+import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, Upload, Avatar, Switch, Row, Col, Checkbox, Tabs   } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
 import { CgCornerLeftUp } from "react-icons/cg";
 
+const { TabPane } = Tabs;
 const { Option } = Select;
 
 const Ingredients = () => {
@@ -18,6 +19,8 @@ const Ingredients = () => {
     const [foodStations, setFoodStations] = useState([]);
     const [categories, setCategories] = useState([]);
     const [parentCategoryId, setParentCategoryId] = useState(null);     
+
+    const [isCat, setIsCat] = useState(false);
 
     const [form] = Form.useForm();
     const [searchForm] = Form.useForm();  // Separate form for search
@@ -125,6 +128,7 @@ const Ingredients = () => {
         setIsModalVisible(true);
         form.resetFields();
         setPicturePreview("");
+        setIsCat(false);
     };
 
     // Edit an Existing Food Menu
@@ -159,6 +163,8 @@ const Ingredients = () => {
             soldout_flag: foodMenu.soldoutFlag === "Y",
             reorder_limit: foodMenu.reorderLimit,
         });
+
+        setIsCat(foodMenu.isCategory === "Y");
 
         // Set picture preview URL using the file server base URL
         if (foodMenu.pictureSrc) {
@@ -682,8 +688,62 @@ const Ingredients = () => {
                 </Select>
             </Form.Item>
         </Col>
+        <Col span={12}>
+            <Form.Item
+                name="sort_order"
+                label="Sort Order"
+            >
+                <Input type="number" placeholder="Enter sort order" />
+            </Form.Item>
+        </Col>
     </Row>
 
+    <Row gutter={16}>
+        <Col span={12}>
+            <Form.Item
+                name="is_category"
+                label="Is Category"
+                valuePropName="checked"
+            >
+                <Switch
+                    onChange={(checked) => {
+                    setIsCat(checked);                        
+                    form.setFieldsValue({ is_category: checked });
+                    }}
+                />
+            </Form.Item>
+        </Col>
+        <Col span={12}>
+            <Form.Item
+                name="active_flag"
+                label="Active"
+                valuePropName="checked"
+            >
+                <Switch
+                    onChange={(checked) => {
+                    form.setFieldsValue({ active_flag: checked });
+                    }}
+                />
+            </Form.Item>
+        </Col>
+    </Row>
+
+
+{/* Render these tabs only if isCat is false */}
+{!isCat ? (
+    <>
+<Tabs
+    defaultActiveKey="1"
+    tabBarStyle={{
+    backgroundColor: "#fff",
+    borderBottom: "1px solid #d9d9d9",
+    padding: "0 16px",
+    marginBottom: 0,
+    }}
+    tabBarGutter={0}
+>
+
+<TabPane tab="Unit of Measure" key="1">
     {/* Row 6: Default Unit Code and Per 100g Flag Checkbox */}
     <Row gutter={16}>
         <Col span={12}>
@@ -715,6 +775,15 @@ const Ingredients = () => {
         </Col>
         <Col span={12}>
             <Form.Item
+                name="reorder_limit"
+                label="Reorder Limit"
+            >
+                <Input type="number" placeholder="Enter reorder limit" />
+            </Form.Item>
+        </Col>
+
+        <Col span={12}>
+            <Form.Item
                 name="per100g_flag"
                 valuePropName="checked"
                 hidden
@@ -723,56 +792,26 @@ const Ingredients = () => {
             </Form.Item>
         </Col>
     </Row>
+</TabPane>
 
-    <Row gutter={16}>
-        <Col span={12}>
-            <Form.Item
-                name="is_category"
-                label="Is Category"
-                valuePropName="checked"
-            >
-                <Switch
-                    onChange={(checked) => {
-                    form.setFieldsValue({ is_category: checked });
-                    }}
-                />
-            </Form.Item>
-        </Col>
-        <Col span={12}>
-            <Form.Item
-                name="active_flag"
-                label="Active"
-                valuePropName="checked"
-            >
-                <Switch
-                    onChange={(checked) => {
-                    form.setFieldsValue({ active_flag: checked });
-                    }}
-                />
-            </Form.Item>
-        </Col>
-    </Row>
+</Tabs>
 
+</>
+) : (
+<>          
+    <Form.Item name="default_unit_code" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="per100_flag" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
+    <Form.Item name="reorder_limit" style={{ display: 'none' }}>
+        <input type="hidden" />
+    </Form.Item>
 
-    {/* Row 10: Reorder Limit and Sort Order */}
-    <Row gutter={16}>
-        <Col span={12}>
-            <Form.Item
-                name="reorder_limit"
-                label="Reorder Limit"
-            >
-                <Input type="number" placeholder="Enter reorder limit" />
-            </Form.Item>
-        </Col>
-        <Col span={12}>
-            <Form.Item
-                name="sort_order"
-                label="Sort Order"
-            >
-                <Input type="number" placeholder="Enter sort order" />
-            </Form.Item>
-        </Col>
-    </Row>
+</>
+)
+}
 
     <Form.Item name="track_invty_flag" style={{ display: 'none' }}>
         <input type="hidden" />
