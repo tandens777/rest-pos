@@ -4,6 +4,8 @@ import { Button, Table, Form, Input, Row, Col, InputNumber, Space, Modal, messag
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined, CloseOutlined, UploadOutlined } from "@ant-design/icons";
 
 const DeliveryApp = () => {
+    const [loading, setLoading] = useState(false);
+
     const [deliveryApps, setDeliveryApps] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -46,21 +48,27 @@ const DeliveryApp = () => {
     // Fetch Delivery Apps from API
     const fetchDeliveryApps = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get("/delivery_apps/all");
             setDeliveryApps(response.data);
 
         } catch (error) {
             message.error("Failed to fetch delivery apps.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     // Search for Delivery Apps
     const handleSearch = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get(`/delivery_apps/all?search=${searchTerm}`);
             setDeliveryApps(response.data);
         } catch (error) {
             message.error("Failed to search delivery apps.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
@@ -378,6 +386,13 @@ const DeliveryApp = () => {
     );
 
     return (
+        <>
+{/* Show loading spinner if data is being fetched */}
+{loading ? (    
+    <div className="flex justify-center items-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+) : (          
         <div
             style={{
                 padding: "20px",
@@ -712,6 +727,8 @@ const DeliveryApp = () => {
                 </Form>
             </Modal>
         </div>
+    )}
+    </>        
     );
 };
 

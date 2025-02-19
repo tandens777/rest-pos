@@ -4,6 +4,8 @@ import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfi
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 const Unit = () => {
+    const [loading, setLoading] = useState(false);
+
     const [units, setUnits] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -38,20 +40,26 @@ const Unit = () => {
     // Fetch Units from API
     const fetchUnits = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get("/units/all");
             setUnits(response.data);
         } catch (error) {
             //message.error("Failed to fetch units.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     // Search for Units
     const handleSearch = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get(`/units/all?search=${searchTerm}`);
             setUnits(response.data);
         } catch (error) {
             message.error("Failed to search units.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
@@ -186,6 +194,13 @@ const Unit = () => {
     );
 
     return (
+        <>
+{/* Show loading spinner if data is being fetched */}
+{loading ? (    
+    <div className="flex justify-center items-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+) : (                
             <div
                 style={{
                     padding: "20px",
@@ -374,6 +389,9 @@ const Unit = () => {
                 </Form>
             </Modal>
         </div>
+    )}
+    </>
+            
     );
 };
 

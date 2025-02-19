@@ -24,13 +24,13 @@ public class ItemService {
         Double default_price, Double addon_price, String picture_src, String default_unit_code,
         String disc_exempt, String allow_sc_on_exempt, String non_vat_flag, String active_flag,
         String show_on_pos_flag, Integer reorder_limit, String track_invty_flag, String send_to_printer_flag,
-        String allow_dinein_flag, String allow_pickup_flag, String allow_delivery_flag, String lastupduserid) {
+        String allow_dinein_flag, String allow_pickup_flag, String allow_delivery_flag, String soldout_flag, String lastupduserid) {
 
         itemRepository.insertItem(item_code, item_desc, short_nm, sort_order, chinese_item_desc,
                 cat_type_id, parent_cat_id, is_category, station_id, per100g_flag, default_price, addon_price, picture_src,
                 default_unit_code, disc_exempt, allow_sc_on_exempt, non_vat_flag, active_flag, show_on_pos_flag,
                 reorder_limit, track_invty_flag, send_to_printer_flag, allow_dinein_flag, allow_pickup_flag,
-                allow_delivery_flag, lastupduserid);
+                allow_delivery_flag, soldout_flag, lastupduserid);
     }
 
     @Transactional
@@ -40,13 +40,13 @@ public class ItemService {
             Double default_price, Double addon_price, String picture_src, String default_unit_code,
             String disc_exempt, String allow_sc_on_exempt, String non_vat_flag, String active_flag,
             String show_on_pos_flag, Integer reorder_limit, String track_invty_flag, String send_to_printer_flag,
-            String allow_dinein_flag, String allow_pickup_flag, String allow_delivery_flag, String lastupduserid) {
+            String allow_dinein_flag, String allow_pickup_flag, String allow_delivery_flag, String soldout_flag, String lastupduserid) {
 
         itemRepository.updateItem(id, item_code, item_desc, short_nm, sort_order, chinese_item_desc,
                 cat_type_id, parent_cat_id, is_category, station_id, per100g_flag, default_price, addon_price, picture_src,
                 default_unit_code, disc_exempt, allow_sc_on_exempt, non_vat_flag, active_flag, show_on_pos_flag,
                 reorder_limit, track_invty_flag, send_to_printer_flag, allow_dinein_flag, allow_pickup_flag,
-                allow_delivery_flag, lastupduserid);
+                allow_delivery_flag, soldout_flag, lastupduserid);
     }
 
     @Transactional

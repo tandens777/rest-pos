@@ -19,6 +19,7 @@ const containerStyle = {
 };
 
 function Login() {
+  const [loading, setLoading] = useState(false);
   const [pinCode, setPinCode] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ function Login() {
 
   const handleLogin = async () => {
     try {
+      setLoading(true); // Show spinner
       console.log('Sending login request...');
       const response = await axios.post('/api/auth/login', { pinCode });
       console.log('Login response:', response.data);
@@ -59,10 +61,19 @@ function Login() {
     } catch (error) {
       console.error('Login error:', error);
       setMessage('Invalid credentials');
+    } finally {
+      setLoading(false); // Hide spinner
     }
   };
 
   return (
+<>
+{/* Show loading spinner if data is being fetched */}
+{loading ? (    
+    <div className="flex justify-center items-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+) : (     
     <div style={containerStyle}>
       <div
         style={{
@@ -297,6 +308,8 @@ function Login() {
         </div>
       </div>
     </div>
+    )}
+    </>
   );
 }
 

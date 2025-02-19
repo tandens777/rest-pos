@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
-import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, Upload, Avatar, Switch, Row, Col, Checkbox } from "antd";
+import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select, Upload, Avatar, Switch, Row, Col, Checkbox, Tabs } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
 import { CgCornerLeftUp } from "react-icons/cg";
 
+const { TabPane } = Tabs;
 const { Option } = Select;
 
 const FoodMenu = () => {
+    const [loading, setLoading] = useState(false);
+
     const [picturePreview, setPicturePreview] = useState(null);
     const [foodMenus, setFoodMenus] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -30,6 +33,7 @@ const FoodMenu = () => {
     const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL; // e.g., http://192.168.68.118:8080
 
     const no_pic_default = `${fileBaseUrl}/uploads/food_menus/default.png`;
+    const soldout_pic = `${fileBaseUrl}/uploads/food_menus/soldout.png`;
 
     const username = localStorage.getItem("username") || "User";
 
@@ -60,6 +64,7 @@ const FoodMenu = () => {
     // Fetch Food Menus from API
     const handleCategoryClick = async (id, parentCatId) => {
         try {
+            setLoading(true); // Show spinner
             console.log("parent id: ", id);
             const response = await axiosInstance.get(`/food_menu/all_subitems/${id || 0}`);
     
@@ -76,12 +81,15 @@ const FoodMenu = () => {
 
         } catch (error) {
             message.error("Failed to fetch child food menus.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
 
     const handleTagClick = async (itemTagId) => {
         try {
+            setLoading(true); // Show spinner
             console.log("Fetching items for tag ID:", itemTagId);
 
             // Update selected tag
@@ -107,11 +115,14 @@ const FoodMenu = () => {
             console.error("Failed to fetch food menus for tag:", error);
             //message.error("Failed to fetch food menus for the selected tag.");
             setFoodMenus([]); // Clear the list if no items found
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
     
     const fetchDropdownData = async () => {
         try {
+            setLoading(true); // Show spinner
             const [unitsResponse, stationResponse, itemTagResponse, categoriesResponse] = await Promise.all([
                 axiosInstance.get("/units/all"),
                 axiosInstance.get("/food_station/all"),
@@ -124,18 +135,24 @@ const FoodMenu = () => {
             setCategories(categoriesResponse.data);
         } catch (error) {
             message.error("Failed to fetch dropdown data.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     // Search for Food Menus
     const handleSearch = async () => {
         try {
+            setLoading(true); // Show spinner
+         
             const response = await axiosInstance.get(`/food_menu/all?search=${searchTerm}`);
             setFoodMenus(response.data);
         } catch (error) {
             console.error("Failed to search food menus.", error);
             //message.error("Failed to search food menus.");
             setFoodMenus([]);
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
@@ -183,6 +200,7 @@ const FoodMenu = () => {
             allow_dinein_flag: foodMenu.allowDineinFlag === "Y",
             allow_pickup_flag: foodMenu.allowPickupFlag === "Y",
             allow_delivery_flag: foodMenu.allowDeliveryFlag === "Y",
+            soldout_flag: foodMenu.soldoutFlag === "Y",
             reorder_limit: foodMenu.reorderLimit,
         });
 
@@ -241,6 +259,7 @@ const FoodMenu = () => {
                 allow_dinein_flag: values.allow_dinein_flag ? "Y" : "N",
                 allow_pickup_flag: values.allow_pickup_flag ? "Y" : "N",
                 allow_delivery_flag: values.allow_delivery_flag ? "Y" : "N",
+                soldout_flag: values.soldout_flag ? "Y" : "N",
                 lastupduserid: username,
             };
 
@@ -304,6 +323,13 @@ const FoodMenu = () => {
     );
 
     return (
+        <>
+{/* Show loading spinner if data is being fetched */}
+{loading ? (    
+    <div className="flex justify-center items-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+) : (        
         <div
             style={{
                 padding: "20px",
@@ -463,6 +489,7 @@ const FoodMenu = () => {
                     }
                 }}
                 style={{
+                    position: "relative", // Needed for proper positioning of the sold-out image
                     backgroundColor: isCategory ? "#E6F7FF" : "#fff", // Soft blue for categories
                     borderRadius: "8px",
                     padding: "16px",
@@ -481,6 +508,26 @@ const FoodMenu = () => {
                     }),
                 }}
             >
+
+{/* Show Sold-Out Overlay in the Top-Right Corner of the Container */}
+{menu.soldoutFlag === "Y" && (
+    <img
+        src={soldout_pic}
+        alt="Sold Out"
+        style={{
+            position: "absolute",
+            top: "0",
+            right: "0",
+            width: "auto", // Adjust size as needed
+            height: "75px", // Ensure it fits properly
+            objectFit: "contain", // Prevents cropping
+            opacity: 0.8, // Makes it semi-transparent
+            pointerEvents: "none", // Ensures it doesn't interfere with clicks
+            zIndex: 10, // Keeps it on top
+        }}
+    />
+)}
+
 {/* Image or Large Centered Text */}
 <div
     style={{
@@ -498,6 +545,8 @@ const FoodMenu = () => {
         filter: menu.activeFlag === "N" ? "grayscale(100%)" : "none", // Grayscale for inactive items
     }}
 >
+
+
     {/* Show Text only if there's NO picture */}
     {!menu.pictureSrc && (
         <span
@@ -947,11 +996,21 @@ const FoodMenu = () => {
         </Col>
         <Col span={12}>
             <Form.Item
-                name="reorder_limit"
+                name="soldout_flag"
+                label="Sold out"
+                valuePropName="checked"
             >
-                <Input type="hidden" placeholder="Enter reorder limit" />
+                <Switch
+                    onChange={(checked) => {
+                    form.setFieldsValue({ soldout_flag: checked });
+                    }}
+                />
             </Form.Item>
         </Col>
+
+        <Form.Item name="reorder_limit" style={{ display: 'none' }}>
+            <input type="hidden" />
+        </Form.Item>
     </Row>
 
                     {/* Save and Cancel Buttons */}
@@ -988,6 +1047,8 @@ const FoodMenu = () => {
                 </Form>
             </Modal>
         </div>
+    )}
+    </>
     );
 };
 

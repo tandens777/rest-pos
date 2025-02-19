@@ -7,6 +7,8 @@ import { CgCornerLeftUp } from "react-icons/cg";
 const { Option } = Select;
 
 const SurchargeDiscount = () => {
+    const [loading, setLoading] = useState(false);
+
     const [picturePreview, setPicturePreview] = useState(null);
     const [surchargeDiscounts, setSurchargeDiscounts] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -56,16 +58,20 @@ const SurchargeDiscount = () => {
     // Fetch Surcharge Discounts from API
     const fetchSurchargeDiscounts = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get("/surcharge_discount/all");
             setSurchargeDiscounts(response.data);
         } catch (error) {
             message.error("Failed to fetch surcharge discounts.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     // Fetch Surcharge Discounts from API
     const handleCategoryClick = async (id, parentDiscId) => {
         try {
+            setLoading(true); // Show spinner
             console.log("parent id: ", id);
             const response = await axiosInstance.get(`/surcharge_discount/all_subitems/${id || 0}`);
     
@@ -82,11 +88,14 @@ const SurchargeDiscount = () => {
 
         } catch (error) {
             message.error("Failed to fetch child surcharge discounts.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     const fetchDropdownData = async () => {
         try {
+            setLoading(true); // Show spinner
             const [discountTypesResponse, categoriesResponse] = await Promise.all([
                 axiosInstance.get("/sm_disc_types"),
                 axiosInstance.get("/surcharge_discount/getcategories"),
@@ -95,16 +104,21 @@ const SurchargeDiscount = () => {
             setSurDiscCategories(categoriesResponse.data);
         } catch (error) {
             message.error("Failed to fetch dropdown data.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
     // Search for Surcharge Discounts
     const handleSearch = async () => {
         try {
+            setLoading(true); // Show spinner
             const response = await axiosInstance.get(`/surcharge_discount/all?search=${searchTerm}`);
             setSurchargeDiscounts(response.data);
         } catch (error) {
             message.error("Failed to search surcharge discounts.");
+        } finally {
+            setLoading(false); // Hide spinner
         }
     };
 
@@ -255,6 +269,13 @@ const SurchargeDiscount = () => {
     );
 
     return (
+        <>
+{/* Show loading spinner if data is being fetched */}
+{loading ? (    
+    <div className="flex justify-center items-center min-h-[400px]">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+    </div>
+) : (            
         <div
             style={{
                 padding: "20px",
@@ -747,6 +768,9 @@ const SurchargeDiscount = () => {
                 </Form>
             </Modal>
         </div>
+    )}
+    </>
+            
     );
 };
 

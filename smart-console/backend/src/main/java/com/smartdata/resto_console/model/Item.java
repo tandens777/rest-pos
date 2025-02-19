@@ -43,6 +43,7 @@ import java.time.LocalDateTime;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_allow_dinein_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_allow_pickup_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_allow_delivery_flag", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_soldout_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_lastupduserid", type = String.class)
         }
     ),
@@ -76,6 +77,7 @@ import java.time.LocalDateTime;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_allow_dinein_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_allow_pickup_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_allow_delivery_flag", type = String.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_soldout_flag", type = String.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_lastupduserid", type = String.class)
         }
     ),
@@ -168,6 +170,9 @@ public class Item {
 
     @Column(name = "allow_delivery_flag")
     private String allowDeliveryFlag;
+
+    @Column(name = "soldout_flag")
+    private String soldoutFlag;
 
     @Column(name = "lastupduserid")
     private String lastupduserid;

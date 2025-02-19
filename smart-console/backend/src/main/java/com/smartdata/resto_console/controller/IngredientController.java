@@ -48,12 +48,13 @@ public class IngredientController {
         @RequestParam String allow_dinein_flag,
         @RequestParam String allow_pickup_flag,
         @RequestParam String allow_delivery_flag,
+        @RequestParam String soldout_flag,        
         @RequestParam String lastupduserid) {
         
             itemService.addItem(item_code, item_desc, short_nm, sort_order, chinese_item_desc, 2, parent_cat_id, is_category,
                     station_id, per100g_flag, default_price, addon_price, picture_src, default_unit_code, disc_exempt,
                     allow_sc_on_exempt, non_vat_flag, active_flag, show_on_pos_flag, reorder_limit, track_invty_flag,
-                    send_to_printer_flag, allow_dinein_flag, allow_pickup_flag, allow_delivery_flag, lastupduserid);
+                    send_to_printer_flag, allow_dinein_flag, allow_pickup_flag, allow_delivery_flag, soldout_flag, lastupduserid);
     }
         
     @PreAuthorize("hasRole('ADMIN')")
@@ -85,12 +86,13 @@ public class IngredientController {
             @RequestParam String allow_dinein_flag,
             @RequestParam String allow_pickup_flag,
             @RequestParam String allow_delivery_flag,
+            @RequestParam String soldout_flag,            
             @RequestParam String lastupduserid) {
             
                 itemService.updateItem(id, item_code, item_desc, short_nm, sort_order, chinese_item_desc, 2, parent_cat_id, is_category,
                         station_id, per100g_flag, default_price, addon_price, picture_src, default_unit_code, disc_exempt,
                         allow_sc_on_exempt, non_vat_flag, active_flag, show_on_pos_flag, reorder_limit, track_invty_flag,
-                        send_to_printer_flag, allow_dinein_flag, allow_pickup_flag, allow_delivery_flag, lastupduserid);
+                        send_to_printer_flag, allow_dinein_flag, allow_pickup_flag, allow_delivery_flag, soldout_flag, lastupduserid);
     }
     
     @PreAuthorize("hasRole('ADMIN')")
