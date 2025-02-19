@@ -515,6 +515,7 @@ const PaymentMethod = () => {
                 <Form form={form} layout="vertical" onFinish={handleModalSubmit}
                     initialValues={{
                         bank_charges: 0, // Default value 0.00
+                        active_flag: true,
                     }}
                 >
                     <Row gutter={16}>
@@ -760,7 +761,7 @@ const PaymentMethod = () => {
         </div>
     )}
     </>
-            
+
     );
 };
 

@@ -509,6 +509,7 @@ const SurchargeDiscount = () => {
                         amt: 0,
                         disc_type: "LP",
                         amount_or_percentage: 0,
+                        active_flag: true,
                 }}>
                     <Row gutter={16}>
                         <Col span={18}>
@@ -770,7 +771,7 @@ const SurchargeDiscount = () => {
         </div>
     )}
     </>
-            
+
     );
 };
 
