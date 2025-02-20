@@ -75,4 +75,12 @@ public class ItemGroupController {
     public ResponseEntity<List<ItemGroupItem>> getItemGroupItems(@RequestParam Integer item_grp_id) throws GenericNotFoundException {
         return ResponseEntity.ok(itemGroupItemService.getItemGroupItems(item_grp_id));
     }    
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete_item_group_items")
+    public void deleteItemGroupItem(@RequestParam Integer item_grp_id, @RequestParam Integer item_id) {
+        itemGroupItemService.deleteItemGroupItem(item_grp_id, item_id);
+    }
+
+    
 }

@@ -5,6 +5,7 @@ import com.smartdata.resto_console.repository.ItemGroupItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,10 +15,16 @@ public class ItemGroupItemService {
     @Autowired
     private ItemGroupItemRepository itemGroupItemRepository;
 
+    @Transactional
     public void updateItemGroupItems(Integer item_grp_id, List<ItemGroupItem> grp_items) {
         for (ItemGroupItem grp_item : grp_items) {
             itemGroupItemRepository.updateItemGroupItems(item_grp_id, grp_item.getItemId(), grp_item.getAddonPrice());
         }
+    }
+
+    @Transactional
+    public void deleteItemGroupItem(Integer item_grp_id, Integer item_id) {
+        itemGroupItemRepository.deleteItemGroupItem(item_grp_id, item_id);
     }
 
     public List<ItemGroupItem> getItemGroupItems(Integer itemGrpId) {

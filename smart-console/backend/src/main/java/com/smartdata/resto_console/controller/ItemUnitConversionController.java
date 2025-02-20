@@ -35,4 +35,10 @@ public class ItemUnitConversionController {
         return ResponseEntity.ok(itemUnitConversionService.getItemUnitConversion(item_id));
     }    
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete")
+    public void deleteItemUnitConversion(@RequestParam Integer item_id, @RequestParam String unit_code) {
+        itemUnitConversionService.deleteItemUnitConversion(item_id, unit_code);
+    }
+
 }

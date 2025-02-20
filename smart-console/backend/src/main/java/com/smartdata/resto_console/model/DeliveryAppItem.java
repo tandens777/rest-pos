@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_app_price", type = Double.class),
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_active_flag", type = String.class),
         }
-    ),
+    ),    
 })
 
 public class DeliveryAppItem {

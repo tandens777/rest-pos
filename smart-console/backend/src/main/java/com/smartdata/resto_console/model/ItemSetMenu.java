@@ -26,6 +26,15 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_sort_order", type = Integer.class),
         }
     ),
+    @NamedStoredProcedureQuery(
+        name = "deleteItemSetMenu",
+        procedureName = "delete_item_set_menu",
+        parameters = {
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_set_item_id", type = Integer.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_set_dtl_id", type = Integer.class),
+        }
+    )
+
 })
 
 public class ItemSetMenu {

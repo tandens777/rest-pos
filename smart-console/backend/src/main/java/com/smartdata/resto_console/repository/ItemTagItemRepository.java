@@ -18,6 +18,11 @@ public interface ItemTagItemRepository extends JpaRepository<ItemTagItem, Long> 
         @Param("p_item_id") Integer item_id
     );
 
+    @Procedure(name = "deleteItemTagItem")
+    void deleteItemTagItem(@Param("p_item_tag_id") Integer item_tag_id, 
+        @Param("p_item_id") Integer item_id
+    );
+
     @Query(value = "SELECT i.* FROM item_tag_items i INNER JOIN item_tag t ON i.item_tag_id = t.item_tag_id WHERE i.item_id = :itemId ORDER BY t.item_tag_desc ASC", nativeQuery = true)
     List<ItemTagItem> findByItemId(@Param("itemId") Integer itemId);    
 }

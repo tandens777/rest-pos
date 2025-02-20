@@ -22,6 +22,14 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_addon_price", type = Double.class),
         }
     ),
+    @NamedStoredProcedureQuery(
+        name = "deleteItemGroupItem",
+        procedureName = "delete_item_group_item",
+        parameters = {
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_item_grp_id", type = Integer.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_item_id", type = Integer.class),
+        }
+    )
 })
 
 public class ItemGroupItem {

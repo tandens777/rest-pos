@@ -19,6 +19,11 @@ public interface ItemGroupItemRepository extends JpaRepository<ItemGroupItem, Lo
         @Param("p_app_price") Double app_price
     );
 
+    @Procedure(name = "deleteItemGroupItem")
+    void deleteItemGroupItem(@Param("p_item_grp_id") Integer item_grp_id, 
+        @Param("p_item_id") Integer item_id
+    );
+
     @Query(value = "SELECT i.* FROM item_group_items i INNER JOIN item t ON i.item_id = t.item_id WHERE i.item_grp_id = :itemGrpId ORDER BY t.item_desc ASC", nativeQuery = true)
     List<ItemGroupItem> findByItemGrpId(@Param("itemGrpId") Integer itemGrpId);    
 }

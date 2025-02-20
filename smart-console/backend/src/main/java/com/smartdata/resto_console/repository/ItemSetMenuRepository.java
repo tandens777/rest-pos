@@ -23,6 +23,11 @@ public interface ItemSetMenuRepository extends JpaRepository<ItemSetMenu, Long> 
         @Param("p_sort_order") Integer sort_order
     );
 
+    @Procedure(name = "deleteItemSetMenu")
+    void deleteItemSetMenu(@Param("p_set_item_id") Integer set_item_id, 
+        @Param("p_set_dtl_id") Integer set_dtl_id
+    );
+
     @Query(value = "SELECT i.* FROM item_set_menu i WHERE i.set_item_id = :itemId ORDER BY i.sort_order ASC, i.set_dtl_id ASC", nativeQuery = true)
     List<ItemSetMenu> findByItemId(@Param("itemId") Integer itemId);    
 }

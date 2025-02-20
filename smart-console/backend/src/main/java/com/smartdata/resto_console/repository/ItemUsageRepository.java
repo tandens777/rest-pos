@@ -20,6 +20,11 @@ public interface ItemUsageRepository extends JpaRepository<ItemUsage, Long> {
         @Param("p_unit_code") String unit_code
     );
 
+    @Procedure(name = "deleteItemUsage")
+    void deleteItemUsage(@Param("p_item_id") Integer item_id, 
+        @Param("p_rm_item_id") Integer rm_item_id
+    );
+
     @Query(value = "SELECT i.* FROM item_usage_setup i INNER JOIN item t ON i.rm_item_id = t.item_id WHERE i.item_id = :itemId ORDER BY t.item_desc ASC", nativeQuery = true)
     List<ItemUsage> findByItemId(@Param("itemId") Integer itemId);    
 }
