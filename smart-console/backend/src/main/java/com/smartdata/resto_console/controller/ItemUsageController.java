@@ -35,4 +35,10 @@ public class ItemUsageController {
         return ResponseEntity.ok(itemUsageService.getItemUsage(item_id));
     }    
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete")
+    public void deleteItemUsage(@RequestParam Integer item_id, @RequestParam Integer rm_item_id) {
+        itemUsageService.deleteItemUsage(item_id, rm_item_id);
+    }
+
 }

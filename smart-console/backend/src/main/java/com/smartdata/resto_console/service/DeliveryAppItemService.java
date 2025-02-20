@@ -5,6 +5,7 @@ import com.smartdata.resto_console.repository.DeliveryAppItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class DeliveryAppItemService {
     @Autowired
     private DeliveryAppItemRepository dlvryAppItemRepository;
 
+    @Transactional
     public void updateDeliveryAppItemPrice(Integer item_id, List<DeliveryAppItem> app_prices) {
         for (DeliveryAppItem app_price : app_prices) {
             dlvryAppItemRepository.updateDeliveryAppItemPrice(app_price.getAppId(), item_id, app_price.getAppAddPcnt(), 

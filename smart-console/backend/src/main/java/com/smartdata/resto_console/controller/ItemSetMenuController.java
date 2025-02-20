@@ -35,4 +35,10 @@ public class ItemSetMenuController {
         return ResponseEntity.ok(itemSetMenuService.getItemSetMenu(item_id));
     }    
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete")
+    public void deleteItemSetMenu(@RequestParam Integer set_item_id, @RequestParam Integer set_dtl_id) {
+        itemSetMenuService.deleteItemSetMenu(set_item_id, set_dtl_id);
+    }
+
 }

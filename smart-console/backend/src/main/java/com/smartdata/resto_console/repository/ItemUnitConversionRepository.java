@@ -19,6 +19,12 @@ public interface ItemUnitConversionRepository extends JpaRepository<ItemUnitConv
         @Param("p_conversion_to_default") Double conversion_to_default
     );
 
+    @Procedure(name = "deleteItemUnitConversion")
+    void deleteItemUnitConversion(@Param("p_item_id") Integer item_id, 
+        @Param("p_unit_code") String unit_code
+    );
+
+
     @Query(value = "SELECT i.* FROM item_unit_conversion i WHERE i.item_id = :itemId ORDER BY i.unit_code ASC", nativeQuery = true)
     List<ItemUnitConversion> findByItemId(@Param("itemId") Integer itemId);    
 }

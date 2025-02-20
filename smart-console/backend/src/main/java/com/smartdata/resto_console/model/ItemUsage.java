@@ -23,6 +23,15 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_unit_code", type = String.class),
         }
     ),
+    @NamedStoredProcedureQuery(
+        name = "deleteItemUsageSetup",
+        procedureName = "delete_item_usage_setup",
+        parameters = {
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_item_id", type = Integer.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_rm_item_id", type = Integer.class),
+        }
+    )
+    
 })
 
 public class ItemUsage {

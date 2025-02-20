@@ -76,4 +76,10 @@ public class ItemTagController {
         return ResponseEntity.ok(itemTagItemService.getItemTagItems(item_id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete_item_tag")
+    public void deleteItemTagItem(@RequestParam Integer item_tag_id, @RequestParam Integer item_id) {
+        itemTagItemService.deleteItemTagItem(item_tag_id, item_id);
+    }
+
 }

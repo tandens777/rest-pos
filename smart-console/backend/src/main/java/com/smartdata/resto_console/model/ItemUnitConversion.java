@@ -22,6 +22,16 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_conversion_to_default", type = Double.class),
         }
     ),
+
+    @NamedStoredProcedureQuery(
+        name = "deleteItemUnitConversion",
+        procedureName = "delete_item_unit_conversion",
+        parameters = {
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_item_id", type = Integer.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_unit_code", type = String.class),
+        }
+    )
+
 })
 
 public class ItemUnitConversion {
