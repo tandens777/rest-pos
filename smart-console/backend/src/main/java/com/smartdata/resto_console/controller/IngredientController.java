@@ -124,4 +124,5 @@ public class IngredientController {
     public ResponseEntity<List<Item>> getItemCategories() {
         return ResponseEntity.ok(itemService.getItemCategories(2));
     }
+
 }

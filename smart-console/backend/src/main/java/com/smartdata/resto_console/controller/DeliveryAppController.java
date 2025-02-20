@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.smartdata.resto_console.model.*;
 import com.smartdata.resto_console.service.DeliveryAppService;
+import com.smartdata.resto_console.service.DeliveryAppItemService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,6 +26,9 @@ public class DeliveryAppController {
 
     @Autowired
     private DeliveryAppService dlvryAppService;
+
+    @Autowired
+    private DeliveryAppItemService dlvryAppItemService;
 
     @PreAuthorize("hasRole('ADMIN')")  // allows only ADMIN role to access this api /add, if more than one role use hasAnyRole('','')
     @PostMapping("/add")
@@ -57,4 +61,22 @@ public class DeliveryAppController {
     public ResponseEntity<List<DeliveryApp>> getDeliveryApps(@RequestParam(required = false) String search) throws GenericNotFoundException {
         return ResponseEntity.ok(dlvryAppService.getDeliveryApps(search));
     }    
+
+    //---------------------------- DeliveryAppItemPrice ----------------------------
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/update_item_prices/{item_id}")
+    public ResponseEntity<String> updateDeliveryAppItemPrice(
+            @PathVariable Integer item_id,
+            @RequestBody List<DeliveryAppItem> app_prices) {
+        dlvryAppItemService.updateDeliveryAppItemPrice(item_id, app_prices);
+        return ResponseEntity.ok("Delivery App Prices updated successfully.");
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/get_item_prices")
+    public ResponseEntity<List<DeliveryAppItem>> getDeliveryAppItems(@RequestParam Integer item_id) throws GenericNotFoundException {
+        return ResponseEntity.ok(dlvryAppItemService.getDeliveryAppItems(item_id));
+    }
+
+
 }

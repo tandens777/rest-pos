@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.smartdata.resto_console.model.*;
 import com.smartdata.resto_console.service.ItemTagService;
+import com.smartdata.resto_console.service.ItemTagItemService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,6 +26,9 @@ public class ItemTagController {
 
     @Autowired
     private ItemTagService itemTagService;
+
+    @Autowired
+    private ItemTagItemService itemTagItemService;
 
     @PreAuthorize("hasRole('ADMIN')")  // allows only ADMIN role to access this api /add, if more than one role use hasAnyRole('','')
     @PostMapping("/add")
@@ -55,4 +59,21 @@ public class ItemTagController {
     public ResponseEntity<List<ItemTag>> getItemTags(@RequestParam(required = false) String search) throws GenericNotFoundException {
         return ResponseEntity.ok(itemTagService.getItemTags(search));
     }    
+
+    //---------------------------- ItemTagItems ----------------------------
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/update_item_tags/{item_id}")
+    public ResponseEntity<String> updateItemTagItems(
+            @PathVariable Integer item_id,
+            @RequestBody List<ItemTagItem> tag_items) {
+        itemTagItemService.updateItemTagItems(item_id, tag_items);
+        return ResponseEntity.ok("Item Tags updated successfully.");
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/get_item_tags")
+    public ResponseEntity<List<ItemTagItem>> getItemTagItems(@RequestParam Integer item_id) throws GenericNotFoundException {
+        return ResponseEntity.ok(itemTagItemService.getItemTagItems(item_id));
+    }
+
 }
