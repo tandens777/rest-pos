@@ -22,6 +22,7 @@ import FoodMenu from './pages/FoodMenu';
 import Ingredients from './pages/Ingredients';
 import PaymentMethod from './pages/PaymentMethod';
 import SurchargeDiscount from './pages/SurchargeDiscount';
+import StorageLocation from './pages/StorageLocation';
 
 const App = () => {
   // Use state to track authentication status
@@ -84,6 +85,7 @@ const App = () => {
                 <Route path="/item-tags" element={<ItemTag />} />
                 <Route path="/food-menus" element={<FoodMenu />} />
                 <Route path="/ingredients" element={<Ingredients />} />
+                <Route path="/storage-location" element={<StorageLocation />} />
               </Routes>
             </RootLayout>
           }
