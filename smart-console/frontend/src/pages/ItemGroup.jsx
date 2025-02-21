@@ -48,7 +48,7 @@ const ItemGroup = () => {
             const response = await axiosInstance.get("/item_group/all");
             setItemGroups(response.data);
         } catch (error) {
-            message.error("Failed to fetch food menu groups");
+           // message.error("Failed to fetch food menu groups");
         } finally {
             setLoading(false); // Hide spinner
         }
@@ -117,7 +117,7 @@ const ItemGroup = () => {
             const response = await axiosInstance.get("/food_menu/all_food_menus", { params: { search: value } });
             setSearchItems(response.data);
         } catch (error) {
-            message.error("Failed to search items");
+            //message.error("Failed to search items");
         }
     };
 
@@ -170,6 +170,8 @@ const ItemGroup = () => {
     // Handle Modal Submission (Add or Update Item Group )
     const handleModalSubmit = async (values) => {
         try {
+            let itemGroupId;
+
             if (editingItemGroup) {
                 // Update Item Group 
                 await axiosInstance.put(
@@ -181,6 +183,7 @@ const ItemGroup = () => {
                         },
                     }
                 );
+                itemGroupId = editingItemGroup.itemGrpId;
                 message.success("Food menu group updated successfully");
             } else {
                 // Add New Item Group 
@@ -193,12 +196,14 @@ const ItemGroup = () => {
                         },
                     }
                 );
+                itemGroupId = response.data.itemGrpId; // Extract ID immediately
                 setEditingItemGroup(response.data);
                 message.success("Food menu group added successfully");
             }
 
             // save itemGroupItems
-            await updateItemGroupItems(editingItemGroup.itemGrpId, itemGroupItems);
+            console.log("call updateItemGroupItems", itemGroupId, itemGroupItems);
+            await updateItemGroupItems(itemGroupId, itemGroupItems);
 
             setIsModalVisible(false);
             fetchItemGroups();
@@ -440,11 +445,15 @@ const ItemGroup = () => {
         placeholder="Search and select item"
         filterOption={false}
         onSearch={handleSearchItem}
-        onSelect={(value, option) => setSelectedItem(option.item)}
+        onSelect={(value, option) => {
+            console.log("Selected Value:", value);
+            console.log("Selected Option:", option);
+            setSelectedItem(option.item);
+        }}
         style={{ flex: 1, minWidth: "250px" }} // Ensure it takes available space
     >
         {searchItems.map(item => (
-            <Select.Option key={item.itemId} value={item.itemId} item={item}>
+            <Select.Option key={item.id} value={item.id} item={item}>
                 {item.itemCode} - {item.itemDesc}
             </Select.Option>
         ))}
@@ -468,7 +477,7 @@ const ItemGroup = () => {
                     <Table columns={[
                         { title: "Item Code", dataIndex: "itemCode", key: "itemCode" },
                         { title: "Item Description", dataIndex: "itemDesc", key: "itemDesc" },
-                        { title: "Addon Price", dataIndex: "addonPrice", key: "addonPrice", render: (text, record) => (
+                        { title: "Add-on Price", dataIndex: "addonPrice", key: "addonPrice", render: (text, record) => (
                             <Input type="number" value={record.addonPrice} 
                                 step="0.01" // Allows decimal input
                                 min="0" 
