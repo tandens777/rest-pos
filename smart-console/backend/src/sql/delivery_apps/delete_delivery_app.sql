@@ -1,18 +1,18 @@
-DROP PROCEDURE if exists public.delete_delivery_app;
+--DROP PROCEDURE if exists public.delete_delivery_app_item_price;
 
-CREATE OR REPLACE PROCEDURE public.delete_delivery_app(
-	IN p_app_id int)
+CREATE OR REPLACE PROCEDURE public.delete_delivery_app_item_price(
+	IN p_app_id int, 
+  IN p_item_id int
+)
 LANGUAGE 'plpgsql'
 AS $BODY$
-declare old_order_type char(1);
 BEGIN
-	select 	order_type into old_order_type from food_delivery_app where app_id = p_app_id;
-  delete from order_type where order_type = old_order_type;
-
-  DELETE FROM food_delivery_app WHERE app_id = p_app_id;
+  DELETE FROM food_delivery_app_item_price 
+  WHERE app_id = p_app_id
+  AND   item_id = p_item_id;
 
 END;
 $BODY$;
-ALTER PROCEDURE public.delete_delivery_app(int)
+ALTER PROCEDURE public.delete_delivery_app_item_price(int, int)
     OWNER TO postgres;
 
