@@ -39,19 +39,19 @@ public class StorageLocationController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public void deleteFoodStation(@PathVariable Integer id) {
+    public void deleteStorageLocation(@PathVariable Integer id) {
         storageLocationService.deleteStorageLocation(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/get/{id}")
-    public ResponseEntity<Optional<StorageLocation>> getFoodStation(@PathVariable Integer id) throws GenericNotFoundException {
+    public ResponseEntity<Optional<StorageLocation>> getStorageLocation(@PathVariable Integer id) throws GenericNotFoundException {
         return ResponseEntity.ok(storageLocationService.getStorageLocation(id));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<List<StorageLocation>> getFoodStations(@RequestParam(required = false) String search) throws GenericNotFoundException {
+    public ResponseEntity<List<StorageLocation>> getStorageLocations(@RequestParam(required = false) String search) throws GenericNotFoundException {
         return ResponseEntity.ok(storageLocationService.getStorageLocations(search));
     }    
 }

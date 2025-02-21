@@ -25,6 +25,14 @@ import lombok.NoArgsConstructor;
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_active_flag", type = String.class),
         }
     ),    
+    @NamedStoredProcedureQuery(
+        name = "deleteDeliveryAppItemPrice",
+        procedureName = "delete_delivery_app_item_price",
+        parameters = {
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_app_id", type = Integer.class),
+            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_item_id", type = Integer.class),
+        }
+    )    
 })
 
 public class DeliveryAppItem {

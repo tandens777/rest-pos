@@ -85,7 +85,7 @@ const App = () => {
                 <Route path="/item-tags" element={<ItemTag />} />
                 <Route path="/food-menus" element={<FoodMenu />} />
                 <Route path="/ingredients" element={<Ingredients />} />
-                <Route path="/storage-location" element={<StorageLocation />} />
+                <Route path="/storage-locations" element={<StorageLocation />} />
               </Routes>
             </RootLayout>
           }

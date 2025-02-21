@@ -78,5 +78,11 @@ public class DeliveryAppController {
         return ResponseEntity.ok(dlvryAppItemService.getDeliveryAppItems(item_id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete_item_price")
+    public void deleteDeliveryAppItemPrice(@RequestParam Integer app_id, @RequestParam Integer item_id) {
+        dlvryAppItemService.deleteDeliveryAppItemPrice(app_id, item_id);
+    }
+
 
 }
