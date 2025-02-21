@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import com.smartdata.resto_console.model.*;
 import com.smartdata.resto_console.service.ItemGroupService;
 import com.smartdata.resto_console.service.ItemGroupItemService;
+import com.smartdata.resto_console.dto.ItemGroupItemDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,8 +33,8 @@ public class ItemGroupController {
 
     @PreAuthorize("hasRole('ADMIN')")  // allows only ADMIN role to access this api /add, if more than one role use hasAnyRole('','')
     @PostMapping("/add")
-    public void addItemGroup(@RequestParam String item_grp_desc) {
-        itemGroupService.addItemGroup(item_grp_desc);
+    public ResponseEntity<Optional<ItemGroup>> addItemGroup(@RequestParam String item_grp_desc) {
+        return ResponseEntity.ok(itemGroupService.addItemGroup(item_grp_desc));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -72,15 +73,9 @@ public class ItemGroupController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/get_item_group_items")
-    public ResponseEntity<List<ItemGroupItem>> getItemGroupItems(@RequestParam Integer item_grp_id) throws GenericNotFoundException {
+    public ResponseEntity<List<ItemGroupItemDTO>> getItemGroupItems(@RequestParam Integer item_grp_id) throws GenericNotFoundException {
         return ResponseEntity.ok(itemGroupItemService.getItemGroupItems(item_grp_id));
     }    
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/delete_item_group_items")
-    public void deleteItemGroupItem(@RequestParam Integer item_grp_id, @RequestParam Integer item_id) {
-        itemGroupItemService.deleteItemGroupItem(item_grp_id, item_id);
-    }
 
     
 }

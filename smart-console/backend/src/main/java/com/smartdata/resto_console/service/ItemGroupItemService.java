@@ -7,6 +7,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.smartdata.resto_console.dto.ItemGroupItemDTO;
+
 import java.util.List;
 
 @Service
@@ -17,17 +19,13 @@ public class ItemGroupItemService {
 
     @Transactional
     public void updateItemGroupItems(Integer item_grp_id, List<ItemGroupItem> grp_items) {
+        itemGroupItemRepository.deleteItemGroupItem(item_grp_id);
         for (ItemGroupItem grp_item : grp_items) {
             itemGroupItemRepository.updateItemGroupItems(item_grp_id, grp_item.getItemId(), grp_item.getAddonPrice());
         }
     }
 
-    @Transactional
-    public void deleteItemGroupItem(Integer item_grp_id, Integer item_id) {
-        itemGroupItemRepository.deleteItemGroupItem(item_grp_id, item_id);
-    }
-
-    public List<ItemGroupItem> getItemGroupItems(Integer itemGrpId) {
+    public List<ItemGroupItemDTO> getItemGroupItems(Integer itemGrpId) {
         // Sort by tbl_num in ascending order
         return itemGroupItemRepository.findByItemGrpId(itemGrpId);
     }

@@ -16,8 +16,16 @@ public class ItemGroupService {
     private ItemGroupRepository itemGroupRepository;
 
     @Transactional
-    public void addItemGroup(String itemGrpDesc) {
+    public Optional<ItemGroup> addItemGroup(String itemGrpDesc) {
         itemGroupRepository.addItemGroup(itemGrpDesc);
+
+        List<ItemGroup> itemGroups = itemGroupRepository.findByItemGrpDescContainingIgnoreCaseOrderByItemGrpDesc(itemGrpDesc);
+
+        if (!itemGroups.isEmpty()) {
+            return Optional.of(itemGroups.get(0)); // Return the first item
+        } else {
+            throw new GenericNotFoundException("add failed for item group " + itemGrpDesc);
+        }        
     }
 
     @Transactional
