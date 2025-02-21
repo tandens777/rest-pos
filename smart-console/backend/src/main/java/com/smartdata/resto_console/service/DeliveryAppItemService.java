@@ -23,6 +23,11 @@ public class DeliveryAppItemService {
         }
     }
 
+    @Transactional
+    public void deleteDeliveryAppItemPrice(Integer app_id, Integer item_id) {
+        dlvryAppItemRepository.deleteDeliveryAppItemPrice(app_id, item_id);
+    }
+
     public List<DeliveryAppItem> getDeliveryAppItems(Integer itemId) {
         // Sort by tbl_num in ascending order
         return dlvryAppItemRepository.findByItemId(itemId);

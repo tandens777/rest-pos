@@ -22,6 +22,11 @@ public interface DeliveryAppItemRepository extends JpaRepository<DeliveryAppItem
         @Param("p_active_flag") String active_flag
     );
 
+    @Procedure(name = "deleteDeliveryAppItemPrice")
+    void deleteDeliveryAppItemPrice(@Param("p_app_id") Integer app_id, 
+        @Param("p_item_id") Integer item_id
+    );
+
     @Query(value = "SELECT i.* FROM food_delivery_app_item_price i INNER JOIN food_delivery_app t ON i.app_id = t.app_id WHERE i.item_id = :itemId ORDER BY t.app_nm ASC", nativeQuery = true)
     List<DeliveryAppItem> findByItemId(@Param("itemId") Integer itemId);    
 }

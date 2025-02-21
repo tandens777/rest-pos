@@ -6,7 +6,7 @@ import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlin
 const StorageLocation = () => {
     const [loading, setLoading] = useState(false);
 
-    const [StorageLocations, setStorageLocations] = useState([]);
+    const [storageLocations, setStorageLocations] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingStorageLocation, setEditingStorageLocation] = useState(null);
@@ -44,7 +44,7 @@ const StorageLocation = () => {
             const response = await axiosInstance.get("/storage_location/all");
             setStorageLocations(response.data);
         } catch (error) {
-            message.error("Failed to fetch storage locations.");
+            //message.error("Failed to fetch storage locations.");
         } finally {
             setLoading(false); // Hide spinner
         }
@@ -326,7 +326,7 @@ const StorageLocation = () => {
                 >
                     <Form.Item
                         name="location_nm"
-                        label="Storage location Name"
+                        label="Storage Location Name"
                         rules={[{ required: true, message: "Storage location name is required." }]}
                         onChange={(e) => {
                             form.setFieldsValue({ location_nm: e.target.value.toUpperCase() });
