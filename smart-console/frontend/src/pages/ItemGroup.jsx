@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../config/axiosConfig"; // Import the configured Axios instance
-import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm } from "antd";
+import { Button, Table, Form, Input, Space, Modal, message, Pagination, Popconfirm, Select } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 const ItemGroup = () => {
@@ -14,6 +14,10 @@ const ItemGroup = () => {
     const [searchForm] = Form.useForm();  // Separate form for search    
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+
+    const [itemGroupItems, setItemGroupItems] = useState([]);
+    const [searchItems, setSearchItems] = useState([]);
+    const [selectedItem, setSelectedItem] = useState(null);    
 
     // Fetch all Item Groups on component mount
     useEffect(() => {
@@ -50,6 +54,18 @@ const ItemGroup = () => {
         }
     };
 
+    const fetchItemGroupItems = async (itemGrpId) => {
+        try {
+            const response = await axiosInstance.get("/item_group/get_item_group_items", {
+                params: { item_grp_id: itemGrpId }
+            });
+            setItemGroupItems(response.data);
+            console.log("fetch data:", response.data);
+        } catch (error) {
+            message.error("Failed to fetch item group items");
+        }
+    };
+
     // Search for Item Groups
     const handleSearch = async () => {
         try {
@@ -74,17 +90,63 @@ const ItemGroup = () => {
         setEditingItemGroup(null);
         setIsModalVisible(true);
         form.resetFields();
+        setItemGroupItems([]);
+        setSelectedItem(null);
+        setSearchItems([]);
     };
 
     // Edit an Existing Item Groups
     const handleEdit = (itemGroup) => {
         setEditingItemGroup(itemGroup);
         setIsModalVisible(true);
+        setSelectedItem(null);
+        setSearchItems([]);
         form.setFieldsValue({
             item_grp_desc: itemGroup.itemGrpDesc,
         });
+        fetchItemGroupItems(itemGroup.itemGrpId);
     };
 
+    const handleDeleteItem = (itemId) => {
+        setItemGroupItems(prevItems => prevItems.filter(item => item.itemId !== itemId));
+    };
+
+    const handleSearchItem = async (value) => {
+        if (!value) return;
+        try {
+            const response = await axiosInstance.get("/food_menu/all_food_menus", { params: { search: value } });
+            setSearchItems(response.data);
+        } catch (error) {
+            message.error("Failed to search items");
+        }
+    };
+
+    const handleAddItem = () => {
+        console.log("inside adding items: ", selectedItem);
+        console.log("before itemgroupitems:", itemGroupItems);
+    
+        if (selectedItem && !itemGroupItems.some(item => item.itemId === selectedItem.id)) {
+            setItemGroupItems(prevItems => [
+                ...prevItems,
+                {
+                    id: prevItems.length > 0 ? Math.max(...prevItems.map(item => item.id)) + 1 : 1, // Assuming backend assigns this later
+                    itemGrpId: editingItemGroup ? editingItemGroup.itemGrpId : null, // Assign item group if available
+                    itemId: selectedItem.id,
+                    itemCode: selectedItem.itemCode,
+                    itemDesc: selectedItem.itemDesc,
+                    addonPrice: 0
+                }
+            ]);
+        }
+        setSelectedItem(null);
+    };
+    
+    // Use `useEffect` to log the updated state after it's applied
+    useEffect(() => {
+        console.log("Updated itemGroupItems:", itemGroupItems);
+    }, [itemGroupItems]); // Runs when `itemGroupItems` updates
+    
+        
     // Delete a Item Group
     const handleDelete = async (id) => {
         try {
@@ -122,7 +184,7 @@ const ItemGroup = () => {
                 message.success("Food menu group updated successfully");
             } else {
                 // Add New Item Group 
-                await axiosInstance.post(
+                const response = await axiosInstance.post(
                     `/item_group/add`,
                     null,
                     {
@@ -131,12 +193,47 @@ const ItemGroup = () => {
                         },
                     }
                 );
+                setEditingItemGroup(response.data);
                 message.success("Food menu group added successfully");
             }
+
+            // save itemGroupItems
+            await updateItemGroupItems(editingItemGroup.itemGrpId, itemGroupItems);
+
             setIsModalVisible(false);
             fetchItemGroups();
         } catch (error) {
-            message.error("Failed to save food menu group. Please try again.");
+            message.error("Failed to save food menu group. Please try again.", error);
+        }
+    };
+
+    const updateItemGroupItems = async (itemGrpId, itemGroupItems) => {
+        console.log("Fetched itemGroupItems details:", itemGroupItems);
+        try {
+          const payload = itemGroupItems.map(grp_item => ({
+            id: grp_item.id,
+            itemGrpId: itemGrpId,
+            itemId: grp_item.itemId,
+            addonPrice: parseFloat(grp_item.addonPrice) || 0 // Ensure decimal format
+          }));
+    
+          console.log("payload: ", payload);
+          
+          await axiosInstance.put(
+            `/item_group/update_item_group_items/${itemGrpId}`,
+            payload,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              },
+            }
+          );
+    
+          message.success(`Food menu group items updated successfully.`);
+        } catch (error) {
+          console.error(`Failed to update itemGroupItems:`, error);
+          message.error(`Failed to update itemGroupItems:.`);
         }
     };
 
@@ -309,7 +406,7 @@ const ItemGroup = () => {
                 onCancel={() => setIsModalVisible(false)}
                 footer={null}
                 centered
-                width="400px"
+                width="800px"
                 maskStyle={{
                     backgroundColor: "rgba(0, 0, 0, 0.6)",
                 }}
@@ -317,6 +414,8 @@ const ItemGroup = () => {
                     padding: "20px",
                     borderRadius: "8px",
                     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                    maxHeight: "600px", // Limit modal height
+                    overflowY: "auto" // Enable scrolling inside modal
                 }}
             >
                 <Form
@@ -334,6 +433,58 @@ const ItemGroup = () => {
                     >
                         <Input placeholder="Enter food menu group name" />
                     </Form.Item>
+
+<div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+    <Select
+        showSearch
+        placeholder="Search and select item"
+        filterOption={false}
+        onSearch={handleSearchItem}
+        onSelect={(value, option) => setSelectedItem(option.item)}
+        style={{ flex: 1, minWidth: "250px" }} // Ensure it takes available space
+    >
+        {searchItems.map(item => (
+            <Select.Option key={item.itemId} value={item.itemId} item={item}>
+                {item.itemCode} - {item.itemDesc}
+            </Select.Option>
+        ))}
+    </Select>
+
+    <Button
+        type="primary"
+        icon={<PlusOutlined />}
+        onClick={handleAddItem}
+        style={{
+            backgroundColor: "#28a745", // Green color for consistency
+            borderColor: "#28a745",
+            color: "#fff",
+            height: "40px",
+        }}
+    >
+        Add Item
+    </Button>
+</div>
+                    
+                    <Table columns={[
+                        { title: "Item Code", dataIndex: "itemCode", key: "itemCode" },
+                        { title: "Item Description", dataIndex: "itemDesc", key: "itemDesc" },
+                        { title: "Addon Price", dataIndex: "addonPrice", key: "addonPrice", render: (text, record) => (
+                            <Input type="number" value={record.addonPrice} 
+                                step="0.01" // Allows decimal input
+                                min="0" 
+                                onChange={(e) => {
+                                const newValue = e.target.value;
+                                setItemGroupItems(prevItems => prevItems.map(item => item.itemId === record.itemId ? { ...item, addonPrice: newValue } : item));
+                            }} />
+                        ) },
+                        {
+                            title: "Actions", key: "actions",
+                            render: (text, record) => (
+                                <Button icon={<DeleteOutlined />} danger onClick={() => handleDeleteItem(record.itemId)} />
+                            )
+                        }
+                    ]} dataSource={itemGroupItems} rowKey="id" pagination={false} />
+
                     <div style={{ textAlign: "right", marginTop: "20px" }}>
                         <Button
                             type="primary"

@@ -23,11 +23,10 @@ import lombok.NoArgsConstructor;
         }
     ),
     @NamedStoredProcedureQuery(
-        name = "deleteItemGroupItem",
-        procedureName = "delete_item_group_item",
+        name = "deleteItemGroupItems",
+        procedureName = "delete_item_group_items",
         parameters = {
             @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_item_grp_id", type = Integer.class),
-            @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_item_id", type = Integer.class),
         }
     )
 })

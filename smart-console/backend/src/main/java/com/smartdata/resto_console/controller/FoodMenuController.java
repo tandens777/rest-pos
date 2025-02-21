@@ -114,6 +114,12 @@ public class FoodMenuController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all_food_menus")
+    public ResponseEntity<List<Item>> getItemsOnly(@RequestParam(required = false) String search) throws GenericNotFoundException {
+        return ResponseEntity.ok(itemService.getItemsOnly(1, search));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all_tag/{item_tag_id}")
     public ResponseEntity<List<Item>> getItemsForTag(@PathVariable Integer item_tag_id, @RequestParam(required = false) String search) throws GenericNotFoundException {
         return ResponseEntity.ok(itemService.getItemsForTag(item_tag_id, 1, search));

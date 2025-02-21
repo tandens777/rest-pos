@@ -79,6 +79,21 @@ public class ItemService {
         }
     }
 
+    public List<Item> getItemsOnly(Integer catTypeId, String searchTerm) throws GenericNotFoundException {
+        List<Item> items;
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            items = itemRepository.findItemsByItemDescContainingIgnoreCaseOrderBySortOrder(catTypeId, searchTerm);
+        } else {
+            items = itemRepository.findAllItemsByOrderBySortOrder(catTypeId);
+        }
+
+        if (!items.isEmpty()) {
+            return items;
+        } else {
+            throw new GenericNotFoundException("No items found.");
+        }
+    }
+
     public List<Item> getItemCategories(Integer catTypeId) {
         List<Item> items;
         items = itemRepository.findByIsCategoryContainingIgnoreCaseOrderBySortOrder(catTypeId, "Y");
